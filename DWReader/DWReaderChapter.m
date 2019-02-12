@@ -10,8 +10,10 @@
 
 #define kIndentLength (2)
 #define kIndentString @"\t\t"
-#define kLineBreakLength (1)
-#define kLineBreakString @"\n"
+#define kHeaderLineBreakLength (1)
+#define kSeperateParagraphString @"\n\n\t\t"
+#define kSeperateParagraphLength (4)
+#define kFooterLineBreakLength (1)
 
 @interface DWReaderChapter ()
 
@@ -45,46 +47,35 @@
     ///去除文本原有制表符，后续将以制表符做段首缩进
     [[[NSRegularExpression alloc] initWithPattern:@"\\t+" options:0 error:nil] replaceMatchesInString:content options:0 range:NSMakeRange(0, content.length) withTemplate:@""];
     
-    ///开始分段，以'\n'作为分段信息，先替换多个连续'\n'为单个'\n'，防止原信息过多换行。在匹配当前换行符进行分段
-    NSRegularExpression * reg = [[NSRegularExpression alloc] initWithPattern:@"\\n+" options:0 error:nil];
     
-    ///替换单个换行符
-    [reg replaceMatchesInString:content options:0 range:NSMakeRange(0, content.length) withTemplate:kLineBreakString];
+    ///替换换行符为分段符（\n\n\t\t，这么做是因为两个换行符间可插入空白字符调整段落间距，两个制表符可作为段首缩进。后期可调整段首缩进的字符串及长度，修改宏即可）
+    [[[NSRegularExpression alloc] initWithPattern:@"\\n+" options:0 error:nil] replaceMatchesInString:content options:0 range:NSMakeRange(0, content.length) withTemplate:kSeperateParagraphString];
     
-    ///去除段首段尾的换行符
-    if ([content hasPrefix:kLineBreakString]) {
-        [content replaceCharactersInRange:NSMakeRange(0, 1) withString:@""];
+    ///去除段首段尾的分段符
+    if ([content hasPrefix:kSeperateParagraphString]) {
+        [content replaceCharactersInRange:NSMakeRange(0, kSeperateParagraphLength) withString:@""];
     }
-    if ([content hasSuffix:kLineBreakString]) {
-        [content replaceCharactersInRange:NSMakeRange(content.length - 1, 1) withString:@""];
+    if ([content hasSuffix:kSeperateParagraphString]) {
+        [content replaceCharactersInRange:NSMakeRange(content.length - kSeperateParagraphLength, kSeperateParagraphLength) withString:@""];
     }
     
     ///匹配段落
-    NSArray <NSTextCheckingResult *>* results = [reg matchesInString:content options:0 range:NSMakeRange(0, content.length)];
+    NSArray <NSTextCheckingResult *>* results = [[[NSRegularExpression alloc] initWithPattern:kSeperateParagraphString options:0 error:nil] matchesInString:content options:0 range:NSMakeRange(0, content.length)];
     
-    ///获取段落以后处理段首缩进及段落间距，现在文首添加一个缩进，之后在每个段落均添加缩进符，段尾不添加
+    ///获取段落以后处理段首缩进及段落间距，由于之前去除了段首的分段符，所以现在首先应该给段首添加缩进
+    [content insertString:kIndentString atIndex:0];
+    
+    ///然后计算段落信息
     NSUInteger resultsCnt = results.count;
     NSMutableArray * paraTmp = [NSMutableArray arrayWithCapacity:resultsCnt + 1];
-    __block NSUInteger loc = 0;
     __block NSUInteger lastLoc = 0;
-    NSUInteger oriLen = content.length;
     [results enumerateObjectsUsingBlock:^(NSTextCheckingResult * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        ///插入缩进符，并创建段落信息（loc为上一个para的长度，len为匹配结果加一个缩进符的长度）
-//        [content insertString:kIndentString atIndex:loc];
-        [self seperateParagraphWithString:content loc:loc];
-        DWReaderParagraph * para = [DWReaderParagraph new];
-        para.range = NSMakeRange(loc, obj.range.location + kIndentLength + kLineBreakLength - lastLoc);
-        [paraTmp addObject:para];
-        lastLoc = obj.range.location + 1;
-        loc = para.range.location + para.range.length;
+        ///计算段落信息，其中LastLoc表示计算本段落的起始位置，除了首次采取默认值0以外，其他均为seperateParagraph方法返回的位置，该方法返回的位置是包括给段首添加
+        lastLoc = [self seperateParagraphWithString:content paras:paraTmp lastLoc:lastLoc nextLoc:obj.range.location + kIndentLength];
     }];
     
     ///补充最后一段
-//    [content insertString:kIndentString atIndex:loc];
-    [self seperateParagraphWithString:content loc:loc];
-    DWReaderParagraph * para = [DWReaderParagraph new];
-    para.range = NSMakeRange(loc,oriLen + kIndentLength + kLineBreakLength - lastLoc);
-    [paraTmp addObject:para];
+    [self seperateParagraphWithString:content paras:paraTmp lastLoc:lastLoc nextLoc:content.length];
     
     _paragraphs = [paraTmp copy];
     self.parsedString = content;
@@ -94,13 +85,13 @@
 }
 
 #pragma mark --- tool method ---
--(void)seperateParagraphWithString:(NSMutableString *)str loc:(NSUInteger)loc {
-    ///段首插入缩进符
-    [str insertString:kIndentString atIndex:loc];
-    ///如果不是首段，再插入一个换行符（这样段落之间既有两个连续的换行符，再在换行符中插入空白字符调整段落间距）
-    if (loc != 0) {
-        [str insertString:kLineBreakString atIndex:loc];
-    }
+-(NSUInteger)seperateParagraphWithString:(NSMutableString *)str paras:(NSMutableArray *)paras lastLoc:(NSUInteger)lastLoc nextLoc:(NSUInteger)nextLoc {
+    
+    DWReaderParagraph * para = [DWReaderParagraph new];
+    para.range = NSMakeRange(lastLoc,nextLoc - lastLoc);
+    [paras addObject:para];
+    
+    return para.range.location + para.range.length + kFooterLineBreakLength;
 }
 
 #pragma mark --- override ---
