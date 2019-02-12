@@ -1,5 +1,5 @@
 //
-//  DWChapter.h
+//  DWReaderChapter.h
 //  DWReader
 //
 //  Created by Wicky on 2019/2/12.
@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "DWReaderParagraph.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DWChapter : NSObject
+@interface DWReaderChapter : NSObject
 
 #pragma mark --- 输入数据 ---
 ///远端获取的原始数据
@@ -29,6 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///标题
 @property (nonatomic ,copy ,readonly) NSString * title;
 
+///段落信息
+@property (nonatomic ,strong ,readonly) NSArray <DWReaderParagraph *>* paragraphs;
+
 
 /**
  初始化章节内容
@@ -45,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  解析内容
  
- 当前解析方式定制为漫读小说项目，其中包括分段方式，段首缩进两项内容。后续应该暴露代理，提供扩展性。
+ 当前解析方式定制为漫读小说项目，其中包括分段方式、段首缩进、分页最大字数等内容。后续应该暴露代理，提供扩展性。
  */
 -(void)parseChapter;
 
