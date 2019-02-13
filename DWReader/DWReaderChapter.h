@@ -25,6 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic ,assign ,readonly) CGSize renderSize;
 
 #pragma mark --- 可配置项 ---
+///标题正文间距
+@property (nonatomic ,assign ,readonly) CGFloat titleSpacing;
+
 ///行间距
 @property (nonatomic ,assign ,readonly) CGFloat lineSpacing;
 
@@ -74,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param lineSpacing 行间距
  @param paragraphSpacing 段落间距
  */
--(void)seperatePageWithFontSize:(CGFloat)fontSize lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing;
+-(void)seperatePageWithFontSize:(CGFloat)fontSize titleSpacing:(CGFloat)titleSpacing lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing;
 
 
 /**

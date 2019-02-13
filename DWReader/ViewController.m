@@ -35,7 +35,7 @@
     c = [c initWithOriginString:testString title:@"aaa" renderSize:[UIScreen mainScreen].bounds.size];
     [c parseChapter];
     
-    [c seperatePageWithFontSize:24 lineSpacing:18 paragraphSpacing:28];
+    [c seperatePageWithFontSize:24 titleSpacing:28 lineSpacing:18 paragraphSpacing:28];
 }
 
 

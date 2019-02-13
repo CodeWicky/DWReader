@@ -48,10 +48,10 @@ a = NULL;\
         _title = title;
         _renderSize = renderSize;
         _content = nil;
-        _title = nil;
         _paragraphs = nil;
         _parsedString = nil;
         _fontSize = MAXFLOAT;
+        _titleSpacing = MAXFLOAT;
         _lineSpacing = MAXFLOAT;
         _paragraphSpacing = MAXFLOAT;
     }
@@ -102,12 +102,13 @@ a = NULL;\
     ///至此字符串已经完成分段，在正文内容不变的情况下，字符串可以保留，改变字号后重新计算分页即可
 }
 
--(void)seperatePageWithFontSize:(CGFloat)fontSize lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing {
+-(void)seperatePageWithFontSize:(CGFloat)fontSize titleSpacing:(CGFloat)titleSpacing lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing {
     ///当任意一个影响分页的数据改变时才重新计算分页
-    if (self.fontSize != fontSize || self.lineSpacing != lineSpacing || self.paragraphSpacing != paragraphSpacing) {
+    if (self.fontSize != fontSize || self.titleSpacing != titleSpacing || self.lineSpacing != lineSpacing || self.paragraphSpacing != paragraphSpacing) {
         
         ///赋值基础属性并清空之前的分页数据
         _fontSize = fontSize;
+        _titleSpacing = titleSpacing;
         _lineSpacing = lineSpacing;
         _paragraphSpacing = paragraphSpacing;
         _pages = nil;
@@ -116,6 +117,7 @@ a = NULL;\
         [self configAttributeString];
         
         ///富文本组装完成后可以开始分页
+        [self seperatePage];
     }
 }
 
@@ -174,6 +176,55 @@ a = NULL;\
     self.drawString = draw;
 }
 
+-(void)seperatePage {
+    ///第一页存在标题，所以首页处理不同。首页应先绘制标题，绘制标题过后计算首页正文绘制区域，来进行首页的分页。其余页的分页均以渲染区域进行分页，每个新页中要考虑新页的起始位置是否是分段的换行符或空白字符，如果是，要排除掉此区域在计算分页
+    UIFont * titleFont = [UIFont systemFontOfSize:self.fontSize * 1.5];
+    UILabel * tmpLb = [[UILabel alloc] initWithFrame:(CGRect){CGPointZero,self.renderSize}];
+    tmpLb.font = titleFont;
+    tmpLb.numberOfLines = 0;
+    tmpLb.text = self.title;
+    [tmpLb sizeToFit];
+    
+    ///计算首页渲染区域
+    CGFloat title_h = tmpLb.bounds.size.height;
+    CGFloat offset_y = title_h + self.titleSpacing;
+    CGSize firstParagraphRenderSize = CGSizeMake(self.renderSize.width, self.renderSize.height - offset_y);
+    
+    NSMutableArray * tmpPages = [NSMutableArray arrayWithCapacity:0];
+    NSUInteger currentLoc = 0;
+    ///当前手机以xs max做最大屏幕，14号字做最小字号，18像素为最小行间距，最大展示字数为564个字，取整估算为600字，为避免因数字较多在成的字形大小差距的影响，乘以1.2倍的安全余量，故当前安全阈值为720字
+    NSUInteger length = self.drawString.length - currentLoc;
+    DWReaderParagraph * currentPara = self.paragraphs.firstObject;
+    while (length > 0) {
+        length = MIN(length, 720);
+        
+        ///截取一段字符串
+        NSAttributedString * sub = [self.drawString attributedSubstringFromRange:NSMakeRange(currentLoc, length)];
+        ///选定渲染区域
+        CGSize size = tmpPages.count == 0 ? firstParagraphRenderSize : self.renderSize;
+        NSRange range = [self calculateVisibleRangeWithString:sub renderSize:size location:currentLoc];
+        if (range.length == 0) {
+            ///计算出错
+            NSAssert(NO, @"DWReader can't calculate visible range,currentLoc = %lu,length = %lu,size = %@,sub = %@",currentLoc,length,NSStringFromCGSize(size),sub.string);
+            break;
+        }
+        
+        ///配置分页信息
+        DWReaderPage * page = [[DWReaderPage alloc] init];
+        page.range = range;
+        page.page = tmpPages.count;
+        if (page.page == 0) {
+            page.offsetY = offset_y;
+        }
+        [tmpPages addObject:page];
+        
+        ///更改currentLoc，此处应根据分段决定下一个Loc。首先应找到现在属于哪个段落
+        currentLoc = NSMaxRange(range);
+        
+    }
+    
+}
+
 -(void)insertPlaceholderForDrawString:(NSMutableAttributedString *)draw withParagraph:(DWReaderParagraph *)para {
     if (para.fixRange.location > draw.length) {
         return;
@@ -195,8 +246,16 @@ a = NULL;\
     [draw insertAttributedString:placeHolderAttrStr atIndex:para.fixRange.location];
 }
 
--(NSRange)calculateVisibleRangeWithString:(NSAttributedString *)string renderSize:(CGSize)size {
-    return NSMakeRange(0, 0);
+-(NSRange)calculateVisibleRangeWithString:(NSAttributedString *)string renderSize:(CGSize)size location:(NSUInteger)loc {
+    ///利用CoreText计算当前显示区域内可显示的范围
+    CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef) string);
+    UIBezierPath * bezierPath = [UIBezierPath bezierPathWithRect:(CGRect){CGPointZero,size}];
+    CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), bezierPath.CGPath, NULL);
+    CFRange range = CTFrameGetVisibleStringRange(frame);
+    NSRange fixRange = {loc, range.length};
+    CFSAFERELEASE(frame);
+    CFSAFERELEASE(framesetter);
+    return fixRange;
 }
 
 #pragma mark --- CoreText callback ---
