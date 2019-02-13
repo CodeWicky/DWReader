@@ -28,12 +28,14 @@
     
     
     
-    DWReaderChapter * c = [DWReaderChapter chapterWithOriginString:testString lineSpacing:18 paragraphSpacing:28];
+    DWReaderChapter * c = [DWReaderChapter chapterWithOriginString:testString title:@"aaa" renderSize:[UIScreen mainScreen].bounds.size];
     [c parseChapter];
     
     testString = @"a\nb\ncc";
-    c = [c initWithOriginString:testString lineSpacing:18 paragraphSpacing:28];
+    c = [c initWithOriginString:testString title:@"aaa" renderSize:[UIScreen mainScreen].bounds.size];
     [c parseChapter];
+    
+    [c seperatePageWithFontSize:24 lineSpacing:18 paragraphSpacing:28];
 }
 
 
