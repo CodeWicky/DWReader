@@ -28,11 +28,7 @@
     
     
     
-    DWReaderChapter * c = [DWReaderChapter chapterWithOriginString:testString title:@"aaa" renderSize:[UIScreen mainScreen].bounds.size];
-    [c parseChapter];
-    
-    testString = @"a\nb\ncc";
-    c = [c initWithOriginString:testString title:@"aaa" renderSize:[UIScreen mainScreen].bounds.size];
+    DWReaderChapter * c = [DWReaderChapter chapterWithOriginString:testString title:@"aaa" renderSize:CGSizeMake(200, 40)];
     [c parseChapter];
     
     [c seperatePageWithFontSize:24 titleSpacing:28 lineSpacing:18 paragraphSpacing:28];

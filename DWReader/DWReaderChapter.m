@@ -9,12 +9,25 @@
 #import "DWReaderChapter.h"
 #import <CoreText/CoreText.h>
 
+///缩进长度
 #define kIndentLength (2)
+///缩进符号
 #define kIndentString @"\t\t"
-#define kHeaderLineBreakLength (1)
-#define kSeperateParagraphString @"\n\n\t\t"
+///段落分隔符长度
 #define kSeperateParagraphLength (4)
+///段落分隔符符号
+#define kSeperateParagraphString @"\n\n\t\t"
+///段落结尾至空白符中间的长度
 #define kFooterLineBreakLength (1)
+///空白符符号
+#define kBlankSymbol 0xFFFC
+///空白符符号长度
+#define kBlankSymbolLength (1)
+///段落间的偏移量
+#define kParagraphOffset (kSeperateParagraphLength + kBlankSymbolLength - kIndentLength)
+///段落起始位置距离段落正文起始位置偏移量
+#define kContentOffset (kParagraphOffset - kFooterLineBreakLength)
+
 
 ///安全释放
 #define CFSAFERELEASE(a)\
@@ -145,7 +158,7 @@ a = NULL;\
     if (para.index < 2) {
         para.fixRange = para.range;
     } else {
-        para.fixRange = NSMakeRange(para.range.location + para.index - 1, para.range.length);
+        para.fixRange = NSMakeRange(para.range.location + (para.index - 1) * kBlankSymbolLength, para.range.length);
     }
     
     [paras addObject:para];
@@ -191,6 +204,14 @@ a = NULL;\
     CGSize firstParagraphRenderSize = CGSizeMake(self.renderSize.width, self.renderSize.height - offset_y);
     
     NSMutableArray * tmpPages = [NSMutableArray arrayWithCapacity:0];
+    
+    ///说明标题过大，不足以再绘制正文，此时正文应该另起一页
+    if (firstParagraphRenderSize.height < 0) {
+        DWReaderPage * titlePage = [[DWReaderPage alloc] init];
+        titlePage.needRenderTitle = YES;
+        [tmpPages addObject:titlePage];
+    }
+    
     NSUInteger currentLoc = 0;
     ///当前手机以xs max做最大屏幕，14号字做最小字号，18像素为最小行间距，最大展示字数为564个字，取整估算为600字，为避免因数字较多在成的字形大小差距的影响，乘以1.2倍的安全余量，故当前安全阈值为720字
     NSUInteger length = self.drawString.length - currentLoc;
@@ -213,35 +234,57 @@ a = NULL;\
         DWReaderPage * page = [[DWReaderPage alloc] init];
         page.range = range;
         page.page = tmpPages.count;
+        page.pageContent = [self.drawString attributedSubstringFromRange:range];
         if (page.page == 0) {
             page.offsetY = offset_y;
+            page.needRenderTitle = YES;
         }
         [tmpPages addObject:page];
         
         ///更改currentLoc，此处应根据分段决定下一个Loc。首先应找到现在属于哪个段落
         currentLoc = NSMaxRange(range);
-        
         if (currentLoc > currentPara.fixRange.location && currentLoc < NSMaxRange(currentPara.fixRange)) {
             ///在当前段落内，不涉及到分段符，currentLoc及currentPara均不需要修正
-        } else if (currentLoc > NSMaxRange(currentPara.fixRange) && currentLoc < (NSMaxRange(currentPara.fixRange) + (kSeperateParagraphLength + 1))) {
+        } else if (currentLoc > NSMaxRange(currentPara.fixRange) && currentLoc < (NSMaxRange(currentPara.fixRange) + kParagraphOffset)) {
             ///不在当前段落，但还没有到下一段落的实际正文处，即当前处于两个段落间的分段处，此时currentLoc应该修正为下一段的实际真跟处，currentPara应该修正为下一段。另外如果存在下一段则修正，不存在的话，分页完毕。
             if (currentPara.nextParagraph) {
                 ///修正段落为下一段
                 currentPara = currentPara.nextParagraph;
                 ///修正位置为下一段正文位置
-                currentLoc = currentPara.fixRange.location + (kSeperateParagraphLength + 1 - kFooterLineBreakLength);
+                currentLoc = currentPara.fixRange.location + kContentOffset;
             } else {
                 break;
             }
         } else {
             ///当位置在更往后的位置是，可能在下一段中，或者下下段中，需要找到对应段，并根据上述规则修正
+            while (currentPara.nextParagraph) {
+                ///如果在下一段的正文至下下段的正文之间，则认为找到所在段落，否则继续查找下下段
+                currentPara = currentPara.nextParagraph;
+                if (currentLoc > currentPara.fixRange.location + kContentOffset && currentLoc < NSMaxRange(currentPara.fixRange) + kParagraphOffset) {
+                    break;
+                }
+            }
             
+            ///至此两种情况：1.找到了所在段落，则可以开始修正currentLoc。2.未找到所在段落，但下一段为空，则分页结束
+            if (!currentPara) {
+                break;
+            } else {
+                ///如果在当前段落与下一段落间的分割区间则按照之前逻辑进行修正，否则无需修正，因为范围已经限定为在当前段落正文之间了。
+                if (currentLoc > NSMaxRange(currentPara.fixRange) && currentLoc < (NSMaxRange(currentPara.fixRange) + kParagraphOffset)) {
+                    if (currentPara.nextParagraph) {
+                        currentPara = currentPara.nextParagraph;
+                        currentLoc = currentPara.fixRange.location + kContentOffset;
+                    } else {
+                        break;
+                    }
+                }
+            }
         }
-        
         length = self.drawString.length - currentLoc;
-        
     }
     
+    ///至此分页完毕
+    NSLog(@"%@",tmpPages);
 }
 
 -(void)insertPlaceholderForDrawString:(NSMutableAttributedString *)draw withParagraph:(DWReaderParagraph *)para {
@@ -256,8 +299,8 @@ a = NULL;\
     callBacks.getAscent = ascentCallBacks;
     callBacks.getDescent = descentCallBacks;
     callBacks.getWidth = widthCallBacks;
-    CTRunDelegateRef delegate = CTRunDelegateCreate(& callBacks, (__bridge void *)dic);
-    unichar placeHolder = 0xFFFC;
+    CTRunDelegateRef delegate = CTRunDelegateCreate(&callBacks, (__bridge_retained void *)dic);
+    unichar placeHolder = kBlankSymbol;
     NSString * placeHolderStr = [NSString stringWithCharacters:&placeHolder length:1];
     NSMutableAttributedString * placeHolderAttrStr = [[NSMutableAttributedString alloc] initWithString:placeHolderStr];
     CFAttributedStringSetAttribute((CFMutableAttributedStringRef)placeHolderAttrStr, CFRangeMake(0, 1), kCTRunDelegateAttributeName, delegate);
