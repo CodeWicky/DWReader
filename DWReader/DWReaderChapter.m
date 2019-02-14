@@ -221,6 +221,25 @@ a = NULL;\
         ///更改currentLoc，此处应根据分段决定下一个Loc。首先应找到现在属于哪个段落
         currentLoc = NSMaxRange(range);
         
+        if (currentLoc > currentPara.fixRange.location && currentLoc < NSMaxRange(currentPara.fixRange)) {
+            ///在当前段落内，不涉及到分段符，currentLoc及currentPara均不需要修正
+        } else if (currentLoc > NSMaxRange(currentPara.fixRange) && currentLoc < (NSMaxRange(currentPara.fixRange) + (kSeperateParagraphLength + 1))) {
+            ///不在当前段落，但还没有到下一段落的实际正文处，即当前处于两个段落间的分段处，此时currentLoc应该修正为下一段的实际真跟处，currentPara应该修正为下一段。另外如果存在下一段则修正，不存在的话，分页完毕。
+            if (currentPara.nextParagraph) {
+                ///修正段落为下一段
+                currentPara = currentPara.nextParagraph;
+                ///修正位置为下一段正文位置
+                currentLoc = currentPara.fixRange.location + (kSeperateParagraphLength + 1 - kFooterLineBreakLength);
+            } else {
+                break;
+            }
+        } else {
+            ///当位置在更往后的位置是，可能在下一段中，或者下下段中，需要找到对应段，并根据上述规则修正
+            
+        }
+        
+        length = self.drawString.length - currentLoc;
+        
     }
     
 }
