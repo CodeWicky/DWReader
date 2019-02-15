@@ -23,9 +23,6 @@ a = NULL;\
 
 @interface DWReaderChapter ()
 
-///分段后的正文内容
-@property (nonatomic ,strong) NSString * parsedString;
-
 ///绘制文本
 @property (nonatomic ,strong) NSMutableAttributedString * drawString;
 
@@ -43,9 +40,11 @@ a = NULL;\
         _originString = oriStr;
         _title = title;
         _renderSize = renderSize;
-        _content = nil;
-        _parsedString = nil;
         _pageConf = nil;
+        _textColor = nil;
+        _content = nil;
+        _pages = nil;
+        _drawString = nil;
     }
     return self;
 }
@@ -65,8 +64,7 @@ a = NULL;\
     }
     
     ///处理为可以直接排版的字符串
-    self.parsedString = content;
-    
+    _content = content;
 }
 
 -(void)seperatePageWithPageConfiguration:(DWReaderPageConfiguration *)conf {
@@ -96,7 +94,7 @@ a = NULL;\
 -(void)configAttributeString {
     ///获取将要绘制的富文本，主要设置字号、行间距属性、添加空白字符
     self.drawString = nil;
-    NSMutableAttributedString * draw = [[NSMutableAttributedString alloc] initWithString:self.parsedString];
+    NSMutableAttributedString * draw = [[NSMutableAttributedString alloc] initWithString:self.content];
     
     NSRange range = NSMakeRange(0, draw.length);
     ///设置字符串属性（字号、行间距）
