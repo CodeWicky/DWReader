@@ -14,7 +14,6 @@
 		9B6ED6922212FE84003BB1EA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B6ED6902212FE84003BB1EA /* LaunchScreen.storyboard */; };
 		9B6ED6952212FE84003BB1EA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED6942212FE84003BB1EA /* main.m */; };
 		9B6ED69D2212FE9C003BB1EA /* DWReaderChapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED69C2212FE9C003BB1EA /* DWReaderChapter.m */; };
-		9B6ED6A022130E90003BB1EA /* DWReaderParagraph.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED69F22130E90003BB1EA /* DWReaderParagraph.m */; };
 		9B6ED6A32213C072003BB1EA /* DWReaderPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED6A22213C072003BB1EA /* DWReaderPage.m */; };
 /* End PBXBuildFile section */
 
@@ -31,8 +30,6 @@
 		9B6ED6942212FE84003BB1EA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		9B6ED69B2212FE9C003BB1EA /* DWReaderChapter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderChapter.h; sourceTree = "<group>"; };
 		9B6ED69C2212FE9C003BB1EA /* DWReaderChapter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderChapter.m; sourceTree = "<group>"; };
-		9B6ED69E22130E90003BB1EA /* DWReaderParagraph.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderParagraph.h; sourceTree = "<group>"; };
-		9B6ED69F22130E90003BB1EA /* DWReaderParagraph.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderParagraph.m; sourceTree = "<group>"; };
 		9B6ED6A12213C072003BB1EA /* DWReaderPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderPage.h; sourceTree = "<group>"; };
 		9B6ED6A22213C072003BB1EA /* DWReaderPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderPage.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -75,8 +72,6 @@
 				9B6ED69C2212FE9C003BB1EA /* DWReaderChapter.m */,
 				9B6ED6A12213C072003BB1EA /* DWReaderPage.h */,
 				9B6ED6A22213C072003BB1EA /* DWReaderPage.m */,
-				9B6ED69E22130E90003BB1EA /* DWReaderParagraph.h */,
-				9B6ED69F22130E90003BB1EA /* DWReaderParagraph.m */,
 				9B6ED68B2212FE83003BB1EA /* Main.storyboard */,
 				9B6ED68E2212FE84003BB1EA /* Assets.xcassets */,
 				9B6ED6902212FE84003BB1EA /* LaunchScreen.storyboard */,
@@ -161,7 +156,6 @@
 				9B6ED6A32213C072003BB1EA /* DWReaderPage.m in Sources */,
 				9B6ED6952212FE84003BB1EA /* main.m in Sources */,
 				9B6ED6872212FE83003BB1EA /* AppDelegate.m in Sources */,
-				9B6ED6A022130E90003BB1EA /* DWReaderParagraph.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

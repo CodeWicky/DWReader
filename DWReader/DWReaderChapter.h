@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DWReaderParagraph.h"
 #import "DWReaderPage.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class DWReaderPageConfiguration;
 @interface DWReaderChapter : NSObject
 
 #pragma mark --- 输入数据 ---
@@ -25,17 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic ,assign ,readonly) CGSize renderSize;
 
 #pragma mark --- 可配置项 ---
-///标题正文间距
-@property (nonatomic ,assign ,readonly) CGFloat titleSpacing;
-
-///行间距
-@property (nonatomic ,assign ,readonly) CGFloat lineSpacing;
-
-///段落间距
-@property (nonatomic ,assign ,readonly) CGFloat paragraphSpacing;
-
-///字号
-@property (nonatomic ,assign ,readonly) CGFloat fontSize;
+///页面配置项
+@property (nonatomic ,strong ,readonly) DWReaderPageConfiguration * pageConf;
 
 ///字体颜色
 @property (nonatomic ,strong ,readonly) UIColor * textColor;
@@ -43,9 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark --- 解析数据 ---
 ///正文内容
 @property (nonatomic ,copy ,readonly) NSString * content;
-
-///段落信息
-@property (nonatomic ,strong ,readonly) NSArray <DWReaderParagraph *>* paragraphs;
 
 ///分页信息
 @property (nonatomic ,strong ,readonly) NSArray <DWReaderPage *>* pages;
@@ -70,14 +58,13 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)parseChapter;
 
 
-/**
- 按给定要求分页
 
- @param fontSize 字号
- @param lineSpacing 行间距
- @param paragraphSpacing 段落间距
+/**
+ 按给定配置分页
+
+ @param conf 页面配置
  */
--(void)seperatePageWithFontSize:(CGFloat)fontSize titleSpacing:(CGFloat)titleSpacing lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing;
+-(void)seperatePageWithPageConfiguration:(DWReaderPageConfiguration *)conf;
 
 
 /**
@@ -86,6 +73,28 @@ NS_ASSUME_NONNULL_BEGIN
  @param textColor 文字颜色
  */
 -(void)configTextColor:(UIColor *)textColor;
+
+@end
+
+/*
+ 页面配置
+ */
+@interface DWReaderPageConfiguration : NSObject
+
+///字号
+@property (nonatomic ,assign) CGFloat fontSize;
+
+///标题距正文的距离
+@property (nonatomic ,assign) CGFloat titleSpacing;
+
+///行间距
+@property (nonatomic ,assign) CGFloat lineSpacing;
+
+///段落间距
+@property (nonatomic ,assign) CGFloat paragraphSpacing;
+
+///段首缩进
+@property (nonatomic ,assign) CGFloat paragraphHeaderSpacing;
 
 @end
 

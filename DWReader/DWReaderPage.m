@@ -10,9 +10,8 @@
 
 @implementation DWReaderPage
 
-#pragma mark --- override ---
 -(NSString *)description {
-    return [NSString stringWithFormat:@"Page range is Loc:%lu - Len:%lu,Page index is %lu,Page content:%@",self.range.location,self.range.length,self.page,self.pageContent.string];
+    return [NSString stringWithFormat:@"Page range is %@,index is %lu,pageContent is %@,offsetY is %f,needRenderTitle is %@",NSStringFromRange(self.range),self.page,self.pageContent.string,self.offsetY,self.needRenderTitle ? @"true" : @"false"];
 }
 
 @end

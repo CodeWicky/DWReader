@@ -21,11 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 ///绘制Y纵向偏移
 @property (nonatomic ,assign) CGFloat offsetY;
 
-///当前页面的文字内容
-@property (nonatomic ,strong) NSAttributedString * pageContent;
-
-///需要渲染标题
+///是否绘制标题
 @property (nonatomic ,assign) BOOL needRenderTitle;
+
+///本页需要绘制的富文本
+@property (nonatomic ,strong) NSAttributedString * pageContent;
 
 @end
 
