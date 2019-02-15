@@ -154,7 +154,7 @@ a = NULL;\
         DWReaderPage * page = [[DWReaderPage alloc] init];
         page.range = range;
         page.page = tmpPages.count;
-        page.pageContent = [self.drawString attributedSubstringFromRange:page.range];
+        page.pageContent = [self.drawString attributedSubstringFromRange:range];
         if (page.page == 0) {
             page.offsetY = offset_y;
             page.needRenderTitle = YES;
