@@ -9,12 +9,8 @@
 #import "DWReaderChapter.h"
 #import <CoreText/CoreText.h>
 
-#define kIndentLength (2)
-#define kIndentString @"\t\t"
-#define kHeaderLineBreakLength (1)
-#define kSeperateParagraphString @"\n\n\t\t"
-#define kSeperateParagraphLength (4)
-#define kFooterLineBreakLength (1)
+#define kLineBreakSymbol @"\n"
+#define kLineBreakLength (1)
 
 ///安全释放
 #define CFSAFERELEASE(a)\
@@ -28,7 +24,7 @@ a = NULL;\
 @interface DWReaderChapter ()
 
 ///分段后的正文内容
-@property (nonatomic ,strong) NSMutableString * parsedString;
+@property (nonatomic ,strong) NSString * parsedString;
 
 ///绘制文本
 @property (nonatomic ,strong) NSMutableAttributedString * drawString;
@@ -48,69 +44,37 @@ a = NULL;\
         _title = title;
         _renderSize = renderSize;
         _content = nil;
-        _paragraphs = nil;
         _parsedString = nil;
-        _fontSize = MAXFLOAT;
-        _titleSpacing = MAXFLOAT;
-        _lineSpacing = MAXFLOAT;
-        _paragraphSpacing = MAXFLOAT;
+        _pageConf = nil;
     }
     return self;
 }
 
 -(void)parseChapter {
-    NSMutableString * content = [NSMutableString stringWithString:_originString];
+    NSString * content = _originString;
     
-    ///去除文本原有制表符，后续将以制表符做段首缩进
-    [[[NSRegularExpression alloc] initWithPattern:@"\\t+" options:0 error:nil] replaceMatchesInString:content options:0 range:NSMakeRange(0, content.length) withTemplate:@""];
-    
-    
-    ///替换换行符为分段符（\n\n\t\t，这么做是因为两个换行符间可插入空白字符调整段落间距，两个制表符可作为段首缩进。后期可调整段首缩进的字符串及长度，修改宏即可）
-    [[[NSRegularExpression alloc] initWithPattern:@"\\n+" options:0 error:nil] replaceMatchesInString:content options:0 range:NSMakeRange(0, content.length) withTemplate:kSeperateParagraphString];
+    ///替换连续\n为单个\n
+    content = [[[NSRegularExpression alloc] initWithPattern:@"\\n+" options:0 error:nil] stringByReplacingMatchesInString:content options:0 range:NSMakeRange(0, content.length) withTemplate:kLineBreakSymbol];
     
     ///去除段首段尾的分段符
-    if ([content hasPrefix:kSeperateParagraphString]) {
-        [content replaceCharactersInRange:NSMakeRange(0, kSeperateParagraphLength) withString:@""];
+    if ([content hasPrefix:kLineBreakSymbol]) {
+        content = [content substringFromIndex:kLineBreakLength];
     }
-    if ([content hasSuffix:kSeperateParagraphString]) {
-        [content replaceCharactersInRange:NSMakeRange(content.length - kSeperateParagraphLength, kSeperateParagraphLength) withString:@""];
+    if ([content hasSuffix:kLineBreakSymbol]) {
+        content = [content substringToIndex:content.length - kLineBreakLength];
     }
     
-    ///获取段落以后处理段首缩进及段落间距，由于之前去除了段首的分段符，所以现在首先应该给段首添加缩进
-    [content insertString:kIndentString atIndex:0];
-    
-    ///匹配段落
-    NSArray <NSTextCheckingResult *>* results = [[[NSRegularExpression alloc] initWithPattern:kSeperateParagraphString options:0 error:nil] matchesInString:content options:0 range:NSMakeRange(0, content.length)];
-    
-    ///然后计算段落信息
-    NSUInteger resultsCnt = results.count;
-    NSMutableArray <DWReaderParagraph *>* paraTmp = [NSMutableArray arrayWithCapacity:resultsCnt + 1];
-    __block NSUInteger lastLoc = 0;
-    [results enumerateObjectsUsingBlock:^(NSTextCheckingResult * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        lastLoc = [self seperateParagraphWithString:content paras:paraTmp lastLoc:lastLoc nextLoc:obj.range.location];
-    }];
-    
-    ///补充最后一段
-    [self seperateParagraphWithString:content paras:paraTmp lastLoc:lastLoc nextLoc:content.length];
-    
-    _paragraphs = [paraTmp copy];
+    ///处理为可以直接排版的字符串
     self.parsedString = content;
     
-    NSLog(@"%@",paraTmp);
-    NSLog(@"\n%@",self.parsedString);
-    
-    ///至此字符串已经完成分段，在正文内容不变的情况下，字符串可以保留，改变字号后重新计算分页即可
 }
 
--(void)seperatePageWithFontSize:(CGFloat)fontSize titleSpacing:(CGFloat)titleSpacing lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing {
+-(void)seperatePageWithPageConfiguration:(DWReaderPageConfiguration *)conf {
     ///当任意一个影响分页的数据改变时才重新计算分页
-    if (self.fontSize != fontSize || self.titleSpacing != titleSpacing || self.lineSpacing != lineSpacing || self.paragraphSpacing != paragraphSpacing) {
+    if (![self.pageConf isEqual:conf]) {
         
         ///赋值基础属性并清空之前的分页数据
-        _fontSize = fontSize;
-        _titleSpacing = titleSpacing;
-        _lineSpacing = lineSpacing;
-        _paragraphSpacing = paragraphSpacing;
+        _pageConf = conf;
         _pages = nil;
         
         ///组装富文本
@@ -128,49 +92,19 @@ a = NULL;\
 }
 
 #pragma mark --- tool method ---
--(NSUInteger)seperateParagraphWithString:(NSMutableString *)str paras:(NSMutableArray <DWReaderParagraph *>*)paras lastLoc:(NSUInteger)lastLoc nextLoc:(NSUInteger)nextLoc {
-    
-    ///计算段落信息，其中LastLoc表示计算本段落的起始位置，nextLoc表示结束位置。起始位置除手段从默认值0开始计算以外，其他均为上一段落结束位置后加一个结尾换行符的长度的位置。结束位置及每次匹配到的分段符的Location。（语言表述能力有限，实在想不明白建议画个图）
-    DWReaderParagraph * para = [DWReaderParagraph new];
-    para.range = NSMakeRange(lastLoc,nextLoc - lastLoc);
-    
-    ///如果这是第一段，改变标志位，标志首段，如果不是，将数组中最后一段的下一段置位本段
-    if (paras.count != 0) {
-        para.prevParagraph = paras.lastObject;
-        paras.lastObject.nextParagraph = para;
-    }
-    
-    para.index = paras.count;
-    ///第0段和第1段不用修，因为第0段不插入空白符，第1段为第一个插入的空白符，故两段不用修range
-    if (para.index < 2) {
-        para.fixRange = para.range;
-    } else {
-        para.fixRange = NSMakeRange(para.range.location + para.index - 1, para.range.length);
-    }
-    
-    [paras addObject:para];
-    
-    ///之所以要加一个结尾换行符长度是因为在结尾换行符后我们后续会添加空白字符来调整段落间距，事实上我们分段就是为了找这个位置及段首缩进。所以找到这个位置很重要
-    return para.range.location + para.range.length + kFooterLineBreakLength;
-}
 
 -(void)configAttributeString {
     ///获取将要绘制的富文本，主要设置字号、行间距属性、添加空白字符
     self.drawString = nil;
     NSMutableAttributedString * draw = [[NSMutableAttributedString alloc] initWithString:self.parsedString];
     
-    ///插入空白字符，调整段落间距
-    DWReaderParagraph * para = self.paragraphs.firstObject.nextParagraph;
-    while (para) {
-        [self insertPlaceholderForDrawString:draw withParagraph:para];
-        para = para.nextParagraph;
-    }
-    
     NSRange range = NSMakeRange(0, draw.length);
     ///设置字符串属性（字号、行间距）
-    [draw addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:self.fontSize] range:range];
+    [draw addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:_pageConf.fontSize] range:range];
     NSMutableParagraphStyle * paraStyle = [[NSMutableParagraphStyle alloc] init];
-    paraStyle.lineSpacing = self.lineSpacing;
+    paraStyle.lineSpacing = _pageConf.lineSpacing;
+    paraStyle.paragraphSpacing = _pageConf.paragraphSpacing;
+    paraStyle.firstLineHeadIndent = _pageConf.paragraphHeaderSpacing;
     [draw addAttribute:NSParagraphStyleAttributeName value:paraStyle range:range];
     
     self.drawString = draw;
@@ -178,7 +112,7 @@ a = NULL;\
 
 -(void)seperatePage {
     ///第一页存在标题，所以首页处理不同。首页应先绘制标题，绘制标题过后计算首页正文绘制区域，来进行首页的分页。其余页的分页均以渲染区域进行分页，每个新页中要考虑新页的起始位置是否是分段的换行符或空白字符，如果是，要排除掉此区域在计算分页
-    UIFont * titleFont = [UIFont systemFontOfSize:self.fontSize * 1.5];
+    UIFont * titleFont = [UIFont systemFontOfSize:_pageConf.fontSize * 1.5];
     UILabel * tmpLb = [[UILabel alloc] initWithFrame:(CGRect){CGPointZero,self.renderSize}];
     tmpLb.font = titleFont;
     tmpLb.numberOfLines = 0;
@@ -187,14 +121,22 @@ a = NULL;\
     
     ///计算首页渲染区域
     CGFloat title_h = tmpLb.bounds.size.height;
-    CGFloat offset_y = title_h + self.titleSpacing;
+    CGFloat offset_y = title_h + _pageConf.titleSpacing;
     CGSize firstParagraphRenderSize = CGSizeMake(self.renderSize.width, self.renderSize.height - offset_y);
     
     NSMutableArray * tmpPages = [NSMutableArray arrayWithCapacity:0];
+    
+    ///如果剩余绘制区域高度小于零说明第一页只能绘制标题，故数组中添加标题页
+    if (firstParagraphRenderSize.height <= 0) {
+        DWReaderPage * titlePage = [[DWReaderPage alloc] init];
+        titlePage.needRenderTitle = YES;
+        [tmpPages addObject:titlePage];
+    }
+    
     NSUInteger currentLoc = 0;
     ///当前手机以xs max做最大屏幕，14号字做最小字号，18像素为最小行间距，最大展示字数为564个字，取整估算为600字，为避免因数字较多在成的字形大小差距的影响，乘以1.2倍的安全余量，故当前安全阈值为720字
-    NSUInteger length = self.drawString.length - currentLoc;
-    DWReaderParagraph * currentPara = self.paragraphs.firstObject;
+    NSUInteger totalLen = self.drawString.length;
+    NSUInteger length = totalLen;
     while (length > 0) {
         length = MIN(length, 720);
         
@@ -213,37 +155,22 @@ a = NULL;\
         DWReaderPage * page = [[DWReaderPage alloc] init];
         page.range = range;
         page.page = tmpPages.count;
+        page.pageContent = [self.drawString attributedSubstringFromRange:page.range];
         if (page.page == 0) {
             page.offsetY = offset_y;
+            page.needRenderTitle = YES;
         }
         [tmpPages addObject:page];
         
-        ///更改currentLoc，此处应根据分段决定下一个Loc。首先应找到现在属于哪个段落
+        ///更改currentLoc
         currentLoc = NSMaxRange(range);
-        
+        ///无需考虑当前位置恰好为一个换行符的情况，因为换行符横向不占空间，一定会计算到之前的段尾中，所以不存在currentLoc位置恰好为换行符的情况。直接计算剩余参与分页长度
+        length = totalLen - currentLoc;
     }
     
-}
-
--(void)insertPlaceholderForDrawString:(NSMutableAttributedString *)draw withParagraph:(DWReaderParagraph *)para {
-    if (para.fixRange.location > draw.length) {
-        return;
-    }
-    
-    NSDictionary * dic = @{@"size":[NSValue valueWithCGSize:CGSizeMake(self.renderSize.width, self.paragraphSpacing - 2 * self.lineSpacing)]};
-    CTRunDelegateCallbacks callBacks;
-    memset(&callBacks, 0, sizeof(CTRunDelegateCallbacks));
-    callBacks.version = kCTRunDelegateVersion1;
-    callBacks.getAscent = ascentCallBacks;
-    callBacks.getDescent = descentCallBacks;
-    callBacks.getWidth = widthCallBacks;
-    CTRunDelegateRef delegate = CTRunDelegateCreate(& callBacks, (__bridge void *)dic);
-    unichar placeHolder = 0xFFFC;
-    NSString * placeHolderStr = [NSString stringWithCharacters:&placeHolder length:1];
-    NSMutableAttributedString * placeHolderAttrStr = [[NSMutableAttributedString alloc] initWithString:placeHolderStr];
-    CFAttributedStringSetAttribute((CFMutableAttributedStringRef)placeHolderAttrStr, CFRangeMake(0, 1), kCTRunDelegateAttributeName, delegate);
-    CFSAFERELEASE(delegate);
-    [draw insertAttributedString:placeHolderAttrStr atIndex:para.fixRange.location];
+    ///至此分页完成
+    _pages = [tmpPages copy];
+    NSLog(@"%@",_pages);
 }
 
 -(NSRange)calculateVisibleRangeWithString:(NSAttributedString *)string renderSize:(CGSize)size location:(NSUInteger)loc {
@@ -258,23 +185,6 @@ a = NULL;\
     return fixRange;
 }
 
-#pragma mark --- CoreText callback ---
-static CGFloat ascentCallBacks(void * ref) {
-    NSDictionary * dic = (__bridge NSDictionary *)ref;
-    CGSize size = [dic[@"size"] CGSizeValue];
-    return size.height;
-}
-
-static CGFloat descentCallBacks(void * ref) {
-    return 0;
-}
-
-static CGFloat widthCallBacks(void * ref) {
-    NSDictionary * dic = (__bridge NSDictionary *)ref;
-    CGSize size = [dic[@"size"] CGSizeValue];
-    return size.width;
-}
-
 #pragma mark --- override ---
 -(BOOL)isEqual:(id)object {
     ///比较类
@@ -285,15 +195,27 @@ static CGFloat widthCallBacks(void * ref) {
     if (![((DWReaderChapter *)object).originString isEqualToString:self.originString]) {
         return NO;
     }
-    ///比较行间距
-    if (((DWReaderChapter *)object).lineSpacing != self.lineSpacing) {
-        return NO;
-    }
-    ///比较段落间距
-    if (((DWReaderChapter *)object).paragraphSpacing != self.paragraphSpacing) {
+    ///比较页面配置
+    if (((DWReaderChapter *)object).pageConf != self.pageConf) {
         return NO;
     }
     return YES;
+}
+
+@end
+
+
+@implementation DWReaderPageConfiguration
+
+-(BOOL)isEqual:(__kindof DWReaderPageConfiguration *)object {
+    if (self.fontSize == object.fontSize &&
+        self.titleSpacing == object.titleSpacing &&
+        self.lineSpacing == object.lineSpacing &&
+        self.paragraphSpacing == object.paragraphSpacing &&
+        self.paragraphHeaderSpacing == object.paragraphHeaderSpacing) {
+        return YES;
+    }
+    return NO;
 }
 
 @end

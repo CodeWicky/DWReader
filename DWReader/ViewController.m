@@ -32,10 +32,18 @@
     [c parseChapter];
     
     testString = @"a\nb\ncc";
-    c = [c initWithOriginString:testString title:@"aaa" renderSize:[UIScreen mainScreen].bounds.size];
+    c = [c initWithOriginString:testString title:@"aaa" renderSize:CGSizeMake(40, 40)];
     [c parseChapter];
     
-    [c seperatePageWithFontSize:24 titleSpacing:28 lineSpacing:18 paragraphSpacing:28];
+    DWReaderPageConfiguration * conf = [[DWReaderPageConfiguration alloc] init];
+    conf.fontSize = 24;
+    conf.titleSpacing = 28;
+    conf.lineSpacing = 18;
+    conf.paragraphSpacing = 28;
+    conf.paragraphHeaderSpacing = 30;
+    
+    [c seperatePageWithPageConfiguration:conf];
+    
 }
 
 

@@ -10,4 +10,8 @@
 
 @implementation DWReaderPage
 
+-(NSString *)description {
+    return [NSString stringWithFormat:@"Page range is %@,index is %lu,pageContent is %@,offsetY is %f,needRenderTitle is %@",NSStringFromRange(self.range),self.page,self.pageContent.string,self.offsetY,self.needRenderTitle ? @"true" : @"false"];
+}
+
 @end
