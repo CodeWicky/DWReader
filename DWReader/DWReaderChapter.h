@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic ,copy ,readonly) NSString * title;
 
 ///渲染尺寸
-@property (nonatomic ,assign ,readonly) CGSize renderSize;
+@property (nonatomic ,assign ,readonly) CGRect renderFrame;
 
 #pragma mark --- 可配置项 ---
 ///页面配置项
@@ -43,11 +43,11 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param oriStr 原始数据
  @param title 标题
- @param renderSize 渲染尺寸
+ @param renderFrame 渲染尺寸
  @return 章节内容
  */
-+(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title renderSize:(CGSize)renderSize;
--(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title renderSize:(CGSize)renderSize;
++(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame;
+-(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame;
 
 
 /**

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9B062B222217B0C000DCF5CB /* DWReaderPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B062B212217B0C000DCF5CB /* DWReaderPage.m */; };
+		9B062B222217B0C000DCF5CB /* DWReaderPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B062B212217B0C000DCF5CB /* DWReaderPageViewController.m */; };
 		9B6ED6872212FE83003BB1EA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED6862212FE83003BB1EA /* AppDelegate.m */; };
 		9B6ED68A2212FE83003BB1EA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED6892212FE83003BB1EA /* ViewController.m */; };
 		9B6ED68D2212FE83003BB1EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B6ED68B2212FE83003BB1EA /* Main.storyboard */; };
@@ -19,8 +19,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		9B062B202217B0C000DCF5CB /* DWReaderPage.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderPage.h; sourceTree = "<group>"; };
-		9B062B212217B0C000DCF5CB /* DWReaderPage.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderPage.m; sourceTree = "<group>"; };
+		9B062B202217B0C000DCF5CB /* DWReaderPageViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderPageViewController.h; sourceTree = "<group>"; };
+		9B062B212217B0C000DCF5CB /* DWReaderPageViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderPageViewController.m; sourceTree = "<group>"; };
 		9B6ED6822212FE83003BB1EA /* DWReader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DWReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B6ED6852212FE83003BB1EA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		9B6ED6862212FE83003BB1EA /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -75,8 +75,8 @@
 				9B6ED69C2212FE9C003BB1EA /* DWReaderChapter.m */,
 				9B6ED6A12213C072003BB1EA /* DWReaderPageInfo.h */,
 				9B6ED6A22213C072003BB1EA /* DWReaderPageInfo.m */,
-				9B062B202217B0C000DCF5CB /* DWReaderPage.h */,
-				9B062B212217B0C000DCF5CB /* DWReaderPage.m */,
+				9B062B202217B0C000DCF5CB /* DWReaderPageViewController.h */,
+				9B062B212217B0C000DCF5CB /* DWReaderPageViewController.m */,
 				9B6ED68B2212FE83003BB1EA /* Main.storyboard */,
 				9B6ED68E2212FE84003BB1EA /* Assets.xcassets */,
 				9B6ED6902212FE84003BB1EA /* LaunchScreen.storyboard */,
@@ -158,7 +158,7 @@
 			files = (
 				9B6ED69D2212FE9C003BB1EA /* DWReaderChapter.m in Sources */,
 				9B6ED68A2212FE83003BB1EA /* ViewController.m in Sources */,
-				9B062B222217B0C000DCF5CB /* DWReaderPage.m in Sources */,
+				9B062B222217B0C000DCF5CB /* DWReaderPageViewController.m in Sources */,
 				9B6ED6A32213C072003BB1EA /* DWReaderPageInfo.m in Sources */,
 				9B6ED6952212FE84003BB1EA /* main.m in Sources */,
 				9B6ED6872212FE83003BB1EA /* AppDelegate.m in Sources */,

@@ -11,12 +11,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface DWReaderPage : NSObject
+@interface DWReaderPageViewController : UIViewController
 
 @property (nonatomic ,strong ,readonly) DWReaderPageInfo * pageInfo;
 
-+(instancetype)pageWithInfo:(DWReaderPageInfo *)info;
--(instancetype)initWithInfo:(DWReaderPageInfo *)info;
+@property (nonatomic ,assign ,readonly) CGRect renderFrame;
+
++(instancetype)pageWithInfo:(DWReaderPageInfo *)info renderFrame:(CGRect)renderFrame;
+-(instancetype)initWithInfo:(DWReaderPageInfo *)info renderFrame:(CGRect)renderFrame;
 
 @end
 

@@ -31,15 +31,15 @@ a = NULL;\
 @implementation DWReaderChapter
 
 #pragma mark --- interface method ---
-+(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title renderSize:(CGSize)renderSize {
-    return [[self alloc] initWithOriginString:oriStr title:title renderSize:renderSize];
++(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame {
+    return [[self alloc] initWithOriginString:oriStr title:title renderFrame:renderFrame];
 }
 
--(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title renderSize:(CGSize)renderSize {
+-(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame {
     if (self = [super init]) {
         _originString = oriStr;
         _title = title;
-        _renderSize = renderSize;
+        _renderFrame = renderFrame;
         _pageConf = nil;
         _textColor = nil;
         _content = nil;
@@ -87,6 +87,10 @@ a = NULL;\
     if (![self.textColor isEqual:textColor]) {
         _textColor = textColor;
         [self.drawString addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, self.drawString.length)];
+        
+        [self.pages enumerateObjectsUsingBlock:^(DWReaderPageInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            obj.pageContent = [self.drawString attributedSubstringFromRange:obj.range];
+        }];
     }
 }
 
@@ -115,6 +119,7 @@ a = NULL;\
     paraStyle.lineSpacing = lineSpacing;
     paraStyle.paragraphSpacing = paragraphSpacing;
     paraStyle.firstLineHeadIndent = paragraphHeaderSpacing;
+    paraStyle.lineBreakMode = NSLineBreakByCharWrapping;
     [attr addAttribute:NSParagraphStyleAttributeName value:paraStyle range:range];
     
     return attr;
@@ -128,16 +133,17 @@ a = NULL;\
     ///当前手机以xs max做最大屏幕，14号字做最小字号，18像素为最小行间距，最大展示字数为564个字，取整估算为600字，为避免因数字较多在成的字形大小差距的影响，乘以1.2倍的安全余量，故当前安全阈值为720字
     NSUInteger totalLen = self.drawString.length;
     NSUInteger length = totalLen;
+    CGSize renderSize = self.renderFrame.size;
     while (length > 0) {
         length = MIN(length, 720);
         
         ///截取一段字符串
         NSAttributedString * sub = [self.drawString attributedSubstringFromRange:NSMakeRange(currentLoc, length)];
         ///选定渲染区域
-        NSRange range = [self calculateVisibleRangeWithString:sub renderSize:self.renderSize location:currentLoc];
+        NSRange range = [self calculateVisibleRangeWithString:sub renderSize:renderSize location:currentLoc];
         if (range.length == 0) {
             ///计算出错
-            NSAssert(NO, @"DWReader can't calculate visible range,currentLoc = %lu,length = %lu,size = %@,sub = %@",currentLoc,length,NSStringFromCGSize(self.renderSize),sub.string);
+            NSAssert(NO, @"DWReader can't calculate visible range,currentLoc = %lu,length = %lu,size = %@,sub = %@",currentLoc,length,NSStringFromCGSize(renderSize),sub.string);
             break;
         }
         
@@ -145,7 +151,6 @@ a = NULL;\
         DWReaderPageInfo * page = [[DWReaderPageInfo alloc] init];
         page.range = range;
         page.page = tmpPages.count;
-        page.pageContent = [self.drawString attributedSubstringFromRange:range];
         [tmpPages addObject:page];
         
         ///更改currentLoc
