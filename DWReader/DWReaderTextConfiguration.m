@@ -1,14 +1,14 @@
 //
-//  DWReaderConfiguration.m
+//  DWReaderTextConfiguration.m
 //  DWReader
 //
 //  Created by Wicky on 2019/2/16.
 //  Copyright © 2019 Wicky. All rights reserved.
 //
 
-#import "DWReaderConfiguration.h"
+#import "DWReaderTextConfiguration.h"
 
-@implementation DWReaderConfiguration
+@implementation DWReaderTextConfiguration
 
 #pragma mark --- override ---
 -(instancetype)init {
@@ -19,7 +19,7 @@
     return self;
 }
 
--(BOOL)isEqual:(__kindof DWReaderConfiguration *)object {
+-(BOOL)isEqual:(__kindof DWReaderTextConfiguration *)object {
     if ([self.fontName isEqualToString:object.fontName] &&
         self.titleFontSize == object.titleFontSize &&
         self.titleLineSpacing == object.titleLineSpacing &&

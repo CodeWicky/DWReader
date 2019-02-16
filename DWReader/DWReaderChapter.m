@@ -68,7 +68,7 @@ a = NULL;\
     _content = content;
 }
 
--(void)seperatePageWithPageConfiguration:(DWReaderConfiguration *)conf {
+-(void)seperatePageWithPageConfiguration:(DWReaderTextConfiguration *)conf {
     ///当任意一个影响分页的数据改变时才重新计算分页
     if (![self.pageConf isEqual:conf]) {
         
@@ -95,7 +95,7 @@ a = NULL;\
     }
 }
 
--(void)asyncParseChapterToPageWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor completion:(dispatch_block_t)completion {
+-(void)asyncParseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor completion:(dispatch_block_t)completion {
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         [self parseChapterToPageWithConfiguration:conf textColor:textColor];
         if (completion) {
@@ -104,7 +104,7 @@ a = NULL;\
     });
 }
 
--(void)parseChapterToPageWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor {
+-(void)parseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor {
     [self parseChapter];
     [self seperatePageWithPageConfiguration:conf];
     [self configTextColor:textColor];

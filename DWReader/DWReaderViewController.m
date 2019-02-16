@@ -12,7 +12,7 @@
 
 @interface DWReaderViewController ()<UIPageViewControllerDelegate ,UIPageViewControllerDataSource>
 
-@property (nonatomic ,strong) DWReaderConfiguration * conf;
+@property (nonatomic ,strong) DWReaderTextConfiguration * textConf;
 
 @property (nonatomic ,strong) UIColor * textColor;
 
@@ -38,25 +38,27 @@
 
 @implementation DWReaderViewController
 
-+(instancetype)readerWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor renderFrame:(CGRect)renderFrame chapterInfo:(DWReaderChapterInfo *)chapterInfo readerDelegate:(nonnull id<DWReaderDataDelegate>)readerDelegate transitionStyle:(UIPageViewControllerTransitionStyle)transitionStyle {
-    if (CGRectEqualToRect(renderFrame, CGRectNull) || CGRectEqualToRect(renderFrame, CGRectZero)) {
++(instancetype)readerWithTextConfiguration:(DWReaderTextConfiguration *)textConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf {
+    if (CGRectEqualToRect(displayConf.renderFrame, CGRectNull) || CGRectEqualToRect(displayConf.renderFrame, CGRectZero)) {
         NSAssert(NO, @"DWReader can't initialize a reader with renderFrame is either CGRectNull or CGRectZero.");
         return nil;
     }
-    __kindof DWReaderViewController * reader = [[[self class] alloc] initWithConfiguration:conf textColor:textColor renderFrame:renderFrame readerDelegate:readerDelegate transitionStyle:transitionStyle];
-    reader.waitingChangeNextChapter = YES;
-    [reader requestChapter:chapterInfo nextChapter:YES preload:NO];
+    __kindof DWReaderViewController * reader = [[[self class] alloc] initWithConfiguration:textConf renderFrame:displayConf.renderFrame textColor:displayConf.textColor transitionStyle:displayConf.transitionStyle];
     return reader;
 }
 
--(instancetype)initWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor renderFrame:(CGRect)renderFrame readerDelegate:(id<DWReaderDataDelegate>)readerDelegate transitionStyle:(UIPageViewControllerTransitionStyle)transitionStyle {
+-(void)configWithChapterInfo:(DWReaderChapterInfo *)chapterInfo {
+    self.waitingChangeNextChapter = YES;
+    [self requestChapter:chapterInfo nextChapter:YES preload:NO];
+}
+
+-(instancetype)initWithConfiguration:(DWReaderTextConfiguration *)conf renderFrame:(CGRect)renderFrame textColor:(UIColor *)textColor transitionStyle:(UIPageViewControllerTransitionStyle)transitionStyle {
     if (self = [super initWithTransitionStyle:transitionStyle navigationOrientation:(UIPageViewControllerNavigationOrientationHorizontal) options:nil]) {
         self.delegate = self;
         self.dataSource = self;
-        _conf = conf;
+        _textConf = conf;
         _textColor = textColor;
         _renderFrame = renderFrame;
-        _readerDelegate = readerDelegate;
         [self configPages];
     }
     return self;
@@ -136,11 +138,11 @@
     ///如果是预加载，分页等工作要异步完成
     if (preload) {
         ///如果是预加载，异步分页完成后应检测是否在等待切章
-        [chapter asyncParseChapterToPageWithConfiguration:_conf textColor:_textColor completion:^{
+        [chapter asyncParseChapterToPageWithConfiguration:_textConf textColor:_textColor completion:^{
             [self changeChapterIfNeeded:chapter nextChapter:nextChapter];
         }];
     } else {
-        [chapter parseChapterToPageWithConfiguration:_conf textColor:_textColor];
+        [chapter parseChapterToPageWithConfiguration:_textConf textColor:_textColor];
     }
     
     

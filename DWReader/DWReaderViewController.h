@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "DWReaderChapterInfo.h"
-#import "DWReaderConfiguration.h"
+#import "DWReaderTextConfiguration.h"
+#import "DWReaderDisplayConfiguration.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -78,7 +79,24 @@ typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,
 ///隐藏Loading的回调
 @property (nonatomic ,copy) dispatch_block_t hideLoading;
 
-+(instancetype)readerWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)color renderFrame:(CGRect)renderFrame chapterInfo:(DWReaderChapterInfo *)chapterInfo readerDelegate:(id<DWReaderDataDelegate>)readerDelegate transitionStyle:(UIPageViewControllerTransitionStyle)transitionStyle;
+
+/**
+ 初始化阅读器
+
+ @param textConf 阅读器文字配置信息
+ @param displayConf 阅读器展示配置信息
+
+ @return 阅读器实例
+ */
++(instancetype)readerWithTextConfiguration:(DWReaderTextConfiguration *)textConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf;
+
+
+/**
+ 按章节信息配置阅读器
+
+ @param chapterInfo 章节信息
+ */
+-(void)configWithChapterInfo:(DWReaderChapterInfo *)chapterInfo;
 
 @end
 

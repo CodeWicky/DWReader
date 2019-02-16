@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "DWReaderPageInfo.h"
-#import "DWReaderConfiguration.h"
+#import "DWReaderTextConfiguration.h"
 #import "DWReaderChapterInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark --- 可配置项 ---
 ///页面配置项
-@property (nonatomic ,strong ,readonly) DWReaderConfiguration * pageConf;
+@property (nonatomic ,strong ,readonly) DWReaderTextConfiguration * pageConf;
 
 ///字体颜色
 @property (nonatomic ,strong ,readonly) UIColor * textColor;
@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param conf 页面配置
  */
--(void)seperatePageWithPageConfiguration:(DWReaderConfiguration *)conf;
+-(void)seperatePageWithPageConfiguration:(DWReaderTextConfiguration *)conf;
 
 
 /**
@@ -86,8 +86,8 @@ NS_ASSUME_NONNULL_BEGIN
  @param textColor 文字颜色
  @param completion 异步完成回调
  */
--(void)asyncParseChapterToPageWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor completion:(dispatch_block_t)completion;
--(void)parseChapterToPageWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor;
+-(void)asyncParseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor completion:(dispatch_block_t)completion;
+-(void)parseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor;
 
 
 @end

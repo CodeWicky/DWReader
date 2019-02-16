@@ -78,7 +78,7 @@
     DWReaderChapter * c = [DWReaderChapter chapterWithOriginString:testString title:titleString renderFrame:renderFrame info:[DWReaderChapterInfo new]];
     [c parseChapter];
 
-    DWReaderConfiguration * conf = [[DWReaderConfiguration alloc] init];
+    DWReaderTextConfiguration * conf = [[DWReaderTextConfiguration alloc] init];
     conf.titleFontSize = 28;
     conf.titleLineSpacing = 18;
     conf.titleSpacing = 28;
@@ -122,7 +122,7 @@
 //    [self.pageVC setViewControllers:@[pageVCs.firstObject] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
 //    [self.navigationController pushViewController:self.pageVC animated:YES];
     
-    DWReaderConfiguration * conf = [[DWReaderConfiguration alloc] init];
+    DWReaderTextConfiguration * conf = [[DWReaderTextConfiguration alloc] init];
     conf.titleFontSize = 28;
     conf.titleLineSpacing = 18;
     conf.titleSpacing = 28;
@@ -133,12 +133,21 @@
     
     CGRect renderFrame = CGRectMake(15, self.view.safeAreaInsets.top, self.view.bounds.size.width - 30, self.view.bounds.size.height - self.view.safeAreaInsets.top - self.view.safeAreaInsets.bottom);
     
+    DWReaderDisplayConfiguration * disCon = [[DWReaderDisplayConfiguration alloc] init];
+    disCon.renderFrame = renderFrame;
+    disCon.textColor = [UIColor redColor];
+    disCon.transitionStyle = UIPageViewControllerTransitionStylePageCurl;
+    
+    
     DWReaderChapterInfo * info = [[DWReaderChapterInfo alloc] init];
     info.book_id = @"1000";
     info.chapter_id = @"10002";
     info.chapter_index = 2;
     
-    self.reader = [DWReaderViewController readerWithConfiguration:conf textColor:[UIColor redColor] renderFrame:renderFrame chapterInfo:info readerDelegate:self transitionStyle:(UIPageViewControllerTransitionStylePageCurl)];
+    self.reader = [DWReaderViewController readerWithTextConfiguration:conf displayConfiguration:disCon];
+    self.reader.readerDelegate = self;
+    [self.reader configWithChapterInfo:info];
+    
     [self presentViewController:self.reader animated:YES completion:nil];
 }
 

@@ -1,5 +1,5 @@
 //
-//  DWReaderConfiguration.h
+//  DWReaderTextConfiguration.h
 //  DWReader
 //
 //  Created by Wicky on 2019/2/16.
@@ -11,9 +11,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /*
- 页面配置
+ 页面文字配置
  */
-@interface DWReaderConfiguration : NSObject
+@interface DWReaderTextConfiguration : NSObject
 
 ///文字字体(如果展示中文，建议采用中文字体。否则系统细算分页的时候存在问题)
 @property (nonatomic ,copy) NSString * fontName;
