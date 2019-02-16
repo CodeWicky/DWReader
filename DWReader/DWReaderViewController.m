@@ -10,7 +10,7 @@
 #import "DWReaderChapter.h"
 #import "DWReaderPageViewController.h"
 
-@interface DWReaderViewController ()
+@interface DWReaderViewController ()<UIPageViewControllerDelegate ,UIPageViewControllerDataSource>
 
 @property (nonatomic ,strong) DWReaderConfiguration * conf;
 
@@ -38,21 +38,25 @@
 
 @implementation DWReaderViewController
 
-+(instancetype)readerWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor renderFrame:(CGRect)renderFrame chapterInfo:(DWReaderChapterInfo *)chapterInfo {
++(instancetype)readerWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor renderFrame:(CGRect)renderFrame chapterInfo:(DWReaderChapterInfo *)chapterInfo readerDelegate:(nonnull id<DWReaderDataDelegate>)readerDelegate transitionStyle:(UIPageViewControllerTransitionStyle)transitionStyle {
     if (CGRectEqualToRect(renderFrame, CGRectNull) || CGRectEqualToRect(renderFrame, CGRectZero)) {
         NSAssert(NO, @"DWReader can't initialize a reader with renderFrame is either CGRectNull or CGRectZero.");
         return nil;
     }
-    __kindof DWReaderViewController * reader = [[[self class] alloc] initWithConfiguration:conf textColor:textColor renderFrame:renderFrame];
+    __kindof DWReaderViewController * reader = [[[self class] alloc] initWithConfiguration:conf textColor:textColor renderFrame:renderFrame readerDelegate:readerDelegate transitionStyle:transitionStyle];
+    reader.waitingChangeNextChapter = YES;
     [reader requestChapter:chapterInfo nextChapter:YES preload:NO];
     return reader;
 }
 
--(instancetype)initWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor renderFrame:(CGRect)renderFrame {
-    if (self = [super init]) {
+-(instancetype)initWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor renderFrame:(CGRect)renderFrame readerDelegate:(id<DWReaderDataDelegate>)readerDelegate transitionStyle:(UIPageViewControllerTransitionStyle)transitionStyle {
+    if (self = [super initWithTransitionStyle:transitionStyle navigationOrientation:(UIPageViewControllerNavigationOrientationHorizontal) options:nil]) {
+        self.delegate = self;
+        self.dataSource = self;
         _conf = conf;
         _textColor = textColor;
         _renderFrame = renderFrame;
+        _readerDelegate = readerDelegate;
         [self configPages];
     }
     return self;
@@ -92,11 +96,11 @@
     }
     
     ///优先使用代理模式，其次使用回调模式
-    if (self.dataDelegate && [self.dataDelegate respondsToSelector:@selector(reader:requestBookDataForBook:chapterID:nextChapter:requestCompleteCallback:)]) {
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:requestBookDataForBook:chapterID:nextChapter:requestCompleteCallback:)]) {
         ///为请求做准备工作
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
-        [self.dataDelegate reader:self requestBookDataForBook:info.book_id chapterID:info.chapter_id nextChapter:next requestCompleteCallback:^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nonnull userInfo) {
+        [self.readerDelegate reader:self requestBookDataForBook:info.book_id chapterID:info.chapter_id nextChapter:next requestCompleteCallback:^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nonnull userInfo) {
             [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex nextChapter:nextChapter userInfo:userInfo];
         }];
     } else if (self.requestBookDataCallback) {
@@ -175,6 +179,15 @@
     
     ///然后进行翻页即可
     [self setViewControllers:@[availablePage] direction:nextChapter?UIPageViewControllerNavigationDirectionForward:UIPageViewControllerNavigationDirectionReverse animated:YES completion:nil];
+}
+
+#pragma mark --- UIPageViewController Delegate ---
+-(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {
+    return nil;
+}
+
+-(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(DWReaderPageViewController *)viewController {
+    return nil;
 }
 
 #pragma mark --- setter/getter ---

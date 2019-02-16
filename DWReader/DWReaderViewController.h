@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class DWReaderViewController;
 
-typedef void(^DWReaderRequestDataCompleteCallback)(NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,id userInfo);
+typedef void(^DWReaderRequestDataCompleteCallback)(NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,_Nullable id userInfo);
 typedef NSString *(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID ,NSInteger chapterIndex);
 typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * chapterID ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
 
@@ -61,7 +61,7 @@ typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,
 @interface DWReaderViewController : UIPageViewController
 
 ///获取书籍数据代理（如果指定代理且代理实现对应方法则优先是否代理方法，否则使用回调方法）
-@property (nonatomic ,weak) id<DWReaderDataDelegate> dataDelegate;
+@property (nonatomic ,weak) id<DWReaderDataDelegate> readerDelegate;
 
 ///根据给定信息返回下一章的章节ID
 @property (nonatomic ,copy) DWReaderQueryChapterIDCallback queryNextChapterIdCallback;
@@ -78,7 +78,7 @@ typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,
 ///隐藏Loading的回调
 @property (nonatomic ,copy) dispatch_block_t hideLoading;
 
-+(instancetype)readerWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)color renderFrame:(CGRect)renderFrame chapterInfo:(DWReaderChapterInfo *)chapterInfo;
++(instancetype)readerWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)color renderFrame:(CGRect)renderFrame chapterInfo:(DWReaderChapterInfo *)chapterInfo readerDelegate:(id<DWReaderDataDelegate>)readerDelegate transitionStyle:(UIPageViewControllerTransitionStyle)transitionStyle;
 
 @end
 

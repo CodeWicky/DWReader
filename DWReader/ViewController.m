@@ -9,14 +9,17 @@
 #import "ViewController.h"
 #import "DWReaderChapter.h"
 #import "DWReaderPageViewController.h"
+#import "DWReaderViewController.h"
 
-@interface ViewController ()<UIPageViewControllerDelegate, UIPageViewControllerDataSource>
+@interface ViewController ()<UIPageViewControllerDelegate, UIPageViewControllerDataSource, DWReaderDataDelegate>
 
 @property (nonatomic ,strong) DWReaderChapter * c;
 
 @property (nonatomic ,strong) UIPageViewController * pageVC;
 
 @property (nonatomic ,strong) NSMutableArray * dataArr;
+
+@property (nonatomic ,strong) DWReaderViewController * reader;
 
 @end
 
@@ -94,26 +97,62 @@
 
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
     
-    NSMutableArray <DWReaderPageViewController *>* pageVCs = [NSMutableArray arrayWithCapacity:self.c.pages.count];
+//    NSMutableArray <DWReaderPageViewController *>* pageVCs = [NSMutableArray arrayWithCapacity:self.c.pages.count];
+//
+//    __block DWReaderPageViewController * lastPageVC = nil;
+//    [self.c.pages enumerateObjectsUsingBlock:^(DWReaderPageInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+//        DWReaderPageViewController * pageVC = [[DWReaderPageViewController alloc] initWithRenderFrame:self.c.renderFrame];
+//        [pageVC updateInfo:obj];
+//        pageVC.previousPage = lastPageVC;
+//        lastPageVC.nextPage = pageVC;
+//        [pageVCs addObject:pageVC];
+//        lastPageVC = pageVC;
+//    }];
+//
+//    pageVCs.firstObject.previousPage = lastPageVC;
+//    lastPageVC.nextPage = pageVCs.firstObject;
+//
+//    self.dataArr = pageVCs;
+//
     
-    __block DWReaderPageViewController * lastPageVC = nil;
-    [self.c.pages enumerateObjectsUsingBlock:^(DWReaderPageInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        DWReaderPageViewController * pageVC = [[DWReaderPageViewController alloc] initWithRenderFrame:self.c.renderFrame];
-        [pageVC updateInfo:obj];
-        pageVC.previousPage = lastPageVC;
-        lastPageVC.nextPage = pageVC;
-        [pageVCs addObject:pageVC];
-        lastPageVC = pageVC;
-    }];
     
-    pageVCs.firstObject.previousPage = lastPageVC;
-    lastPageVC.nextPage = pageVCs.firstObject;
     
-    self.dataArr = pageVCs;
     
-    [self.pageVC setViewControllers:@[pageVCs.firstObject] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
-    [self.navigationController pushViewController:self.pageVC animated:YES];
     
+//    [self.pageVC setViewControllers:@[pageVCs.firstObject] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
+//    [self.navigationController pushViewController:self.pageVC animated:YES];
+    
+    DWReaderConfiguration * conf = [[DWReaderConfiguration alloc] init];
+    conf.titleFontSize = 28;
+    conf.titleLineSpacing = 18;
+    conf.titleSpacing = 28;
+    conf.contentFontSize = 24;
+    conf.contentLineSpacing = 18;
+    conf.paragraphSpacing = 28;
+    conf.paragraphHeaderSpacing = 30;
+    
+    CGRect renderFrame = CGRectMake(15, self.view.safeAreaInsets.top, self.view.bounds.size.width - 30, self.view.bounds.size.height - self.view.safeAreaInsets.top - self.view.safeAreaInsets.bottom);
+    
+    DWReaderChapterInfo * info = [[DWReaderChapterInfo alloc] init];
+    info.book_id = @"1000";
+    info.chapter_id = @"10002";
+    info.chapter_index = 2;
+    
+    self.reader = [DWReaderViewController readerWithConfiguration:conf textColor:[UIColor redColor] renderFrame:renderFrame chapterInfo:info readerDelegate:self transitionStyle:(UIPageViewControllerTransitionStylePageCurl)];
+    [self presentViewController:self.reader animated:YES completion:nil];
+}
+
+-(void)reader:(DWReaderViewController *)reader requestBookDataForBook:(NSString *)bookID chapterID:(NSString *)chapterID nextChapter:(BOOL)next requestCompleteCallback:(DWReaderRequestDataCompleteCallback)callback {
+    if (callback) {
+        
+        NSString * tmp = @"豪华的别墅酒店。\n年轻俊美的男人刚刚从浴室里洗澡出来，健硕的腰身只围着一条浴巾，充满了力与美的身躯，仿佛西方阿波罗临世。\n“该死的。”一声低咒，男人低下头，一脸烦燥懊恼。\n他拿起手机，拔通了助手的电话，“给我找个干净的女人进来。”\n“少爷，怎么今晚有兴趣了？”\n\n“在酒会上喝错了东西，快点。”低沉的声线已经不奈烦了。\n“好的，马上。”\n一处景观灯的牌子面前，穿着清凉的女孩抬起头，看着那蛇线一样的线路图，感到相当的无语。\n明明就是来旅个游的，竟然迷路了。\n";
+        NSString * testString = @"";
+        for (int i = 0; i < 15; ++i) {
+            testString = [testString stringByAppendingString:tmp];
+        }
+        
+        callback(@"霸道总裁爱上我",testString,bookID,chapterID,0,3,next,nil);
+    }
 }
 
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {
