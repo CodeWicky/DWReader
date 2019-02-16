@@ -2,7 +2,7 @@
 //  DWReaderPage.m
 //  DWReader
 //
-//  Created by Wicky on 2019/2/13.
+//  Created by Wicky on 2019/2/16.
 //  Copyright © 2019 Wicky. All rights reserved.
 //
 
@@ -10,8 +10,15 @@
 
 @implementation DWReaderPage
 
--(NSString *)description {
-    return [NSString stringWithFormat:@"Page range is %@,index is %lu,pageContent is %@,offsetY is %f,needRenderTitle is %@",NSStringFromRange(self.range),self.page,self.pageContent.string,self.offsetY,self.needRenderTitle ? @"true" : @"false"];
++(instancetype)pageWithInfo:(DWReaderPageInfo *)info {
+    return [[[self class] alloc] initWithInfo:info];
+}
+
+-(instancetype)initWithInfo:(DWReaderPageInfo *)info {
+    if (self = [super init]) {
+        _pageInfo = info;
+    }
+    return self;
 }
 
 @end

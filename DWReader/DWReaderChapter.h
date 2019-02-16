@@ -7,11 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DWReaderPage.h"
+#import "DWReaderPageInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DWReaderPageConfiguration;
+@class DWReaderPageInfoConfiguration;
 @interface DWReaderChapter : NSObject
 
 #pragma mark --- 输入数据 ---
@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark --- 可配置项 ---
 ///页面配置项
-@property (nonatomic ,strong ,readonly) DWReaderPageConfiguration * pageConf;
+@property (nonatomic ,strong ,readonly) DWReaderPageInfoConfiguration * pageConf;
 
 ///字体颜色
 @property (nonatomic ,strong ,readonly) UIColor * textColor;
@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic ,copy ,readonly) NSString * content;
 
 ///分页信息
-@property (nonatomic ,strong ,readonly) NSArray <DWReaderPage *>* pages;
+@property (nonatomic ,strong ,readonly) NSArray <DWReaderPageInfo *>* pages;
 
 /**
  初始化章节内容
@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param conf 页面配置
  */
--(void)seperatePageWithPageConfiguration:(DWReaderPageConfiguration *)conf;
+-(void)seperatePageWithPageConfiguration:(DWReaderPageInfoConfiguration *)conf;
 
 
 /**
@@ -79,16 +79,22 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  页面配置
  */
-@interface DWReaderPageConfiguration : NSObject
+@interface DWReaderPageInfoConfiguration : NSObject
 
-///字号
-@property (nonatomic ,assign) CGFloat fontSize;
+///标题字号
+@property (nonatomic ,assign) CGFloat titleFontSize;
+
+///标题行间距
+@property (nonatomic ,assign) CGFloat titleLineSpacing;
 
 ///标题距正文的距离
 @property (nonatomic ,assign) CGFloat titleSpacing;
 
+///正文字号
+@property (nonatomic ,assign) CGFloat contentFontSize;
+
 ///行间距
-@property (nonatomic ,assign) CGFloat lineSpacing;
+@property (nonatomic ,assign) CGFloat contentLineSpacing;
 
 ///段落间距
 @property (nonatomic ,assign) CGFloat paragraphSpacing;

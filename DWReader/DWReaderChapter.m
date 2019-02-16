@@ -67,7 +67,7 @@ a = NULL;\
     _content = content;
 }
 
--(void)seperatePageWithPageConfiguration:(DWReaderPageConfiguration *)conf {
+-(void)seperatePageWithPageConfiguration:(DWReaderPageInfoConfiguration *)conf {
     ///当任意一个影响分页的数据改变时才重新计算分页
     if (![self.pageConf isEqual:conf]) {
         
@@ -86,6 +86,7 @@ a = NULL;\
 -(void)configTextColor:(UIColor *)textColor {
     if (![self.textColor isEqual:textColor]) {
         _textColor = textColor;
+        [self.drawString addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, self.drawString.length)];
     }
 }
 
@@ -94,43 +95,34 @@ a = NULL;\
 -(void)configAttributeString {
     ///获取将要绘制的富文本，主要设置字号、行间距属性、添加空白字符
     self.drawString = nil;
-    NSMutableAttributedString * draw = [[NSMutableAttributedString alloc] initWithString:self.content];
     
-    NSRange range = NSMakeRange(0, draw.length);
+    ///将标题插入正文头部(标题尾部加换行符)
+    NSMutableAttributedString * titleAttr = [self createAttrWithString:[self.title stringByAppendingString:@"\n"] fontSize:_pageConf.titleFontSize lineSpacing:_pageConf.titleLineSpacing paragraphSpacing:_pageConf.titleSpacing paragraphHeaderSpacing:0];
+    NSMutableAttributedString * contentAttr = [self createAttrWithString:self.content fontSize:_pageConf.contentFontSize lineSpacing:_pageConf.contentLineSpacing paragraphSpacing:_pageConf.paragraphSpacing paragraphHeaderSpacing:_pageConf.paragraphHeaderSpacing];
+    [titleAttr appendAttributedString:contentAttr];
+
+    self.drawString = titleAttr;
+}
+
+-(NSMutableAttributedString *)createAttrWithString:(NSString *)string fontSize:(CGFloat)fontSize lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing paragraphHeaderSpacing:(CGFloat)paragraphHeaderSpacing {
+    
+    NSMutableAttributedString * attr = [[NSMutableAttributedString alloc] initWithString:string];
+    
+    NSRange range = NSMakeRange(0, attr.length);
     ///设置字符串属性（字号、行间距）
-    [draw addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:_pageConf.fontSize] range:range];
+    [attr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:fontSize] range:range];
     NSMutableParagraphStyle * paraStyle = [[NSMutableParagraphStyle alloc] init];
-    paraStyle.lineSpacing = _pageConf.lineSpacing;
-    paraStyle.paragraphSpacing = _pageConf.paragraphSpacing;
-    paraStyle.firstLineHeadIndent = _pageConf.paragraphHeaderSpacing;
-    [draw addAttribute:NSParagraphStyleAttributeName value:paraStyle range:range];
+    paraStyle.lineSpacing = lineSpacing;
+    paraStyle.paragraphSpacing = paragraphSpacing;
+    paraStyle.firstLineHeadIndent = paragraphHeaderSpacing;
+    [attr addAttribute:NSParagraphStyleAttributeName value:paraStyle range:range];
     
-    self.drawString = draw;
+    return attr;
 }
 
 -(void)seperatePage {
-    ///第一页存在标题，所以首页处理不同。首页应先绘制标题，绘制标题过后计算首页正文绘制区域，来进行首页的分页。其余页的分页均以渲染区域进行分页，每个新页中要考虑新页的起始位置是否是分段的换行符或空白字符，如果是，要排除掉此区域在计算分页
-    UIFont * titleFont = [UIFont systemFontOfSize:_pageConf.fontSize * 1.5];
-    UILabel * tmpLb = [[UILabel alloc] initWithFrame:(CGRect){CGPointZero,self.renderSize}];
-    tmpLb.font = titleFont;
-    tmpLb.numberOfLines = 0;
-    tmpLb.text = self.title;
-    [tmpLb sizeToFit];
-    
-    ///计算首页渲染区域
-    CGFloat title_h = tmpLb.bounds.size.height;
-    CGFloat offset_y = title_h + _pageConf.titleSpacing;
-    CGSize firstParagraphRenderSize = CGSizeMake(self.renderSize.width, self.renderSize.height - offset_y);
     
     NSMutableArray * tmpPages = [NSMutableArray arrayWithCapacity:0];
-    
-    ///如果剩余绘制区域高度小于零说明第一页只能绘制标题，故数组中添加标题页
-    if (firstParagraphRenderSize.height <= 0) {
-
-        DWReaderPage * titlePage = [[DWReaderPage alloc] init];
-        titlePage.needRenderTitle = YES;
-        [tmpPages addObject:titlePage];
-    }
     
     NSUInteger currentLoc = 0;
     ///当前手机以xs max做最大屏幕，14号字做最小字号，18像素为最小行间距，最大展示字数为564个字，取整估算为600字，为避免因数字较多在成的字形大小差距的影响，乘以1.2倍的安全余量，故当前安全阈值为720字
@@ -142,23 +134,18 @@ a = NULL;\
         ///截取一段字符串
         NSAttributedString * sub = [self.drawString attributedSubstringFromRange:NSMakeRange(currentLoc, length)];
         ///选定渲染区域
-        CGSize size = tmpPages.count == 0 ? firstParagraphRenderSize : self.renderSize;
-        NSRange range = [self calculateVisibleRangeWithString:sub renderSize:size location:currentLoc];
+        NSRange range = [self calculateVisibleRangeWithString:sub renderSize:self.renderSize location:currentLoc];
         if (range.length == 0) {
             ///计算出错
-            NSAssert(NO, @"DWReader can't calculate visible range,currentLoc = %lu,length = %lu,size = %@,sub = %@",currentLoc,length,NSStringFromCGSize(size),sub.string);
+            NSAssert(NO, @"DWReader can't calculate visible range,currentLoc = %lu,length = %lu,size = %@,sub = %@",currentLoc,length,NSStringFromCGSize(self.renderSize),sub.string);
             break;
         }
         
         ///配置分页信息
-        DWReaderPage * page = [[DWReaderPage alloc] init];
+        DWReaderPageInfo * page = [[DWReaderPageInfo alloc] init];
         page.range = range;
         page.page = tmpPages.count;
         page.pageContent = [self.drawString attributedSubstringFromRange:range];
-        if (page.page == 0) {
-            page.offsetY = offset_y;
-            page.needRenderTitle = YES;
-        }
         [tmpPages addObject:page];
         
         ///更改currentLoc
@@ -204,12 +191,14 @@ a = NULL;\
 @end
 
 
-@implementation DWReaderPageConfiguration
+@implementation DWReaderPageInfoConfiguration
 
--(BOOL)isEqual:(__kindof DWReaderPageConfiguration *)object {
-    if (self.fontSize == object.fontSize &&
+-(BOOL)isEqual:(__kindof DWReaderPageInfoConfiguration *)object {
+    if (self.titleFontSize == object.titleFontSize &&
+        self.titleLineSpacing == object.titleLineSpacing &&
         self.titleSpacing == object.titleSpacing &&
-        self.lineSpacing == object.lineSpacing &&
+        self.contentFontSize == object.contentFontSize &&
+        self.contentLineSpacing == object.contentLineSpacing &&
         self.paragraphSpacing == object.paragraphSpacing &&
         self.paragraphHeaderSpacing == object.paragraphHeaderSpacing) {
         return YES;
