@@ -17,28 +17,38 @@
 @implementation DWReaderPageViewController
 
 #pragma mark --- interface method ---
-+(instancetype)pageWithInfo:(DWReaderPageInfo *)info renderFrame:(CGRect)renderFrame {
-    return [[[self class] alloc] initWithInfo:info renderFrame:renderFrame];
++(instancetype)pageWithRenderFrame:(CGRect)renderFrame {
+    return [[[self class] alloc] initWithRenderFrame:renderFrame];
 }
 
--(instancetype)initWithInfo:(DWReaderPageInfo *)info renderFrame:(CGRect)renderFrame {
+-(instancetype)initWithRenderFrame:(CGRect)renderFrame {
     if (self = [super init]) {
-        _pageInfo = info;
         _renderFrame = renderFrame;
     }
     return self;
+}
+
+-(void)configNextPage:(DWReaderPageViewController *)nextPage {
+    self.nextPage = nextPage;
+    nextPage.previousPage = self;
+}
+
+-(void)updateInfo:(DWReaderPageInfo *)info {
+    if (![_pageInfo isEqual:info]) {
+        _pageInfo = info;
+        self.contentLb.frame = self.renderFrame;
+        [self draw];
+    }
 }
 
 #pragma mark --- life cycle ---
 -(void)viewDidLoad {
     [super viewDidLoad];
     [self setupUI];
-    [self draw];
 }
 
 #pragma mark --- tool method ---
 -(void)setupUI {
-    
     self.view.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.contentLb];
 }
@@ -53,6 +63,7 @@
     if (!_contentLb) {
         _contentLb = [[UILabel alloc] initWithFrame:self.renderFrame];
         _contentLb.numberOfLines = 0;
+        _contentLb.backgroundColor = [UIColor greenColor];
     }
     return _contentLb;
 }

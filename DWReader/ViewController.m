@@ -10,9 +10,13 @@
 #import "DWReaderChapter.h"
 #import "DWReaderPageViewController.h"
 
-@interface ViewController ()
+@interface ViewController ()<UIPageViewControllerDelegate, UIPageViewControllerDataSource>
 
 @property (nonatomic ,strong) DWReaderChapter * c;
+
+@property (nonatomic ,strong) UIPageViewController * pageVC;
+
+@property (nonatomic ,strong) NSMutableArray * dataArr;
 
 @end
 
@@ -54,15 +58,24 @@
 
 -(void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
-    NSString * testString = @"豪华的别墅酒店。\n年轻俊美的男人刚刚从浴室里洗澡出来，健硕的腰身只围着一条浴巾，充满了力与美的身躯，仿佛西方阿波罗临世。\n“该死的。”一声低咒，男人低下头，一脸烦燥懊恼。\n他拿起手机，拔通了助手的电话，“给我找个干净的女人进来。”\n“少爷，怎么今晚有兴趣了？”\n\n“在酒会上喝错了东西，快点。”低沉的声线已经不奈烦了。\n“好的，马上。”\n一处景观灯的牌子面前，穿着清凉的女孩抬起头，看着那蛇线一样的线路图，感到相当的无语。\n明明就是来旅个游的，竟然迷路了。\n";
+    NSString * tmp = @"豪华的别墅酒店。\n年轻俊美的男人刚刚从浴室里洗澡出来，健硕的腰身只围着一条浴巾，充满了力与美的身躯，仿佛西方阿波罗临世。\n“该死的。”一声低咒，男人低下头，一脸烦燥懊恼。\n他拿起手机，拔通了助手的电话，“给我找个干净的女人进来。”\n“少爷，怎么今晚有兴趣了？”\n\n“在酒会上喝错了东西，快点。”低沉的声线已经不奈烦了。\n“好的，马上。”\n一处景观灯的牌子面前，穿着清凉的女孩抬起头，看着那蛇线一样的线路图，感到相当的无语。\n明明就是来旅个游的，竟然迷路了。\n";
+    NSString * testString = @"";
+    for (int i = 0; i < 15; ++i) {
+        testString = [testString stringByAppendingString:tmp];
+    }
     
+    NSLog(@"%lu",testString.length);
+
     NSString * titleString = @"霸道总裁爱上我\n";
-    
+
     CGRect renderFrame = CGRectMake(15, self.view.safeAreaInsets.top, self.view.bounds.size.width - 30, self.view.bounds.size.height - self.view.safeAreaInsets.top - self.view.safeAreaInsets.bottom);
-    DWReaderChapter * c = [DWReaderChapter chapterWithOriginString:testString title:@"霸道总裁爱上我" renderFrame:renderFrame];
-    [c parseChapter];
     
-    DWReaderPageInfoConfiguration * conf = [[DWReaderPageInfoConfiguration alloc] init];
+    NSLog(@"start");
+    
+    DWReaderChapter * c = [DWReaderChapter chapterWithOriginString:testString title:titleString renderFrame:renderFrame info:[DWReaderChapterInfo new]];
+    [c parseChapter];
+
+    DWReaderConfiguration * conf = [[DWReaderConfiguration alloc] init];
     conf.titleFontSize = 28;
     conf.titleLineSpacing = 18;
     conf.titleSpacing = 28;
@@ -70,21 +83,54 @@
     conf.contentLineSpacing = 18;
     conf.paragraphSpacing = 28;
     conf.paragraphHeaderSpacing = 30;
-    
+
     [c seperatePageWithPageConfiguration:conf];
     [c configTextColor: [UIColor redColor]];
+
     
+    NSLog(@"end");
     self.c = c;
 }
 
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    NSUInteger page = 0;
     
-    DWReaderPageInfo * info = [self.c.pages objectAtIndex:page];
-    DWReaderPageViewController * pageVC = [DWReaderPageViewController pageWithInfo:info renderFrame:self.c.renderFrame];
+    NSMutableArray <DWReaderPageViewController *>* pageVCs = [NSMutableArray arrayWithCapacity:self.c.pages.count];
     
-    [self.navigationController pushViewController:pageVC animated:YES];
+    __block DWReaderPageViewController * lastPageVC = nil;
+    [self.c.pages enumerateObjectsUsingBlock:^(DWReaderPageInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        DWReaderPageViewController * pageVC = [[DWReaderPageViewController alloc] initWithRenderFrame:self.c.renderFrame];
+        [pageVC updateInfo:obj];
+        pageVC.previousPage = lastPageVC;
+        lastPageVC.nextPage = pageVC;
+        [pageVCs addObject:pageVC];
+        lastPageVC = pageVC;
+    }];
     
+    pageVCs.firstObject.previousPage = lastPageVC;
+    lastPageVC.nextPage = pageVCs.firstObject;
+    
+    self.dataArr = pageVCs;
+    
+    [self.pageVC setViewControllers:@[pageVCs.firstObject] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
+    [self.navigationController pushViewController:self.pageVC animated:YES];
+    
+}
+
+-(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {
+    return viewController.nextPage;
+}
+
+-(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(DWReaderPageViewController *)viewController {
+    return viewController.previousPage;
+}
+
+-(UIPageViewController *)pageVC {
+    if (!_pageVC) {
+        _pageVC = [[UIPageViewController alloc] initWithTransitionStyle:(UIPageViewControllerTransitionStylePageCurl) navigationOrientation:(UIPageViewControllerNavigationOrientationHorizontal) options:nil];
+        _pageVC.delegate = self;
+        _pageVC.dataSource = self;
+    }
+    return _pageVC;
 }
 
 

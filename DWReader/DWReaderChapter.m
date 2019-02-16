@@ -31,15 +31,16 @@ a = NULL;\
 @implementation DWReaderChapter
 
 #pragma mark --- interface method ---
-+(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame {
-    return [[self alloc] initWithOriginString:oriStr title:title renderFrame:renderFrame];
++(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame info:(DWReaderChapterInfo *)info {
+    return [[self alloc] initWithOriginString:oriStr title:title renderFrame:renderFrame info:info];
 }
 
--(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame {
+-(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame info:(DWReaderChapterInfo *)info {
     if (self = [super init]) {
         _originString = oriStr;
         _title = title;
         _renderFrame = renderFrame;
+        _chapterInfo = info;
         _pageConf = nil;
         _textColor = nil;
         _content = nil;
@@ -67,7 +68,7 @@ a = NULL;\
     _content = content;
 }
 
--(void)seperatePageWithPageConfiguration:(DWReaderPageInfoConfiguration *)conf {
+-(void)seperatePageWithPageConfiguration:(DWReaderConfiguration *)conf {
     ///当任意一个影响分页的数据改变时才重新计算分页
     if (![self.pageConf isEqual:conf]) {
         
@@ -94,6 +95,21 @@ a = NULL;\
     }
 }
 
+-(void)asyncParseChapterToPageWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor completion:(dispatch_block_t)completion {
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        [self parseChapterToPageWithConfiguration:conf textColor:textColor];
+        if (completion) {
+            completion();
+        }
+    });
+}
+
+-(void)parseChapterToPageWithConfiguration:(DWReaderConfiguration *)conf textColor:(UIColor *)textColor {
+    [self parseChapter];
+    [self seperatePageWithPageConfiguration:conf];
+    [self configTextColor:textColor];
+}
+
 #pragma mark --- tool method ---
 
 -(void)configAttributeString {
@@ -101,20 +117,20 @@ a = NULL;\
     self.drawString = nil;
     
     ///将标题插入正文头部(标题尾部加换行符)
-    NSMutableAttributedString * titleAttr = [self createAttrWithString:[self.title stringByAppendingString:@"\n"] fontSize:_pageConf.titleFontSize lineSpacing:_pageConf.titleLineSpacing paragraphSpacing:_pageConf.titleSpacing paragraphHeaderSpacing:0];
-    NSMutableAttributedString * contentAttr = [self createAttrWithString:self.content fontSize:_pageConf.contentFontSize lineSpacing:_pageConf.contentLineSpacing paragraphSpacing:_pageConf.paragraphSpacing paragraphHeaderSpacing:_pageConf.paragraphHeaderSpacing];
+    NSMutableAttributedString * titleAttr = [self createAttrWithString:[self.title stringByAppendingString:@"\n"] fontName:_pageConf.fontName fontSize:_pageConf.titleFontSize lineSpacing:_pageConf.titleLineSpacing paragraphSpacing:_pageConf.titleSpacing paragraphHeaderSpacing:0];
+    NSMutableAttributedString * contentAttr = [self createAttrWithString:self.content fontName:_pageConf.fontName fontSize:_pageConf.contentFontSize lineSpacing:_pageConf.contentLineSpacing paragraphSpacing:_pageConf.paragraphSpacing paragraphHeaderSpacing:_pageConf.paragraphHeaderSpacing];
     [titleAttr appendAttributedString:contentAttr];
 
     self.drawString = titleAttr;
 }
 
--(NSMutableAttributedString *)createAttrWithString:(NSString *)string fontSize:(CGFloat)fontSize lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing paragraphHeaderSpacing:(CGFloat)paragraphHeaderSpacing {
+-(NSMutableAttributedString *)createAttrWithString:(NSString *)string fontName:(NSString *)fontName fontSize:(CGFloat)fontSize lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing paragraphHeaderSpacing:(CGFloat)paragraphHeaderSpacing {
     
     NSMutableAttributedString * attr = [[NSMutableAttributedString alloc] initWithString:string];
     
     NSRange range = NSMakeRange(0, attr.length);
     ///设置字符串属性（字号、行间距）
-    [attr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:fontSize] range:range];
+    [attr addAttribute:NSFontAttributeName value:[UIFont fontWithName:fontName size:fontSize] range:range];
     NSMutableParagraphStyle * paraStyle = [[NSMutableParagraphStyle alloc] init];
     paraStyle.lineSpacing = lineSpacing;
     paraStyle.paragraphSpacing = paragraphSpacing;
@@ -134,6 +150,7 @@ a = NULL;\
     NSUInteger totalLen = self.drawString.length;
     NSUInteger length = totalLen;
     CGSize renderSize = self.renderFrame.size;
+    DWReaderPageInfo * lastPageInfo = nil;
     while (length > 0) {
         length = MIN(length, 720);
         
@@ -148,10 +165,12 @@ a = NULL;\
         }
         
         ///配置分页信息
-        DWReaderPageInfo * page = [[DWReaderPageInfo alloc] init];
-        page.range = range;
-        page.page = tmpPages.count;
-        [tmpPages addObject:page];
+        DWReaderPageInfo * pageInfo = [[DWReaderPageInfo alloc] init];
+        pageInfo.range = range;
+        pageInfo.page = tmpPages.count;
+        pageInfo.previousPageInfo = lastPageInfo;
+        lastPageInfo.nextPageInfo = pageInfo;
+        [tmpPages addObject:pageInfo];
         
         ///更改currentLoc
         currentLoc = NSMaxRange(range);
@@ -196,19 +215,4 @@ a = NULL;\
 @end
 
 
-@implementation DWReaderPageInfoConfiguration
 
--(BOOL)isEqual:(__kindof DWReaderPageInfoConfiguration *)object {
-    if (self.titleFontSize == object.titleFontSize &&
-        self.titleLineSpacing == object.titleLineSpacing &&
-        self.titleSpacing == object.titleSpacing &&
-        self.contentFontSize == object.contentFontSize &&
-        self.contentLineSpacing == object.contentLineSpacing &&
-        self.paragraphSpacing == object.paragraphSpacing &&
-        self.paragraphHeaderSpacing == object.paragraphHeaderSpacing) {
-        return YES;
-    }
-    return NO;
-}
-
-@end

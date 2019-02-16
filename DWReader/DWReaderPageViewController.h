@@ -13,12 +13,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DWReaderPageViewController : UIViewController
 
+@property (nonatomic ,weak) DWReaderPageViewController * nextPage;
+
+@property (nonatomic ,weak) DWReaderPageViewController * previousPage;
+
 @property (nonatomic ,strong ,readonly) DWReaderPageInfo * pageInfo;
 
 @property (nonatomic ,assign ,readonly) CGRect renderFrame;
 
-+(instancetype)pageWithInfo:(DWReaderPageInfo *)info renderFrame:(CGRect)renderFrame;
--(instancetype)initWithInfo:(DWReaderPageInfo *)info renderFrame:(CGRect)renderFrame;
++(instancetype)pageWithRenderFrame:(CGRect)renderFrame;
+-(instancetype)initWithRenderFrame:(CGRect)renderFrame;
+-(void)configNextPage:(DWReaderPageViewController *)nextPage;
+
+-(void)updateInfo:(DWReaderPageInfo *)info;
 
 @end
 
