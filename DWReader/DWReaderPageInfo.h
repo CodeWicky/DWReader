@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic ,assign) NSUInteger page;
 
 ///本页需要绘制的富文本
-@property (nonatomic ,strong) NSAttributedString * pageContent;
+@property (nonatomic ,strong) NSMutableAttributedString * pageContent;
 
 @end
 

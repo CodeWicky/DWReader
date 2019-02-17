@@ -42,6 +42,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///分页信息
 @property (nonatomic ,strong ,readonly) NSArray <DWReaderPageInfo *>* pages;
 
+///正在异步解析
+@property (nonatomic ,assign ,readonly) BOOL parsing;
+
 /**
  初始化章节内容
 

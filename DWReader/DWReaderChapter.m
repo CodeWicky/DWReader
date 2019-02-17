@@ -76,7 +76,7 @@ a = NULL;\
         _pageConf = conf;
         _pages = nil;
         
-        ///组装富文本
+        ///组装富文本，此时并不能组装一个完整的富文本，因为分页是视情况而定要改变富文本
         [self configAttributeString];
         
         ///富文本组装完成后可以开始分页
@@ -87,17 +87,17 @@ a = NULL;\
 -(void)configTextColor:(UIColor *)textColor {
     if (![self.textColor isEqual:textColor]) {
         _textColor = textColor;
-        [self.drawString addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, self.drawString.length)];
-        
         [self.pages enumerateObjectsUsingBlock:^(DWReaderPageInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            obj.pageContent = [self.drawString attributedSubstringFromRange:obj.range];
+            [obj.pageContent addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, obj.pageContent.length)];
         }];
     }
 }
 
 -(void)asyncParseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor completion:(dispatch_block_t)completion {
+    [self configAsyncParseStatus:YES];
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         [self parseChapterToPageWithConfiguration:conf textColor:textColor];
+        [self configAsyncParseStatus:NO];
         if (completion) {
             completion();
         }
@@ -151,11 +151,12 @@ a = NULL;\
     NSUInteger length = totalLen;
     CGSize renderSize = self.renderFrame.size;
     DWReaderPageInfo * lastPageInfo = nil;
+    NSMutableAttributedString * drawString = self.drawString;
     while (length > 0) {
         length = MIN(length, 720);
         
         ///截取一段字符串
-        NSAttributedString * sub = [self.drawString attributedSubstringFromRange:NSMakeRange(currentLoc, length)];
+        NSAttributedString * sub = [drawString attributedSubstringFromRange:NSMakeRange(currentLoc, length)];
         ///选定渲染区域
         NSRange range = [self calculateVisibleRangeWithString:sub renderSize:renderSize location:currentLoc];
         if (range.length == 0) {
@@ -168,17 +169,33 @@ a = NULL;\
         DWReaderPageInfo * pageInfo = [[DWReaderPageInfo alloc] init];
         pageInfo.range = range;
         pageInfo.page = tmpPages.count;
+        pageInfo.pageContent = (NSMutableAttributedString *)[drawString attributedSubstringFromRange:range];
         pageInfo.previousPageInfo = lastPageInfo;
         lastPageInfo.nextPageInfo = pageInfo;
         [tmpPages addObject:pageInfo];
+        lastPageInfo = pageInfo;
         
         ///更改currentLoc
         currentLoc = NSMaxRange(range);
         ///无需考虑当前位置恰好为一个换行符的情况，因为换行符横向不占空间，一定会计算到之前的段尾中，所以不存在currentLoc位置恰好为换行符的情况。直接计算剩余参与分页长度
+        ///此处需要考虑另一件事，由于第二页是subString下来。所以第二页的开头几个字到另一个换行符之前会被误认为是一段。这里应该排除这种错误，可采用方案是第二页subString之前，检验之前一个符号是否是换行符，如果是换行符则说明subString的确是新的一段。如果不是换行符则不是新段，应将第一个字的段落属性中的段首间距至为0再计算第二页分页
+    
+        ///检查上一个字符是不是换行符，条件是这里不是第一页也不是最后一页
+        if (currentLoc > 0 && currentLoc < totalLen) {
+            ///如果上一页最后一个字符不是换行符则排除错误(不是第一页就不可能是标题，参数使用文章正文参数)
+            if (![pageInfo.pageContent.string hasSuffix:@"\n"]) {
+                NSMutableParagraphStyle * paraStyle = [[NSMutableParagraphStyle alloc] init];
+                paraStyle.lineSpacing = _pageConf.contentLineSpacing;
+                paraStyle.paragraphSpacing = _pageConf.paragraphSpacing;
+                paraStyle.lineBreakMode = NSLineBreakByCharWrapping;
+                [drawString addAttribute:NSParagraphStyleAttributeName value:paraStyle range:NSMakeRange(currentLoc, 1)];
+            }
+        }
+        
         length = totalLen - currentLoc;
     }
     
-    ///至此分页完成
+    ///至此分页完成，事实上关于影响布局的富文本至此才配置完成，文字颜色要在配置画笔颜色时再改变
     _pages = [tmpPages copy];
     NSLog(@"%@",_pages);
 }
@@ -193,6 +210,10 @@ a = NULL;\
     CFSAFERELEASE(frame);
     CFSAFERELEASE(framesetter);
     return fixRange;
+}
+
+-(void)configAsyncParseStatus:(BOOL)parsing {
+    _parsing = parsing;
 }
 
 #pragma mark --- override ---

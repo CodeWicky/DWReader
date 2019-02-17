@@ -16,24 +16,22 @@ NS_ASSUME_NONNULL_BEGIN
 @class DWReaderViewController;
 
 typedef void(^DWReaderRequestDataCompleteCallback)(NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,_Nullable id userInfo);
-typedef NSString *(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID ,NSInteger chapterIndex);
+typedef NSString *(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID);
 typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * chapterID ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
 
 @protocol DWReaderDataDelegate <NSObject>
 
-
+@optional
 /**
  根据给定信息返回下一章的章节ID
 
  @param reader 当前阅读器对象
  @param bookID 当前书籍的bookID
  @param chapterID 当前章节的chapterID
- @param chapterIndex 当前章节的index
- @return 返回下一章的章节ID
  
- 注：chapterIndex由开发者自己维护，只是提供给开发者一个更快寻找chapterID的手段
+ @return 返回下一章的章节ID
  */
--(NSString *)reader:(DWReaderViewController *)reader queryNextChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID currentChapterIndex:(NSInteger)chapterIndex;
+-(NSString *)reader:(DWReaderViewController *)reader queryNextChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID;
 
 
 /**
@@ -42,10 +40,9 @@ typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,
  @param reader 当前阅读器对象
  @param bookID 当前书籍的bookID
  @param chapterID 当前章节的chapterID
- @param chapterIndex 当前章节的index
  @return 返回上一章的章节ID
  */
--(NSString *)reader:(DWReaderViewController *)reader queryPreviousChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID currentChapterIndex:(NSInteger)chapterIndex;
+-(NSString *)reader:(DWReaderViewController *)reader queryPreviousChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID;
 
 /**
  请求对应章节内容
@@ -73,11 +70,11 @@ typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,
 ///请求对应章节内容
 @property (nonatomic ,copy) DWReaderRequestBookDataCallback requestBookDataCallback;
 
-///展示Loading的回调
-@property (nonatomic ,copy) dispatch_block_t showLoading;
+///需要展示Loading的回调，通常出现在请求章节内容时（非预加载）
+@property (nonatomic ,copy) void (^loadingAction) (BOOL show);
 
-///隐藏Loading的回调
-@property (nonatomic ,copy) dispatch_block_t hideLoading;
+///没有更多章节了，last为真表示没有下一章节，否则表示没有上一章节
+@property (nonatomic ,copy) void (^noMoreChapter) (BOOL last);
 
 
 /**
@@ -96,7 +93,7 @@ typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,
 
  @param chapterInfo 章节信息
  */
--(void)configWithChapterInfo:(DWReaderChapterInfo *)chapterInfo;
+-(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo;
 
 @end
 
