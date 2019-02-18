@@ -45,6 +45,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///正在异步解析
 @property (nonatomic ,assign ,readonly) BOOL parsing;
 
+///总页数
+@property (nonatomic ,assign ,readonly) NSUInteger totalPage;
+
 /**
  初始化章节内容
 

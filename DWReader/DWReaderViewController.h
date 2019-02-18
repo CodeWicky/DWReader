@@ -16,33 +16,23 @@ NS_ASSUME_NONNULL_BEGIN
 @class DWReaderViewController;
 
 typedef void(^DWReaderRequestDataCompleteCallback)(NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,_Nullable id userInfo);
-typedef NSString *(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID);
+typedef NSString *(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID ,BOOL nextChapter);
 typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * chapterID ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
 
 @protocol DWReaderDataDelegate <NSObject>
 
 @optional
-/**
- 根据给定信息返回下一章的章节ID
-
- @param reader 当前阅读器对象
- @param bookID 当前书籍的bookID
- @param chapterID 当前章节的chapterID
- 
- @return 返回下一章的章节ID
- */
--(NSString *)reader:(DWReaderViewController *)reader queryNextChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID;
-
 
 /**
- 根据给定信息返回上一章的章节ID
+ 根据给定信息返回关联的章节ID
  
  @param reader 当前阅读器对象
  @param bookID 当前书籍的bookID
  @param chapterID 当前章节的chapterID
- @return 返回上一章的章节ID
+ @param nextChapter 是否询问的是下一章节
+ @return 返回指定的章节ID
  */
--(NSString *)reader:(DWReaderViewController *)reader queryPreviousChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID;
+-(NSString *)reader:(DWReaderViewController *)reader queryChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID nextChapter:(BOOL)nextChapter;
 
 /**
  请求对应章节内容
