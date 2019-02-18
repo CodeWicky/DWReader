@@ -163,8 +163,11 @@
     }
 }
 
--(NSString *)reader:(DWReaderViewController *)reader queryNextChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID {
-    return [@(chapterID.integerValue + 1) stringValue];
+-(NSString *)reader:(DWReaderViewController *)reader queryChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID nextChapter:(BOOL)nextChapter {
+    
+    NSInteger step = nextChapter ? 1 : -1;
+    
+    return [@(chapterID.integerValue + step) stringValue];
 }
 
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {

@@ -216,14 +216,14 @@
     }
 }
 
--(NSString *)queryNextChapterId {
+-(NSString *)queryChapterId:(BOOL)nextChapter {
     DWReaderChapterInfo * currentChapterInfo = self.currentChapter.chapterInfo;
     if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:queryChapterIdForBook:currentChapterID:nextChapter:)]) {
-        return [self.readerDelegate reader:self queryChapterIdForBook:currentChapterInfo.book_id currentChapterID:currentChapterInfo.chapter_id nextChapter:YES];
+        return [self.readerDelegate reader:self queryChapterIdForBook:currentChapterInfo.book_id currentChapterID:currentChapterInfo.chapter_id nextChapter:nextChapter];
     } else if (self.queryChapterIdCallback) {
-        return self.queryChapterIdCallback(self,currentChapterInfo.book_id,currentChapterInfo.chapter_id,YES);
+        return self.queryChapterIdCallback(self,currentChapterInfo.book_id,currentChapterInfo.chapter_id,nextChapter);
     } else {
-        NSAssert(NO, @"DWReader can't query next chapter_id.You must either implement -reader:queryNextChapterIdForBook:currentChapterID:currentChapterIndex: or set queryNextChapterIdCallback.");
+        NSAssert(NO, @"DWReader can't query chapter_id.You must either implement -reader:queryChapterIdForBook:currentChapterID:currentChapterIndex:nextChapter or set queryChapterIdCallback.");
         return nil;
     }
 }
@@ -243,7 +243,7 @@
     }
     
     ///如果当前无页面配置信息代表要切章了，首先找到下一章
-    NSString * nextChapterID = [self queryNextChapterId];
+    NSString * nextChapterID = [self queryChapterId:YES];
     ///如果获取不到章节ID则代表是最后一章了，询问外部动作,并返回
     if (!nextChapterID.length) {
         if (self.noMoreChapter) {
@@ -280,6 +280,43 @@
 }
 
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(DWReaderPageViewController *)viewController {
+    
+    DWReaderPageInfo * previousPage = viewController.pageInfo.previousPageInfo;
+    if (previousPage) {
+        DWReaderPageViewController * previousPageVC = viewController.previousPage;
+        [previousPageVC updateInfo:previousPage];
+        self.currentPageVC = previousPageVC;
+        return previousPageVC;
+    }
+    
+    NSString * previousChapterID = [self queryChapterId:NO];
+    if (!previousChapterID.length) {
+        if (self.noMoreChapter) {
+            self.noMoreChapter(YES);
+        }
+        return nil;
+    }
+    
+    DWReaderChapter * previousChapter = [self.chapterTbl valueForKey:previousChapterID];
+    if (previousChapter) {
+        if (!previousChapter.parsing) {
+            self.currentChapter = previousChapter;
+            previousPage = previousChapter.pages.firstObject;
+            DWReaderPageViewController * previousPageVC = viewController.previousPage;
+            [previousPageVC updateInfo:previousPage];
+            self.currentPageVC = previousPageVC;
+            return previousPageVC;
+        }
+        return nil;
+    }
+    
+    DWReaderChapterInfo * chapterInfo = [[DWReaderChapterInfo alloc] init];
+    chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
+    chapterInfo.chapter_id = previousChapterID;
+    self.waitingChangePreviousChapter = YES;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self requestChapter:chapterInfo nextChapter:NO preload:NO];
+    });
     return nil;
 }
 
