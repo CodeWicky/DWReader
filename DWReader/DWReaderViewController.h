@@ -51,11 +51,8 @@ typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,
 ///获取书籍数据代理（如果指定代理且代理实现对应方法则优先是否代理方法，否则使用回调方法）
 @property (nonatomic ,weak) id<DWReaderDataDelegate> readerDelegate;
 
-///根据给定信息返回下一章的章节ID
-@property (nonatomic ,copy) DWReaderQueryChapterIDCallback queryNextChapterIdCallback;
-
-///根据给定信息返回上一章的章节ID
-@property (nonatomic ,copy) DWReaderQueryChapterIDCallback queryPreviousChapterIdCallback;
+///根据给定信息返回指定的章节ID
+@property (nonatomic ,copy) DWReaderQueryChapterIDCallback queryChapterIdCallback;
 
 ///请求对应章节内容
 @property (nonatomic ,copy) DWReaderRequestBookDataCallback requestBookDataCallback;

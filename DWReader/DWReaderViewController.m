@@ -220,8 +220,8 @@
     DWReaderChapterInfo * currentChapterInfo = self.currentChapter.chapterInfo;
     if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:queryChapterIdForBook:currentChapterID:nextChapter:)]) {
         return [self.readerDelegate reader:self queryChapterIdForBook:currentChapterInfo.book_id currentChapterID:currentChapterInfo.chapter_id nextChapter:YES];
-    } else if (self.queryNextChapterIdCallback) {
-        return self.queryNextChapterIdCallback(self,currentChapterInfo.book_id,currentChapterInfo.chapter_id,YES);
+    } else if (self.queryChapterIdCallback) {
+        return self.queryChapterIdCallback(self,currentChapterInfo.book_id,currentChapterInfo.chapter_id,YES);
     } else {
         NSAssert(NO, @"DWReader can't query next chapter_id.You must either implement -reader:queryNextChapterIdForBook:currentChapterID:currentChapterIndex: or set queryNextChapterIdCallback.");
         return nil;
