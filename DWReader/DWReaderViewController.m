@@ -302,7 +302,7 @@
     if (previousChapter) {
         if (!previousChapter.parsing) {
             self.currentChapter = previousChapter;
-            previousPage = previousChapter.pages.firstObject;
+            previousPage = previousChapter.pages.lastObject;
             DWReaderPageViewController * previousPageVC = viewController.previousPage;
             [previousPageVC updateInfo:previousPage];
             self.currentPageVC = previousPageVC;
