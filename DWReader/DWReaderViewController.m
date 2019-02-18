@@ -86,6 +86,7 @@
 
 #pragma mark --- tool method ---
 -(void)configPages {
+    ///建立一个重用池，降低内存中VC数量
     DWReaderPageViewController * tmp1 = [DWReaderPageViewController pageWithRenderFrame:self.renderFrame];
     DWReaderPageViewController * tmp2 = [DWReaderPageViewController pageWithRenderFrame:self.renderFrame];
     [tmp1 configNextPage:tmp2];
