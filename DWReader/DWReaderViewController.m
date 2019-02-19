@@ -195,6 +195,9 @@
         return;
     }
     
+    ///获取到首次加载和正常加载的状态（因为如果是首次加载代表阅读器初始化，此时如果远端进度为50%，应该跳转至50%，如果不是首次加载，切章发生在翻页过程中，切章过程中均应该保证连续性，故进度不为50%。self.currentChapter为nil刚好可以标志阅读器初始化的状态）
+    BOOL initializeReader = (self.currentChapter == nil);
+    
     ///切换当前章节为指定章节
     self.currentChapter = chapter;
     
@@ -204,7 +207,7 @@
     DWReaderPageInfo * pageInfo = nil;
     
     ///如果有百分比，调到对应页
-    if (chapter.chapterInfo.percent > 0) {
+    if (chapter.chapterInfo.percent > 0 && initializeReader) {
         NSUInteger page = floor(chapter.chapterInfo.percent * chapter.totalPage);
         pageInfo = [chapter pageInfoOnPage:page];
         ///如果取不到则采用默认数据
