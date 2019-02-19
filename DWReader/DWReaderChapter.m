@@ -129,6 +129,37 @@ a = NULL;\
     _totalPage = totalPage;
 }
 
+-(DWReaderPageInfo *)pageInfoOnPage:(NSUInteger)pageIndex {
+    
+    BOOL front = YES;
+    if (pageIndex > self.totalPage * 0.5) {
+        front = NO;
+    }
+    DWReaderPageInfo * ret = nil;
+    if (front) {
+        DWReaderPageInfo * tmp = _firstPageInfo;
+        while (tmp) {
+            if (tmp.page == pageIndex) {
+                ret = tmp;
+                break;
+            } else {
+                tmp = tmp.nextPageInfo;
+            }
+        }
+    } else {
+        DWReaderPageInfo * tmp = _lastPageInfo;
+        while (tmp) {
+            if (tmp.page == pageIndex) {
+                ret = tmp;
+                break;
+            } else {
+                tmp = tmp.previousPageInfo;
+            }
+        }
+    }
+    return ret;
+}
+
 #pragma mark --- tool method ---
 
 -(void)configAttributeString {
@@ -187,7 +218,7 @@ a = NULL;\
         ///配置分页信息
         DWReaderPageInfo * pageInfo = [[DWReaderPageInfo alloc] init];
         pageInfo.range = range;
-        pageInfo.page = pageCount;
+        pageInfo.page = pageCount + 1;
         pageInfo.pageContent = (NSMutableAttributedString *)[drawString attributedSubstringFromRange:range];
         pageInfo.previousPageInfo = lastPageInfo;
         lastPageInfo.nextPageInfo = pageInfo;

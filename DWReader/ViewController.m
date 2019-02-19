@@ -159,7 +159,7 @@
             testString = [testString stringByAppendingString:tmp];
         }
         
-        callback(@"霸道总裁爱上我",testString,bookID,chapterID,0,3,next,nil);
+        callback(@"霸道总裁爱上我",testString,bookID,chapterID,0.5,3,next,nil);
     }
 }
 

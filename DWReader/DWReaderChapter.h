@@ -111,6 +111,15 @@ NS_ASSUME_NONNULL_BEGIN
  */
 -(void)reprocessChapterWithFirstPageInfo:(DWReaderPageInfo *)first lastPageInfo:(DWReaderPageInfo *)last totalPage:(NSInteger)totalPage;
 
+
+/**
+ 找到指定页码的页面信息
+
+ @param pageIndex 指定页码
+ @return 对应的页面信息
+ */
+-(DWReaderPageInfo *)pageInfoOnPage:(NSUInteger)pageIndex;
+
 @end
 
 NS_ASSUME_NONNULL_END

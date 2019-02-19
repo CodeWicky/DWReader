@@ -144,6 +144,7 @@
 }
 
 -(void)requestCompleteWithInfo:(DWReaderChapterInfo *)info preload:(BOOL)preload title:(NSString *)title content:(NSString *)content bookID:(NSString *)bookID chapterID:(NSString *)chapterID percent:(CGFloat)percent chapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter userInfo:(id)userInfo {
+    info.percent = percent;
     ///请求完成后先取消请求状态
     [self.requestingChapterIDs removeObject:info.chapter_id];
     
@@ -200,7 +201,21 @@
     ///找到当前未使用的页面控制器(当前采取复用模式，总共只有两个页面控制器)
     DWReaderPageViewController * availablePage = self.currentPageVC.nextPage;
     ///找到页面后配置页面信息(往后翻页则找到下一章的第一页，往前翻页则找到上一章的最后一页)
-    DWReaderPageInfo * pageInfo = nextChapter ? chapter.firstPageInfo : chapter.lastPageInfo;
+    DWReaderPageInfo * pageInfo = nil;
+    
+    ///如果有百分比，调到对应页
+    if (chapter.chapterInfo.percent > 0) {
+        NSUInteger page = floor(chapter.chapterInfo.percent * chapter.totalPage);
+        pageInfo = [chapter pageInfoOnPage:page];
+        ///如果取不到则采用默认数据
+        if (!pageInfo) {
+            pageInfo = nextChapter ? chapter.firstPageInfo : chapter.lastPageInfo;
+        }
+    } else {
+        ///否则直接跳至首页或者尾页
+        pageInfo = nextChapter ? chapter.firstPageInfo : chapter.lastPageInfo;
+    }
+    
     [availablePage updateInfo:pageInfo];
     
     ///然后进行翻页即可(翻页操作必须在主线程)
