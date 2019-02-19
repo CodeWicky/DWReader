@@ -34,6 +34,12 @@
 
 @property (nonatomic ,strong) DWReaderPageViewController * currentPageVC;
 
+@property (nonatomic ,assign) BOOL cancelableChangingChapter;
+
+@property (nonatomic ,strong) DWReaderChapter * originChapter;
+
+@property (nonatomic ,strong) DWReaderPageViewController * originPageVC;
+
 @end
 
 @implementation DWReaderViewController
@@ -198,9 +204,6 @@
     ///获取到首次加载和正常加载的状态（因为如果是首次加载代表阅读器初始化，此时如果远端进度为50%，应该跳转至50%，如果不是首次加载，切章发生在翻页过程中，切章过程中均应该保证连续性，故进度不为50%。self.currentChapter为nil刚好可以标志阅读器初始化的状态）
     BOOL initializeReader = (self.currentChapter == nil);
     
-    ///切换当前章节为指定章节
-    self.currentChapter = chapter;
-    
     ///找到当前未使用的页面控制器(当前采取复用模式，总共只有两个页面控制器)
     DWReaderPageViewController * availablePage = self.currentPageVC.nextPage;
     ///找到页面后配置页面信息(往后翻页则找到下一章的第一页，往前翻页则找到上一章的最后一页)
@@ -223,7 +226,10 @@
     
     ///然后进行翻页即可(翻页操作必须在主线程)
     dispatch_async(dispatch_get_main_queue(), ^{
+        ///切换当前使用的控制器
         self.currentPageVC = availablePage;
+        ///切换当前章节为指定章节
+        self.currentChapter = chapter;
         ///关闭交互避免连续翻页
         self.view.userInteractionEnabled = NO;
         __weak typeof(self)weakSelf = self;
@@ -289,13 +295,19 @@
     ///获取到下章ID，先查询本地是否存在下一章，不存在直接请求下章即可，同时要将等待翻页置位真，让请求完成后自动翻页
     DWReaderChapter * nextChapter = [self.chapterTbl valueForKey:nextChapterID];
     if (nextChapter) {
-        ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转
+        ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转（由于直接返回vc的都是可以取消的翻页，所以如果翻页取消了，要将章节和控制器恢复成切章之前的状态）
         if (!nextChapter.parsing) {
             ///切换章节并找到章节中第一页
+            ///记录当前进行的是可取消的切章状态
+            self.cancelableChangingChapter = YES;
+            ///记录原始章节
+            self.originChapter = self.currentChapter;
             self.currentChapter = nextChapter;
             nextPage = nextChapter.firstPageInfo;
             DWReaderPageViewController * nextPageVC = viewController.nextPage;
             [nextPageVC updateInfo:nextPage];
+            ///记录原始页面控制器
+            self.originPageVC = self.currentPageVC;
             self.currentPageVC = nextPageVC;
             return nextPageVC;
         }
@@ -335,10 +347,13 @@
     DWReaderChapter * previousChapter = [self.chapterTbl valueForKey:previousChapterID];
     if (previousChapter) {
         if (!previousChapter.parsing) {
+            self.cancelableChangingChapter = YES;
+            self.originChapter = self.currentChapter;
             self.currentChapter = previousChapter;
             previousPage = previousChapter.lastPageInfo;
             DWReaderPageViewController * previousPageVC = viewController.previousPage;
             [previousPageVC updateInfo:previousPage];
+            self.originPageVC = self.currentPageVC;
             self.currentPageVC = previousPageVC;
             return previousPageVC;
         }
@@ -355,13 +370,22 @@
     return nil;
 }
 
-///避免连续翻页渲染失败
+///避免连续翻页渲染失败（翻页开始时关闭交互防止二次翻页，翻页结束时再打开交互）
 -(void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<UIViewController *> *)pendingViewControllers {
     pageViewController.view.userInteractionEnabled = NO;
 }
 
 -(void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray<UIViewController *> *)previousViewControllers transitionCompleted:(BOOL)completed {
     pageViewController.view.userInteractionEnabled = YES;
+    
+    ///如果进行的是可取消的切章且的确取消切章的话，要恢复原始章节及页面控制器
+    if (!completed && self.cancelableChangingChapter) {
+        self.currentChapter = self.originChapter;
+        self.currentPageVC = self.originPageVC;
+    }
+    self.cancelableChangingChapter = NO;
+    self.originChapter = nil;
+    self.originPageVC = nil;
 }
 
 #pragma mark --- setter/getter ---
