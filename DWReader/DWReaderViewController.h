@@ -10,14 +10,18 @@
 #import "DWReaderChapterInfo.h"
 #import "DWReaderTextConfiguration.h"
 #import "DWReaderDisplayConfiguration.h"
+#import "DWReaderChapter.h"
+#import "DWReaderPageInfo.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class DWReaderViewController;
 
 typedef void(^DWReaderRequestDataCompleteCallback)(NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,_Nullable id userInfo);
+typedef void(^DWReaderReprocessorCallback)(DWReaderPageInfo * _Nullable  newFirstPage, DWReaderPageInfo * _Nullable newLastPage,NSUInteger fixTotalPage);
 typedef NSString *(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID ,BOOL nextChapter);
 typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * chapterID ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
+typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader ,DWReaderChapter * chapter ,DWReaderReprocessorCallback reprocessor);
 
 @protocol DWReaderDataDelegate <NSObject>
 
@@ -44,6 +48,16 @@ typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,
  */
 -(void)reader:(DWReaderViewController *)reader requestBookDataForBook:(NSString *)bookID chapterID:(NSString *)chapterID nextChapter:(BOOL)next requestCompleteCallback:(DWReaderRequestDataCompleteCallback)callback;
 
+
+/**
+ 分页完成后完成对页面的二次修改
+
+ @param reader 当前阅读器对象
+ @param chapter 当前分章完毕的章节实例
+ @param callback 修改当前章节实例首尾页面及总页面数的回调
+ */
+-(void)reader:(DWReaderViewController *)reader reprocessChapter:(DWReaderChapter *)chapter configChapterCallback:(DWReaderReprocessorCallback)callback;
+
 @end
 
 @interface DWReaderViewController : UIPageViewController
@@ -56,6 +70,9 @@ typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,
 
 ///请求对应章节内容
 @property (nonatomic ,copy) DWReaderRequestBookDataCallback requestBookDataCallback;
+
+///分页完成后完成对页面的二次修改
+@property (nonatomic ,copy) DWReaderReprocessChapterCallback reprocessChapterCallback;
 
 ///需要展示Loading的回调，通常出现在请求章节内容时（非预加载）
 @property (nonatomic ,copy) void (^loadingAction) (BOOL show);

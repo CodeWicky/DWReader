@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface DWReaderPageInfo : NSObject
 
 ///下一页的页面信息
-@property (nonatomic ,weak) DWReaderPageInfo * nextPageInfo;
+@property (nonatomic ,strong) DWReaderPageInfo * nextPageInfo;
 
 ///上一页的页面信息
 @property (nonatomic ,weak) DWReaderPageInfo * previousPageInfo;

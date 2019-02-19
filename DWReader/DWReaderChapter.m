@@ -44,7 +44,8 @@ a = NULL;\
         _pageConf = nil;
         _textColor = nil;
         _content = nil;
-        _pages = nil;
+        _firstPageInfo = nil;
+        _lastPageInfo = nil;
         _drawString = nil;
     }
     return self;
@@ -74,7 +75,8 @@ a = NULL;\
         
         ///赋值基础属性并清空之前的分页数据
         _pageConf = conf;
-        _pages = nil;
+        _firstPageInfo = nil;
+        _lastPageInfo = nil;
         
         ///组装富文本，此时并不能组装一个完整的富文本，因为分页是视情况而定要改变富文本
         [self configAttributeString];
@@ -87,16 +89,20 @@ a = NULL;\
 -(void)configTextColor:(UIColor *)textColor {
     if (![self.textColor isEqual:textColor]) {
         _textColor = textColor;
-        [self.pages enumerateObjectsUsingBlock:^(DWReaderPageInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-            [obj.pageContent addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, obj.pageContent.length)];
-        }];
+        
+        DWReaderPageInfo * page = _firstPageInfo;
+        
+        while (page) {
+            [page.pageContent addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, page.pageContent.length)];
+            page = page.nextPageInfo;
+        }
     }
 }
 
--(void)asyncParseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor completion:(dispatch_block_t)completion {
+-(void)asyncParseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor reprocess:(dispatch_block_t)reprocess completion:(dispatch_block_t)completion {
     [self configAsyncParseStatus:YES];
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        [self parseChapterToPageWithConfiguration:conf textColor:textColor];
+        [self parseChapterToPageWithConfiguration:conf textColor:textColor reprocess:reprocess];
         [self configAsyncParseStatus:NO];
         if (completion) {
             completion();
@@ -104,10 +110,23 @@ a = NULL;\
     });
 }
 
--(void)parseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor {
+-(void)parseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor reprocess:(nonnull dispatch_block_t)reprocess {
     [self parseChapter];
     [self seperatePageWithPageConfiguration:conf];
     [self configTextColor:textColor];
+    if (reprocess) {
+        reprocess();
+    }
+}
+
+-(void)reprocessChapterWithFirstPageInfo:(DWReaderPageInfo *)first lastPageInfo:(DWReaderPageInfo *)last totalPage:(NSInteger)totalPage {
+    if (first) {
+        _firstPageInfo = first;
+    }
+    if (last) {
+        _lastPageInfo = last;
+    }
+    _totalPage = totalPage;
 }
 
 #pragma mark --- tool method ---
@@ -143,15 +162,15 @@ a = NULL;\
 
 -(void)seperatePage {
     
-    NSMutableArray * tmpPages = [NSMutableArray arrayWithCapacity:0];
-    
     NSUInteger currentLoc = 0;
     ///当前手机以xs max做最大屏幕，14号字做最小字号，18像素为最小行间距，最大展示字数为564个字，取整估算为600字，为避免因数字较多在成的字形大小差距的影响，乘以1.2倍的安全余量，故当前安全阈值为720字
     NSUInteger totalLen = self.drawString.length;
     NSUInteger length = totalLen;
     CGSize renderSize = self.renderFrame.size;
     DWReaderPageInfo * lastPageInfo = nil;
+    DWReaderPageInfo * firstPageInfo = nil;
     NSMutableAttributedString * drawString = self.drawString;
+    NSUInteger pageCount = 0;
     while (length > 0) {
         length = MIN(length, 720);
         
@@ -168,11 +187,14 @@ a = NULL;\
         ///配置分页信息
         DWReaderPageInfo * pageInfo = [[DWReaderPageInfo alloc] init];
         pageInfo.range = range;
-        pageInfo.page = tmpPages.count;
+        pageInfo.page = pageCount;
         pageInfo.pageContent = (NSMutableAttributedString *)[drawString attributedSubstringFromRange:range];
         pageInfo.previousPageInfo = lastPageInfo;
         lastPageInfo.nextPageInfo = pageInfo;
-        [tmpPages addObject:pageInfo];
+        pageCount += 1;
+        if (!firstPageInfo) {
+            firstPageInfo = pageInfo;
+        }
         lastPageInfo = pageInfo;
         
         ///更改currentLoc
@@ -196,9 +218,8 @@ a = NULL;\
     }
     
     ///至此分页完成，事实上关于影响布局的富文本至此才配置完成，文字颜色要在配置画笔颜色时再改变
-    _pages = [tmpPages copy];
-    _totalPage = tmpPages.count;
-    NSLog(@"%@",_pages);
+    [self reprocessChapterWithFirstPageInfo:firstPageInfo lastPageInfo:lastPageInfo totalPage:pageCount];
+    NSLog(@"%lu",pageCount);
 }
 
 -(NSRange)calculateVisibleRangeWithString:(NSAttributedString *)string renderSize:(CGSize)size location:(NSUInteger)loc {

@@ -170,6 +170,47 @@
     return [@(chapterID.integerValue + step) stringValue];
 }
 
+-(void)reader:(DWReaderViewController *)reader reprocessChapter:(DWReaderChapter *)chapter configChapterCallback:(DWReaderReprocessorCallback)callback {
+    DWReaderPageInfo * page = [[DWReaderPageInfo alloc] init];
+    NSMutableAttributedString * attr = [[NSMutableAttributedString alloc] initWithString:@"测试首页"];
+    [attr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:28] range:NSMakeRange(0, attr.length)];
+    [attr addAttribute:NSForegroundColorAttributeName value:[UIColor yellowColor] range:NSMakeRange(0, attr.length)];
+    page.pageContent = attr;
+    
+    ///修改新首页
+    chapter.firstPageInfo.previousPageInfo = page;
+    page.nextPageInfo = chapter.firstPageInfo;
+    
+    DWReaderPageInfo * tmpPage = chapter.firstPageInfo;
+    while (tmpPage) {
+        
+        if (tmpPage.page % 4 != 3) {
+            tmpPage = tmpPage.nextPageInfo;
+            continue;
+        }
+        
+        NSMutableAttributedString * attr = [[NSMutableAttributedString alloc] initWithString:@"测试广告"];
+        [attr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:56] range:NSMakeRange(0, attr.length)];
+        DWReaderPageInfo * adPage = [[DWReaderPageInfo alloc] init];
+        adPage.pageContent = attr;
+
+        DWReaderPageInfo * nextPage = tmpPage.nextPageInfo;
+
+        if (!nextPage) {
+            break;
+        }
+
+        tmpPage.nextPageInfo = adPage;
+        adPage.previousPageInfo = tmpPage;
+        nextPage.previousPageInfo = adPage;
+        adPage.nextPageInfo = nextPage;
+
+        tmpPage = nextPage;
+    }
+    
+    callback(page,nil,chapter.totalPage + 1);
+}
+
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {
     return viewController.nextPage;
 }

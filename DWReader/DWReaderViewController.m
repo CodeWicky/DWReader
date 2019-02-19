@@ -156,12 +156,16 @@
         ///如果是预加载是异步解析，且解析完成后会自动切章，所以在解析之前存储到章节表中
         [self.chapterTbl setValue:chapter forKey:info.chapter_id];
         ///如果是预加载，异步分页完成后应检测是否在等待切章
-        [chapter asyncParseChapterToPageWithConfiguration:_textConf textColor:_textColor completion:^{
+        [chapter asyncParseChapterToPageWithConfiguration:_textConf textColor:_textColor reprocess:^{
+            [self reprocessChapterIfNeeded:chapter];
+        } completion:^{
             [self changeChapterIfNeeded:chapter nextChapter:nextChapter];
         }];
     } else {
         ///如果不是预加载，是同步解析，当解析完成后再加入到章节表中
-        [chapter parseChapterToPageWithConfiguration:_textConf textColor:_textColor];
+        [chapter parseChapterToPageWithConfiguration:_textConf textColor:_textColor reprocess:^{
+            [self reprocessChapterIfNeeded:chapter];
+        }];
         [self.chapterTbl setValue:chapter forKey:info.chapter_id];
     }
     
@@ -196,7 +200,7 @@
     ///找到当前未使用的页面控制器(当前采取复用模式，总共只有两个页面控制器)
     DWReaderPageViewController * availablePage = self.currentPageVC.nextPage;
     ///找到页面后配置页面信息(往后翻页则找到下一章的第一页，往前翻页则找到上一章的最后一页)
-    DWReaderPageInfo * pageInfo = nextChapter ? chapter.pages.firstObject : chapter.pages.lastObject;
+    DWReaderPageInfo * pageInfo = nextChapter ? chapter.firstPageInfo : chapter.lastPageInfo;
     [availablePage updateInfo:pageInfo];
     
     ///然后进行翻页即可(翻页操作必须在主线程)
@@ -214,6 +218,18 @@
         self.waitingChangeNextChapter = NO;
     } else {
         self.waitingChangePreviousChapter = NO;
+    }
+}
+
+-(void)reprocessChapterIfNeeded:(DWReaderChapter *)chapter {
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:reprocessChapter:configChapterCallback:)]) {
+        [self.readerDelegate reader:self reprocessChapter:chapter configChapterCallback:^(DWReaderPageInfo * _Nonnull newFirstPage, DWReaderPageInfo * _Nonnull newLastPage, NSUInteger fixTotalPage) {
+            [chapter reprocessChapterWithFirstPageInfo:newFirstPage lastPageInfo:newLastPage totalPage:fixTotalPage];
+        }];
+    } else if (self.reprocessChapterCallback) {
+        self.reprocessChapterCallback(self, chapter, ^(DWReaderPageInfo * _Nonnull newFirstPage, DWReaderPageInfo * _Nonnull newLastPage, NSUInteger fixTotalPage) {
+            [chapter reprocessChapterWithFirstPageInfo:newFirstPage lastPageInfo:newLastPage totalPage:fixTotalPage];
+        });
     }
 }
 
@@ -259,7 +275,7 @@
         if (!nextChapter.parsing) {
             ///切换章节并找到章节中第一页
             self.currentChapter = nextChapter;
-            nextPage = nextChapter.pages.firstObject;
+            nextPage = nextChapter.firstPageInfo;
             DWReaderPageViewController * nextPageVC = viewController.nextPage;
             [nextPageVC updateInfo:nextPage];
             self.currentPageVC = nextPageVC;
@@ -302,7 +318,7 @@
     if (previousChapter) {
         if (!previousChapter.parsing) {
             self.currentChapter = previousChapter;
-            previousPage = previousChapter.pages.lastObject;
+            previousPage = previousChapter.lastPageInfo;
             DWReaderPageViewController * previousPageVC = viewController.previousPage;
             [previousPageVC updateInfo:previousPage];
             self.currentPageVC = previousPageVC;

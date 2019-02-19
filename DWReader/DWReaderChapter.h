@@ -11,6 +11,8 @@
 #import "DWReaderTextConfiguration.h"
 #import "DWReaderChapterInfo.h"
 
+
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DWReaderChapter : NSObject
@@ -39,8 +41,11 @@ NS_ASSUME_NONNULL_BEGIN
 ///正文内容
 @property (nonatomic ,copy ,readonly) NSString * content;
 
-///分页信息
-@property (nonatomic ,strong ,readonly) NSArray <DWReaderPageInfo *>* pages;
+///第一页信息
+@property (nonatomic ,strong) DWReaderPageInfo * firstPageInfo;
+
+///最后一页信息
+@property (nonatomic ,weak) DWReaderPageInfo * lastPageInfo;
 
 ///正在异步解析
 @property (nonatomic ,assign ,readonly) BOOL parsing;
@@ -90,11 +95,21 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param conf 页面配置
  @param textColor 文字颜色
+ @param reprocess 分页完成后想做的额外操作
  @param completion 异步完成回调
  */
--(void)asyncParseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor completion:(dispatch_block_t)completion;
--(void)parseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor;
+-(void)asyncParseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor reprocess:(dispatch_block_t)reprocess completion:(dispatch_block_t)completion;
+-(void)parseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor reprocess:(dispatch_block_t)reprocess;
 
+
+/**
+ 二次处理chapter，重新配置首页、尾页及总页数
+
+ @param first 新的首页
+ @param last 新的尾页
+ @param totalPage 新的总页数
+ */
+-(void)reprocessChapterWithFirstPageInfo:(DWReaderPageInfo *)first lastPageInfo:(DWReaderPageInfo *)last totalPage:(NSInteger)totalPage;
 
 @end
 
