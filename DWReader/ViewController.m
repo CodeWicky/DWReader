@@ -115,10 +115,25 @@
 //    self.dataArr = pageVCs;
 //
     
-    
-    
-    
-    
+//    NSMutableArray <DWReaderPageViewController *>* pageVCs = [NSMutableArray arrayWithCapacity:2];
+//
+//    DWReaderPageViewController * vc1 = [DWReaderPageViewController new];
+//    vc1.view.backgroundColor = [UIColor redColor];
+//
+//    DWReaderPageViewController * vc2 = [DWReaderPageViewController new];
+//    vc2.view.backgroundColor = [UIColor yellowColor];
+//
+//    vc1.nextPage = vc2;
+//    vc1.previousPage = vc2;
+//    vc2.previousPage = vc1;
+//    vc2.nextPage = vc1;
+//
+//    [pageVCs addObject:vc1];
+//    [pageVCs addObject:vc2];
+//
+//    self.dataArr = pageVCs;
+//
+//
 //    [self.pageVC setViewControllers:@[pageVCs.firstObject] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
 //    [self.navigationController pushViewController:self.pageVC animated:YES];
     
@@ -130,23 +145,23 @@
     conf.contentLineSpacing = 18;
     conf.paragraphSpacing = 28;
     conf.paragraphHeaderSpacing = 30;
-    
+
     CGRect renderFrame = CGRectMake(15, self.view.safeAreaInsets.top, self.view.bounds.size.width - 30, self.view.bounds.size.height - self.view.safeAreaInsets.top - self.view.safeAreaInsets.bottom);
-    
+
     DWReaderDisplayConfiguration * disCon = [[DWReaderDisplayConfiguration alloc] init];
     disCon.renderFrame = renderFrame;
     disCon.textColor = [UIColor redColor];
     disCon.transitionStyle = UIPageViewControllerTransitionStylePageCurl;
-    
-    
+
+
     DWReaderChapterInfo * info = [[DWReaderChapterInfo alloc] init];
     info.book_id = @"1000";
     info.chapter_id = @"10002";
-    
+
     self.reader = [DWReaderViewController readerWithTextConfiguration:conf displayConfiguration:disCon];
     self.reader.readerDelegate = self;
     [self.reader fetchChapter:info];
-    
+
     [self presentViewController:self.reader animated:YES completion:nil];
 }
 
@@ -217,6 +232,10 @@
 
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(DWReaderPageViewController *)viewController {
     return viewController.previousPage;
+}
+
+- (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray<UIViewController *> *)previousViewControllers transitionCompleted:(BOOL)completed {
+    
 }
 
 -(UIPageViewController *)pageVC {

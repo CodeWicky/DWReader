@@ -36,10 +36,6 @@
 
 @property (nonatomic ,assign) BOOL cancelableChangingChapter;
 
-@property (nonatomic ,strong) DWReaderChapter * originChapter;
-
-@property (nonatomic ,strong) DWReaderPageViewController * originPageVC;
-
 @end
 
 @implementation DWReaderViewController
@@ -208,7 +204,7 @@
     DWReaderPageViewController * availablePage = self.currentPageVC.nextPage;
     ///找到页面后配置页面信息(往后翻页则找到下一章的第一页，往前翻页则找到上一章的最后一页)
     DWReaderPageInfo * pageInfo = nil;
-    
+    NSLog(@"availabelPage %@",availablePage);
     ///如果有百分比，调到对应页
     if (chapter.chapterInfo.percent > 0 && initializeReader) {
         NSUInteger page = floor(chapter.chapterInfo.percent * chapter.totalPage);
@@ -300,14 +296,11 @@
             ///切换章节并找到章节中第一页
             ///记录当前进行的是可取消的切章状态
             self.cancelableChangingChapter = YES;
-            ///记录原始章节
-            self.originChapter = self.currentChapter;
             self.currentChapter = nextChapter;
             nextPage = nextChapter.firstPageInfo;
             DWReaderPageViewController * nextPageVC = viewController.nextPage;
             [nextPageVC updateInfo:nextPage];
             ///记录原始页面控制器
-            self.originPageVC = self.currentPageVC;
             self.currentPageVC = nextPageVC;
             return nextPageVC;
         }
@@ -348,12 +341,10 @@
     if (previousChapter) {
         if (!previousChapter.parsing) {
             self.cancelableChangingChapter = YES;
-            self.originChapter = self.currentChapter;
             self.currentChapter = previousChapter;
             previousPage = previousChapter.lastPageInfo;
             DWReaderPageViewController * previousPageVC = viewController.previousPage;
             [previousPageVC updateInfo:previousPage];
-            self.originPageVC = self.currentPageVC;
             self.currentPageVC = previousPageVC;
             return previousPageVC;
         }
@@ -375,17 +366,17 @@
     pageViewController.view.userInteractionEnabled = NO;
 }
 
--(void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray<UIViewController *> *)previousViewControllers transitionCompleted:(BOOL)completed {
+-(void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray<DWReaderPageViewController *> *)previousViewControllers transitionCompleted:(BOOL)completed {
     pageViewController.view.userInteractionEnabled = YES;
     
     ///如果进行的是可取消的切章且的确取消切章的话，要恢复原始章节及页面控制器
     if (!completed && self.cancelableChangingChapter) {
-        self.currentChapter = self.originChapter;
-        self.currentPageVC = self.originPageVC;
+        self.currentChapter = previousViewControllers.firstObject.pageInfo.chapter;
+        self.currentPageVC = previousViewControllers.firstObject;
     }
     self.cancelableChangingChapter = NO;
-    self.originChapter = nil;
-    self.originPageVC = nil;
+    
+    NSLog(@"finish %@",self.currentPageVC);
 }
 
 #pragma mark --- setter/getter ---

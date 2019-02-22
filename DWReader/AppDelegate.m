@@ -16,7 +16,11 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [DWLogManager configDefaultLogger];
+        [DWLogManager shareLogManager].saveLocalLog = NO;
+        [DWLogManager printLoggerMainPath];
+    });
     return YES;
 }
 

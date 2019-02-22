@@ -8,9 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+
+@class DWReaderChapter;
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DWReaderPageInfo : NSObject
+
+@property (nonatomic ,weak) DWReaderChapter * chapter;
 
 ///下一页的页面信息
 @property (nonatomic ,strong) DWReaderPageInfo * nextPageInfo;

@@ -1,0 +1,969 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0298E1922F0D594F9B9325365D6F3C92 /* UIDevice+DWDeviceUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = E98D9192664A31627CFCA360C9862CD6 /* UIDevice+DWDeviceUtils.m */; };
+		0823CC865D8944D3CC4A777AA928A956 /* NSArray+DWArrayUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = D5FDF6EF4377597B25F6016915D28F0D /* NSArray+DWArrayUtils.m */; };
+		112E74506EA615C1108630965C9F7605 /* DWTableViewHelper.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C7370F1DF638E3A580081C9295CD7CC /* DWTableViewHelper.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		133B85AA3ADECA996964F3B2FE58ED5A /* DWLogManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 03F17A68D6B1A0E3EB9E59EAD1F4E643 /* DWLogManager.m */; };
+		1458555EDBC221FD183EB6E6C6446B21 /* DWCheckBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 8877B51C7F572AEA55A3EA11179413C1 /* DWCheckBox.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		242CE977D14BA38C355BEC953D18A13F /* DWLogManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A5828760C3BEFEF3AE2C6DBE827CA28E /* DWLogManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		2868FEB1E0B86FD75C6895E8BC30FBEA /* UIDevice+DWDeviceUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7962393A8AE260F29F084CC1C9D3D7DA /* UIDevice+DWDeviceUtils.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		3A2B0503E73878F790175D245D0C501F /* DWLoggerMacro.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AF37EA4A0432DC1185074984DA4473E /* DWLoggerMacro.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		4B44ED46F6782526ECFA7612B56E5AA0 /* DWSearchView.h in Headers */ = {isa = PBXBuildFile; fileRef = 9FC817EA554B8E650DB35DC0941DC715 /* DWSearchView.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		52763E538211410AA4F7496280A0E6C8 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD46FBC041420035C341CC6342582587 /* UIKit.framework */; };
+		5F10A4288A52E634C94A98719C11613E /* DWLogView.m in Sources */ = {isa = PBXBuildFile; fileRef = 787B280124EBCBA6050C243A8ACD4077 /* DWLogView.m */; };
+		780C323FDF15764CF129B8B1850D4E7A /* DWCrashCollector.m in Sources */ = {isa = PBXBuildFile; fileRef = 160AA768800C9836ADA6E6B6EB1DEF1E /* DWCrashCollector.m */; };
+		79C2225C7785A520207EDA71731E39CA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD46FBC041420035C341CC6342582587 /* UIKit.framework */; };
+		7FD512D8A77462CA80F985B5AB96E8F1 /* UIWindow+DWLoggerShake.h in Headers */ = {isa = PBXBuildFile; fileRef = ACCC08E1462CCC60B89A5E5BBF7FF3F6 /* UIWindow+DWLoggerShake.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		806CBD5136D9EFDF8013AEE2CDC5BF4B /* DWTableViewHelper-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 58C4831CDF5760F4D4374EF8201F1F29 /* DWTableViewHelper-dummy.m */; };
+		86FE6656378F5AF290C315AF8C79B083 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD46FBC041420035C341CC6342582587 /* UIKit.framework */; };
+		8A20F06D6EF46F34ECF618EB49BF65B3 /* DWCheckBox.m in Sources */ = {isa = PBXBuildFile; fileRef = 51914058DE3624DB454167E934DAAFFF /* DWCheckBox.m */; };
+		92D31AB7C31D4716B002FB3AC17CB796 /* DWOperationCancelFlag.h in Headers */ = {isa = PBXBuildFile; fileRef = EFEF760D7AE724207D3BD690B7715770 /* DWOperationCancelFlag.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		92D321DD1FD0C97A4FEF6AFAE0391E1F /* DWLogView.h in Headers */ = {isa = PBXBuildFile; fileRef = 7489ED61CC85B05F8DAC5DD82A9A98E1 /* DWLogView.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		92EB77FDDE458FDF3D7212EA70A3D48C /* DWFileManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 04159B473D0FC6C80B08F63DBB7E4743 /* DWFileManager.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		996B774B8462F8796F18BF601F8DE833 /* DWTableViewHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = E4C5CCE1EB5DDE404016EFCD0BA47AE2 /* DWTableViewHelper.m */; };
+		99FDA483820CDC363446D443DBF58110 /* DWSearchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 021B01F3C0E9F04FFB03D2E16B106313 /* DWSearchView.m */; };
+		9A0197A3674FD6B04DFC5AFBD15E0DF7 /* DWFileManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 34D75C2623E6B1043B16915BF241019E /* DWFileManager.m */; };
+		9F22243EB88F069689ADE3C6DDA77327 /* NSArray+DWArrayUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 6CBDD6D973E357C60D86F8A4D60792DA /* NSArray+DWArrayUtils.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		B6B80D64BF4761298BD79B6EAA7919F8 /* DWTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = 4486018D48112A7321703B2AB0082E47 /* DWTransaction.m */; };
+		CDC2A24C3C0F0A67E689A5BCDCC29D6B /* DWCheckBox-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 75D75C84788A464A13127594202D8B45 /* DWCheckBox-dummy.m */; };
+		CFA42E67B5DC7EA895FB4111E36A0DB4 /* DWLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = F6A0DDCE393392D3884AC3A2C39A1C12 /* DWLogger.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		DB21E85BFF6E2165968FDD5014EE7F50 /* DWLogger-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A6215F1A6065FB364CA8008444B5EB6 /* DWLogger-dummy.m */; };
+		DF96639C290C5B2F211CE77F419EBC8C /* DWCrashCollector.h in Headers */ = {isa = PBXBuildFile; fileRef = 58C8428BDADA88B85AE90F7E231C4277 /* DWCrashCollector.h */; settings = {ATTRIBUTES = (Project, ); }; };
+		EE1534028216E7271E1D901F6D08AE39 /* UIWindow+DWLoggerShake.m in Sources */ = {isa = PBXBuildFile; fileRef = 25C5DE6A049C6E491733C97578FAFB74 /* UIWindow+DWLoggerShake.m */; };
+		F3C8BF4AC1A686AC03A647F476D4108C /* Pods-DWReader-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 03D52E50CE4A9BFDE96DEB79C4D925C7 /* Pods-DWReader-dummy.m */; };
+		FB66C668B559DE5EE48CE4671D5318B3 /* DWOperationCancelFlag.m in Sources */ = {isa = PBXBuildFile; fileRef = 205C2A5A7BFB4877972C4D095A7D5FDA /* DWOperationCancelFlag.m */; };
+		FD9A78F713AF758CEDB1C7AB7A138F45 /* DWTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8A5BE3D18A4ABCBAB7F0D8A71D28B39F /* DWTransaction.h */; settings = {ATTRIBUTES = (Project, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		0C1A07F9AFF50EF1ED205D7779914E1F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F05DA903A9B4ED92BDDE5EB04A7FEA75;
+			remoteInfo = DWLogger;
+		};
+		408B4D45DD5C08024FFF313E9AA27AEA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6C351B1FD654E517E5D12FA1122D2230;
+			remoteInfo = DWTableViewHelper;
+		};
+		4D535D51401C8C0AF556A207A03ACF50 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6C351B1FD654E517E5D12FA1122D2230;
+			remoteInfo = DWTableViewHelper;
+		};
+		65E7B7DEC10A50AE2E531203ED807C7E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F72DDB3641C36B0F59CF4AD57706AC33;
+			remoteInfo = DWCheckBox;
+		};
+		710A8998F5C67FD2DEA80A358862E557 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F72DDB3641C36B0F59CF4AD57706AC33;
+			remoteInfo = DWCheckBox;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		001913C9273FE48D2BBF446764D723B2 /* DWLogger-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DWLogger-prefix.pch"; sourceTree = "<group>"; };
+		021B01F3C0E9F04FFB03D2E16B106313 /* DWSearchView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DWSearchView.m; path = DWLogger/DWSearchView.m; sourceTree = "<group>"; };
+		03D52E50CE4A9BFDE96DEB79C4D925C7 /* Pods-DWReader-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-DWReader-dummy.m"; sourceTree = "<group>"; };
+		03F17A68D6B1A0E3EB9E59EAD1F4E643 /* DWLogManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DWLogManager.m; path = DWLogger/DWLogManager.m; sourceTree = "<group>"; };
+		04159B473D0FC6C80B08F63DBB7E4743 /* DWFileManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWFileManager.h; path = DWLogger/Dependence/DWFileManager/DWFileManager.h; sourceTree = "<group>"; };
+		0AF37EA4A0432DC1185074984DA4473E /* DWLoggerMacro.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWLoggerMacro.h; path = DWLogger/DWLoggerMacro.h; sourceTree = "<group>"; };
+		160AA768800C9836ADA6E6B6EB1DEF1E /* DWCrashCollector.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DWCrashCollector.m; path = DWLogger/DWCrashCollector.m; sourceTree = "<group>"; };
+		19B697FE3027157C723E5033EBAF790E /* Pods-DWReader-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-DWReader-acknowledgements.markdown"; sourceTree = "<group>"; };
+		205C2A5A7BFB4877972C4D095A7D5FDA /* DWOperationCancelFlag.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DWOperationCancelFlag.m; path = DWTableViewHelper/Dependence/DWOperationCancelFlag.m; sourceTree = "<group>"; };
+		25C5DE6A049C6E491733C97578FAFB74 /* UIWindow+DWLoggerShake.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIWindow+DWLoggerShake.m"; path = "DWLogger/UIWindow+DWLoggerShake.m"; sourceTree = "<group>"; };
+		34D75C2623E6B1043B16915BF241019E /* DWFileManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DWFileManager.m; path = DWLogger/Dependence/DWFileManager/DWFileManager.m; sourceTree = "<group>"; };
+		3546EB9CBFD8ADF2FA19B6CAC249FC1C /* libDWLogger.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libDWLogger.a; path = libDWLogger.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		4486018D48112A7321703B2AB0082E47 /* DWTransaction.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DWTransaction.m; path = DWTableViewHelper/Dependence/DWTransaction.m; sourceTree = "<group>"; };
+		4B9CCC8FF92A831EE963B8023EB63A13 /* Pods-DWReader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DWReader.release.xcconfig"; sourceTree = "<group>"; };
+		51914058DE3624DB454167E934DAAFFF /* DWCheckBox.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DWCheckBox.m; path = DWCheckBox/DWCheckBox.m; sourceTree = "<group>"; };
+		56FFF093F3C2C0D1AD75F72E80AE1EA5 /* DWLoggerBundle.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; name = DWLoggerBundle.bundle; path = DWLogger/DWLoggerBundle.bundle; sourceTree = "<group>"; };
+		58C4831CDF5760F4D4374EF8201F1F29 /* DWTableViewHelper-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DWTableViewHelper-dummy.m"; sourceTree = "<group>"; };
+		58C8428BDADA88B85AE90F7E231C4277 /* DWCrashCollector.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWCrashCollector.h; path = DWLogger/DWCrashCollector.h; sourceTree = "<group>"; };
+		5CFD1C8930BF537CE415508BAC094F9A /* DWCheckBox-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DWCheckBox-prefix.pch"; sourceTree = "<group>"; };
+		626981B5BB49C8623869AE43021ADB83 /* DWTableViewHelperResource.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; name = DWTableViewHelperResource.bundle; path = DWTableViewHelper/DWTableViewHelperResource.bundle; sourceTree = "<group>"; };
+		652C18D84593F2F4B1A5A592C87CE882 /* libDWCheckBox.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libDWCheckBox.a; path = libDWCheckBox.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		6CBDD6D973E357C60D86F8A4D60792DA /* NSArray+DWArrayUtils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "NSArray+DWArrayUtils.h"; path = "DWLogger/Dependence/DWArrayUtils/NSArray+DWArrayUtils.h"; sourceTree = "<group>"; };
+		725EC801796FE11E6142B138F53CC33D /* libDWTableViewHelper.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = libDWTableViewHelper.a; path = libDWTableViewHelper.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		7489ED61CC85B05F8DAC5DD82A9A98E1 /* DWLogView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWLogView.h; path = DWLogger/DWLogView.h; sourceTree = "<group>"; };
+		75D75C84788A464A13127594202D8B45 /* DWCheckBox-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DWCheckBox-dummy.m"; sourceTree = "<group>"; };
+		787B280124EBCBA6050C243A8ACD4077 /* DWLogView.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DWLogView.m; path = DWLogger/DWLogView.m; sourceTree = "<group>"; };
+		78CABA4D9A8507AA07C23072B9B3C338 /* DWCheckBoxBundle.bundle */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "wrapper.plug-in"; name = DWCheckBoxBundle.bundle; path = DWCheckBox/DWCheckBoxBundle.bundle; sourceTree = "<group>"; };
+		7962393A8AE260F29F084CC1C9D3D7DA /* UIDevice+DWDeviceUtils.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIDevice+DWDeviceUtils.h"; path = "DWLogger/Dependence/DWDeviceUtils/UIDevice+DWDeviceUtils.h"; sourceTree = "<group>"; };
+		7A6215F1A6065FB364CA8008444B5EB6 /* DWLogger-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "DWLogger-dummy.m"; sourceTree = "<group>"; };
+		7C7370F1DF638E3A580081C9295CD7CC /* DWTableViewHelper.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWTableViewHelper.h; path = DWTableViewHelper/DWTableViewHelper.h; sourceTree = "<group>"; };
+		8060EF456B902B731000FBDDF2BB555C /* DWTableViewHelper.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DWTableViewHelper.xcconfig; sourceTree = "<group>"; };
+		8877B51C7F572AEA55A3EA11179413C1 /* DWCheckBox.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWCheckBox.h; path = DWCheckBox/DWCheckBox.h; sourceTree = "<group>"; };
+		8A5BE3D18A4ABCBAB7F0D8A71D28B39F /* DWTransaction.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWTransaction.h; path = DWTableViewHelper/Dependence/DWTransaction.h; sourceTree = "<group>"; };
+		8E4F786F31FE32F3D811CB97AD289C41 /* Pods-DWReader-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DWReader-frameworks.sh"; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9FC817EA554B8E650DB35DC0941DC715 /* DWSearchView.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWSearchView.h; path = DWLogger/DWSearchView.h; sourceTree = "<group>"; };
+		A5828760C3BEFEF3AE2C6DBE827CA28E /* DWLogManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWLogManager.h; path = DWLogger/DWLogManager.h; sourceTree = "<group>"; };
+		ACCC08E1462CCC60B89A5E5BBF7FF3F6 /* UIWindow+DWLoggerShake.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "UIWindow+DWLoggerShake.h"; path = "DWLogger/UIWindow+DWLoggerShake.h"; sourceTree = "<group>"; };
+		C248F74A7B3A37F9288984E3F71325B1 /* DWLogger.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DWLogger.xcconfig; sourceTree = "<group>"; };
+		C572CFF005689BB9EC53E73240B64BC5 /* Pods-DWReader.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-DWReader.debug.xcconfig"; sourceTree = "<group>"; };
+		D5FDF6EF4377597B25F6016915D28F0D /* NSArray+DWArrayUtils.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "NSArray+DWArrayUtils.m"; path = "DWLogger/Dependence/DWArrayUtils/NSArray+DWArrayUtils.m"; sourceTree = "<group>"; };
+		D777CFB83D4B3D74E89D2B3D8BB12B78 /* DWTableViewHelper-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "DWTableViewHelper-prefix.pch"; sourceTree = "<group>"; };
+		DD46FBC041420035C341CC6342582587 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.3.sdk/System/Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		E4C5CCE1EB5DDE404016EFCD0BA47AE2 /* DWTableViewHelper.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = DWTableViewHelper.m; path = DWTableViewHelper/DWTableViewHelper.m; sourceTree = "<group>"; };
+		E98D9192664A31627CFCA360C9862CD6 /* UIDevice+DWDeviceUtils.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIDevice+DWDeviceUtils.m"; path = "DWLogger/Dependence/DWDeviceUtils/UIDevice+DWDeviceUtils.m"; sourceTree = "<group>"; };
+		EDE339D0B998EB159113159B7648012C /* libPods-DWReader.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; name = "libPods-DWReader.a"; path = "libPods-DWReader.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFEF760D7AE724207D3BD690B7715770 /* DWOperationCancelFlag.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWOperationCancelFlag.h; path = DWTableViewHelper/Dependence/DWOperationCancelFlag.h; sourceTree = "<group>"; };
+		F6A0DDCE393392D3884AC3A2C39A1C12 /* DWLogger.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = DWLogger.h; path = DWLogger/DWLogger.h; sourceTree = "<group>"; };
+		FD9391D9C879C15B3F31BE614C283A44 /* Pods-DWReader-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-DWReader-acknowledgements.plist"; sourceTree = "<group>"; };
+		FEF1353FD199BB4A5EDECB440910D0F2 /* Pods-DWReader-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-DWReader-resources.sh"; sourceTree = "<group>"; };
+		FFD6291669F61B0ED2AA901E3BAB48BB /* DWCheckBox.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = DWCheckBox.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2B78CABB641FED3BA6B4871C9BFDFAFE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				86FE6656378F5AF290C315AF8C79B083 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		514E7780BEFC695A266F231909FC65A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				79C2225C7785A520207EDA71731E39CA /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9B7D4F88792307CEEFC1F43EE609F998 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9ED4BB368E90E2868FAC715601368459 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				52763E538211410AA4F7496280A0E6C8 /* UIKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0597D122F4FC0AC2F2B91C1BBF074738 /* DWFileManager */ = {
+			isa = PBXGroup;
+			children = (
+				04159B473D0FC6C80B08F63DBB7E4743 /* DWFileManager.h */,
+				34D75C2623E6B1043B16915BF241019E /* DWFileManager.m */,
+			);
+			name = DWFileManager;
+			sourceTree = "<group>";
+		};
+		09AC2809FCC27B948DC1975E6763EE9C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				652C18D84593F2F4B1A5A592C87CE882 /* libDWCheckBox.a */,
+				3546EB9CBFD8ADF2FA19B6CAC249FC1C /* libDWLogger.a */,
+				725EC801796FE11E6142B138F53CC33D /* libDWTableViewHelper.a */,
+				EDE339D0B998EB159113159B7648012C /* libPods-DWReader.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		1723EBC59A90EBE95EAE667DF8DBEE4F /* DWCheckBox */ = {
+			isa = PBXGroup;
+			children = (
+				8877B51C7F572AEA55A3EA11179413C1 /* DWCheckBox.h */,
+				51914058DE3624DB454167E934DAAFFF /* DWCheckBox.m */,
+				225E16D796073297314A02D2AA0000EF /* Resources */,
+				4F40315DB104E14E4B510AD5030860E6 /* Support Files */,
+			);
+			name = DWCheckBox;
+			path = DWCheckBox;
+			sourceTree = "<group>";
+		};
+		21F701C5E6DAD978AACB69BEDB8187CB /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1723EBC59A90EBE95EAE667DF8DBEE4F /* DWCheckBox */,
+				4BB4B77042343CA872244872807DC63D /* DWLogger */,
+				354F0F9B9C9A007D44C408F14278C9FE /* DWTableViewHelper */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		225E16D796073297314A02D2AA0000EF /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				78CABA4D9A8507AA07C23072B9B3C338 /* DWCheckBoxBundle.bundle */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		354F0F9B9C9A007D44C408F14278C9FE /* DWTableViewHelper */ = {
+			isa = PBXGroup;
+			children = (
+				EFEF760D7AE724207D3BD690B7715770 /* DWOperationCancelFlag.h */,
+				205C2A5A7BFB4877972C4D095A7D5FDA /* DWOperationCancelFlag.m */,
+				7C7370F1DF638E3A580081C9295CD7CC /* DWTableViewHelper.h */,
+				E4C5CCE1EB5DDE404016EFCD0BA47AE2 /* DWTableViewHelper.m */,
+				8A5BE3D18A4ABCBAB7F0D8A71D28B39F /* DWTransaction.h */,
+				4486018D48112A7321703B2AB0082E47 /* DWTransaction.m */,
+				6D05BBC2DB07DFD1D797A9E45F5F8FF5 /* Resources */,
+				4B8A1B88207957F83178C444C1F8313C /* Support Files */,
+			);
+			name = DWTableViewHelper;
+			path = DWTableViewHelper;
+			sourceTree = "<group>";
+		};
+		4B8A1B88207957F83178C444C1F8313C /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				8060EF456B902B731000FBDDF2BB555C /* DWTableViewHelper.xcconfig */,
+				58C4831CDF5760F4D4374EF8201F1F29 /* DWTableViewHelper-dummy.m */,
+				D777CFB83D4B3D74E89D2B3D8BB12B78 /* DWTableViewHelper-prefix.pch */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/DWTableViewHelper";
+			sourceTree = "<group>";
+		};
+		4BB4B77042343CA872244872807DC63D /* DWLogger */ = {
+			isa = PBXGroup;
+			children = (
+				58C8428BDADA88B85AE90F7E231C4277 /* DWCrashCollector.h */,
+				160AA768800C9836ADA6E6B6EB1DEF1E /* DWCrashCollector.m */,
+				F6A0DDCE393392D3884AC3A2C39A1C12 /* DWLogger.h */,
+				0AF37EA4A0432DC1185074984DA4473E /* DWLoggerMacro.h */,
+				A5828760C3BEFEF3AE2C6DBE827CA28E /* DWLogManager.h */,
+				03F17A68D6B1A0E3EB9E59EAD1F4E643 /* DWLogManager.m */,
+				7489ED61CC85B05F8DAC5DD82A9A98E1 /* DWLogView.h */,
+				787B280124EBCBA6050C243A8ACD4077 /* DWLogView.m */,
+				9FC817EA554B8E650DB35DC0941DC715 /* DWSearchView.h */,
+				021B01F3C0E9F04FFB03D2E16B106313 /* DWSearchView.m */,
+				ACCC08E1462CCC60B89A5E5BBF7FF3F6 /* UIWindow+DWLoggerShake.h */,
+				25C5DE6A049C6E491733C97578FAFB74 /* UIWindow+DWLoggerShake.m */,
+				69AD7AADD1924B2BFA115ECD8EA7E639 /* Dependence */,
+				F5C8BF04D535AF61BF9BB5202D553E30 /* Resources */,
+				7ED1686C54B9555659A3D01BE34909F5 /* Support Files */,
+			);
+			name = DWLogger;
+			path = DWLogger;
+			sourceTree = "<group>";
+		};
+		4F40315DB104E14E4B510AD5030860E6 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				FFD6291669F61B0ED2AA901E3BAB48BB /* DWCheckBox.xcconfig */,
+				75D75C84788A464A13127594202D8B45 /* DWCheckBox-dummy.m */,
+				5CFD1C8930BF537CE415508BAC094F9A /* DWCheckBox-prefix.pch */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/DWCheckBox";
+			sourceTree = "<group>";
+		};
+		69AD7AADD1924B2BFA115ECD8EA7E639 /* Dependence */ = {
+			isa = PBXGroup;
+			children = (
+				77B0A47CDD436810A02D673DEAF2EF75 /* DWArrayUtils */,
+				9A3B77E36184F761A85EB995093DD871 /* DWDeviceUtils */,
+				0597D122F4FC0AC2F2B91C1BBF074738 /* DWFileManager */,
+			);
+			name = Dependence;
+			sourceTree = "<group>";
+		};
+		6D05BBC2DB07DFD1D797A9E45F5F8FF5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				626981B5BB49C8623869AE43021ADB83 /* DWTableViewHelperResource.bundle */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		77B0A47CDD436810A02D673DEAF2EF75 /* DWArrayUtils */ = {
+			isa = PBXGroup;
+			children = (
+				6CBDD6D973E357C60D86F8A4D60792DA /* NSArray+DWArrayUtils.h */,
+				D5FDF6EF4377597B25F6016915D28F0D /* NSArray+DWArrayUtils.m */,
+			);
+			name = DWArrayUtils;
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
+				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				21F701C5E6DAD978AACB69BEDB8187CB /* Pods */,
+				09AC2809FCC27B948DC1975E6763EE9C /* Products */,
+				BA7C3A2026ED0BC1D3AB0899591E15ED /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		7ED1686C54B9555659A3D01BE34909F5 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				C248F74A7B3A37F9288984E3F71325B1 /* DWLogger.xcconfig */,
+				7A6215F1A6065FB364CA8008444B5EB6 /* DWLogger-dummy.m */,
+				001913C9273FE48D2BBF446764D723B2 /* DWLogger-prefix.pch */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/DWLogger";
+			sourceTree = "<group>";
+		};
+		9A3B77E36184F761A85EB995093DD871 /* DWDeviceUtils */ = {
+			isa = PBXGroup;
+			children = (
+				7962393A8AE260F29F084CC1C9D3D7DA /* UIDevice+DWDeviceUtils.h */,
+				E98D9192664A31627CFCA360C9862CD6 /* UIDevice+DWDeviceUtils.m */,
+			);
+			name = DWDeviceUtils;
+			sourceTree = "<group>";
+		};
+		BA7C3A2026ED0BC1D3AB0899591E15ED /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				BDA8F8F93F00BFDD1BC86091DFB1C1FD /* Pods-DWReader */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FF5B08143E740C3777FEB0D3A952141C /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BDA8F8F93F00BFDD1BC86091DFB1C1FD /* Pods-DWReader */ = {
+			isa = PBXGroup;
+			children = (
+				19B697FE3027157C723E5033EBAF790E /* Pods-DWReader-acknowledgements.markdown */,
+				FD9391D9C879C15B3F31BE614C283A44 /* Pods-DWReader-acknowledgements.plist */,
+				03D52E50CE4A9BFDE96DEB79C4D925C7 /* Pods-DWReader-dummy.m */,
+				8E4F786F31FE32F3D811CB97AD289C41 /* Pods-DWReader-frameworks.sh */,
+				FEF1353FD199BB4A5EDECB440910D0F2 /* Pods-DWReader-resources.sh */,
+				C572CFF005689BB9EC53E73240B64BC5 /* Pods-DWReader.debug.xcconfig */,
+				4B9CCC8FF92A831EE963B8023EB63A13 /* Pods-DWReader.release.xcconfig */,
+			);
+			name = "Pods-DWReader";
+			path = "Target Support Files/Pods-DWReader";
+			sourceTree = "<group>";
+		};
+		F5C8BF04D535AF61BF9BB5202D553E30 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				56FFF093F3C2C0D1AD75F72E80AE1EA5 /* DWLoggerBundle.bundle */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		FF5B08143E740C3777FEB0D3A952141C /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				DD46FBC041420035C341CC6342582587 /* UIKit.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		7A10F7AFC816DB2953D08E114891A8B1 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF96639C290C5B2F211CE77F419EBC8C /* DWCrashCollector.h in Headers */,
+				92EB77FDDE458FDF3D7212EA70A3D48C /* DWFileManager.h in Headers */,
+				CFA42E67B5DC7EA895FB4111E36A0DB4 /* DWLogger.h in Headers */,
+				3A2B0503E73878F790175D245D0C501F /* DWLoggerMacro.h in Headers */,
+				242CE977D14BA38C355BEC953D18A13F /* DWLogManager.h in Headers */,
+				92D321DD1FD0C97A4FEF6AFAE0391E1F /* DWLogView.h in Headers */,
+				4B44ED46F6782526ECFA7612B56E5AA0 /* DWSearchView.h in Headers */,
+				9F22243EB88F069689ADE3C6DDA77327 /* NSArray+DWArrayUtils.h in Headers */,
+				2868FEB1E0B86FD75C6895E8BC30FBEA /* UIDevice+DWDeviceUtils.h in Headers */,
+				7FD512D8A77462CA80F985B5AB96E8F1 /* UIWindow+DWLoggerShake.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		840B47AFC29AF0BD2F897ABDF3C8D04A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				92D31AB7C31D4716B002FB3AC17CB796 /* DWOperationCancelFlag.h in Headers */,
+				112E74506EA615C1108630965C9F7605 /* DWTableViewHelper.h in Headers */,
+				FD9A78F713AF758CEDB1C7AB7A138F45 /* DWTransaction.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		87CC06B9B7EF9572303DCBD4A5BA9BCF /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1458555EDBC221FD183EB6E6C6446B21 /* DWCheckBox.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		6C351B1FD654E517E5D12FA1122D2230 /* DWTableViewHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A9150EAE9A589C1A405F8A6E4E04A2AE /* Build configuration list for PBXNativeTarget "DWTableViewHelper" */;
+			buildPhases = (
+				2BDC363D8D5DC6EBAB59481FBE77C4AC /* Sources */,
+				514E7780BEFC695A266F231909FC65A4 /* Frameworks */,
+				840B47AFC29AF0BD2F897ABDF3C8D04A /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DWTableViewHelper;
+			productName = DWTableViewHelper;
+			productReference = 725EC801796FE11E6142B138F53CC33D /* libDWTableViewHelper.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		F05DA903A9B4ED92BDDE5EB04A7FEA75 /* DWLogger */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8BD790558C708881DA15A5C912FC7B3 /* Build configuration list for PBXNativeTarget "DWLogger" */;
+			buildPhases = (
+				C9D1785B4D9BD671292A22EDD71D8FE7 /* Sources */,
+				2B78CABB641FED3BA6B4871C9BFDFAFE /* Frameworks */,
+				7A10F7AFC816DB2953D08E114891A8B1 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				C7376B08F388EE9D4893CAD381469424 /* PBXTargetDependency */,
+				A5C96AF8EDD6D7554E4449D6A32DE725 /* PBXTargetDependency */,
+			);
+			name = DWLogger;
+			productName = DWLogger;
+			productReference = 3546EB9CBFD8ADF2FA19B6CAC249FC1C /* libDWLogger.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		F63CB7CC6D527B8729A860A61FC8B753 /* Pods-DWReader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2CC1AF345C0FCB7AD00DB901C28FF1F9 /* Build configuration list for PBXNativeTarget "Pods-DWReader" */;
+			buildPhases = (
+				ABF6E11442318621B5E9A03AC353DB42 /* Sources */,
+				9B7D4F88792307CEEFC1F43EE609F998 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				4C58563D8547E9FA9FA8F303FD730A52 /* PBXTargetDependency */,
+				FB87D5DCFC2040484BA6BFE99785CAB3 /* PBXTargetDependency */,
+				2EE360D33240BE3306C2B13481704616 /* PBXTargetDependency */,
+			);
+			name = "Pods-DWReader";
+			productName = "Pods-DWReader";
+			productReference = EDE339D0B998EB159113159B7648012C /* libPods-DWReader.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		F72DDB3641C36B0F59CF4AD57706AC33 /* DWCheckBox */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B2331D4687F5A44CAE1A9C35EFF4A2A /* Build configuration list for PBXNativeTarget "DWCheckBox" */;
+			buildPhases = (
+				952BE34EF871C97C542B64220C687BF1 /* Sources */,
+				9ED4BB368E90E2868FAC715601368459 /* Frameworks */,
+				87CC06B9B7EF9572303DCBD4A5BA9BCF /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DWCheckBox;
+			productName = DWCheckBox;
+			productReference = 652C18D84593F2F4B1A5A592C87CE882 /* libDWCheckBox.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0930;
+				LastUpgradeCheck = 0930;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = 09AC2809FCC27B948DC1975E6763EE9C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				F72DDB3641C36B0F59CF4AD57706AC33 /* DWCheckBox */,
+				F05DA903A9B4ED92BDDE5EB04A7FEA75 /* DWLogger */,
+				6C351B1FD654E517E5D12FA1122D2230 /* DWTableViewHelper */,
+				F63CB7CC6D527B8729A860A61FC8B753 /* Pods-DWReader */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2BDC363D8D5DC6EBAB59481FBE77C4AC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FB66C668B559DE5EE48CE4671D5318B3 /* DWOperationCancelFlag.m in Sources */,
+				806CBD5136D9EFDF8013AEE2CDC5BF4B /* DWTableViewHelper-dummy.m in Sources */,
+				996B774B8462F8796F18BF601F8DE833 /* DWTableViewHelper.m in Sources */,
+				B6B80D64BF4761298BD79B6EAA7919F8 /* DWTransaction.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		952BE34EF871C97C542B64220C687BF1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDC2A24C3C0F0A67E689A5BCDCC29D6B /* DWCheckBox-dummy.m in Sources */,
+				8A20F06D6EF46F34ECF618EB49BF65B3 /* DWCheckBox.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ABF6E11442318621B5E9A03AC353DB42 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F3C8BF4AC1A686AC03A647F476D4108C /* Pods-DWReader-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9D1785B4D9BD671292A22EDD71D8FE7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				780C323FDF15764CF129B8B1850D4E7A /* DWCrashCollector.m in Sources */,
+				9A0197A3674FD6B04DFC5AFBD15E0DF7 /* DWFileManager.m in Sources */,
+				DB21E85BFF6E2165968FDD5014EE7F50 /* DWLogger-dummy.m in Sources */,
+				133B85AA3ADECA996964F3B2FE58ED5A /* DWLogManager.m in Sources */,
+				5F10A4288A52E634C94A98719C11613E /* DWLogView.m in Sources */,
+				99FDA483820CDC363446D443DBF58110 /* DWSearchView.m in Sources */,
+				0823CC865D8944D3CC4A777AA928A956 /* NSArray+DWArrayUtils.m in Sources */,
+				0298E1922F0D594F9B9325365D6F3C92 /* UIDevice+DWDeviceUtils.m in Sources */,
+				EE1534028216E7271E1D901F6D08AE39 /* UIWindow+DWLoggerShake.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		2EE360D33240BE3306C2B13481704616 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DWTableViewHelper;
+			target = 6C351B1FD654E517E5D12FA1122D2230 /* DWTableViewHelper */;
+			targetProxy = 408B4D45DD5C08024FFF313E9AA27AEA /* PBXContainerItemProxy */;
+		};
+		4C58563D8547E9FA9FA8F303FD730A52 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DWCheckBox;
+			target = F72DDB3641C36B0F59CF4AD57706AC33 /* DWCheckBox */;
+			targetProxy = 710A8998F5C67FD2DEA80A358862E557 /* PBXContainerItemProxy */;
+		};
+		A5C96AF8EDD6D7554E4449D6A32DE725 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DWTableViewHelper;
+			target = 6C351B1FD654E517E5D12FA1122D2230 /* DWTableViewHelper */;
+			targetProxy = 4D535D51401C8C0AF556A207A03ACF50 /* PBXContainerItemProxy */;
+		};
+		C7376B08F388EE9D4893CAD381469424 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DWCheckBox;
+			target = F72DDB3641C36B0F59CF4AD57706AC33 /* DWCheckBox */;
+			targetProxy = 65E7B7DEC10A50AE2E531203ED807C7E /* PBXContainerItemProxy */;
+		};
+		FB87D5DCFC2040484BA6BFE99785CAB3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = DWLogger;
+			target = F05DA903A9B4ED92BDDE5EB04A7FEA75 /* DWLogger */;
+			targetProxy = 0C1A07F9AFF50EF1ED205D7779914E1F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0E12B7268EF0862DFEEB8B6B0BD7C9F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		5D60AD07F38BF32D1FBAC32D96805798 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C572CFF005689BB9EC53E73240B64BC5 /* Pods-DWReader.debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MACH_O_TYPE = staticlib;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6C3E452C84D85D1E80F8E0D5D8177D00 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4B9CCC8FF92A831EE963B8023EB63A13 /* Pods-DWReader.release.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MACH_O_TYPE = staticlib;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		A0F8294F4B52349620A8210FC54F405B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8060EF456B902B731000FBDDF2BB555C /* DWTableViewHelper.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/DWTableViewHelper/DWTableViewHelper-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = DWTableViewHelper;
+				PRODUCT_NAME = DWTableViewHelper;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		A1B4AF41D596669739539B63333DB6B3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FFD6291669F61B0ED2AA901E3BAB48BB /* DWCheckBox.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/DWCheckBox/DWCheckBox-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = DWCheckBox;
+				PRODUCT_NAME = DWCheckBox;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B42F3E07E00F9FB58ADFE8E18927C9FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FFD6291669F61B0ED2AA901E3BAB48BB /* DWCheckBox.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/DWCheckBox/DWCheckBox-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = DWCheckBox;
+				PRODUCT_NAME = DWCheckBox;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CB38ACE3E25527541AAAA944A6F3B2B5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8060EF456B902B731000FBDDF2BB555C /* DWTableViewHelper.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/DWTableViewHelper/DWTableViewHelper-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = DWTableViewHelper;
+				PRODUCT_NAME = DWTableViewHelper;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		CD8324D57CD462761E218EEA4EA91EC7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Release;
+		};
+		D2B449ECCEEF63BDCE585C7E264229AB /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C248F74A7B3A37F9288984E3F71325B1 /* DWLogger.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/DWLogger/DWLogger-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = DWLogger;
+				PRODUCT_NAME = DWLogger;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		D3FBD168C59C755C7BC3E69D2D261BE8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C248F74A7B3A37F9288984E3F71325B1 /* DWLogger.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				GCC_PREFIX_HEADER = "Target Support Files/DWLogger/DWLogger-prefix.pch";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PRIVATE_HEADERS_FOLDER_PATH = "";
+				PRODUCT_MODULE_NAME = DWLogger;
+				PRODUCT_NAME = DWLogger;
+				PUBLIC_HEADERS_FOLDER_PATH = "";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2CC1AF345C0FCB7AD00DB901C28FF1F9 /* Build configuration list for PBXNativeTarget "Pods-DWReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5D60AD07F38BF32D1FBAC32D96805798 /* Debug */,
+				6C3E452C84D85D1E80F8E0D5D8177D00 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0E12B7268EF0862DFEEB8B6B0BD7C9F4 /* Debug */,
+				CD8324D57CD462761E218EEA4EA91EC7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3B2331D4687F5A44CAE1A9C35EFF4A2A /* Build configuration list for PBXNativeTarget "DWCheckBox" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A1B4AF41D596669739539B63333DB6B3 /* Debug */,
+				B42F3E07E00F9FB58ADFE8E18927C9FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A9150EAE9A589C1A405F8A6E4E04A2AE /* Build configuration list for PBXNativeTarget "DWTableViewHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A0F8294F4B52349620A8210FC54F405B /* Debug */,
+				CB38ACE3E25527541AAAA944A6F3B2B5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D8BD790558C708881DA15A5C912FC7B3 /* Build configuration list for PBXNativeTarget "DWLogger" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D3FBD168C59C755C7BC3E69D2D261BE8 /* Debug */,
+				D2B449ECCEEF63BDCE585C7E264229AB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}
