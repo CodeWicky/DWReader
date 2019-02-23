@@ -229,8 +229,12 @@
         ///关闭交互避免连续翻页
         self.view.userInteractionEnabled = NO;
         __weak typeof(self)weakSelf = self;
+        [self willDisplayPage:availablePage];
         [self setViewControllers:@[availablePage] direction:nextChapter?UIPageViewControllerNavigationDirectionForward:UIPageViewControllerNavigationDirectionReverse animated:YES completion:^(BOOL finished) {
             weakSelf.view.userInteractionEnabled = YES;
+            if (!initializeReader) {
+                [weakSelf didEndDisplayingPage:availablePage.nextPage];
+            }
         }];
     });
     
@@ -262,6 +266,22 @@
     } else {
         NSAssert(NO, @"DWReader can't query chapter_id.You must either implement -reader:queryChapterIdForBook:currentChapterID:currentChapterIndex:nextChapter or set queryChapterIdCallback.");
         return nil;
+    }
+}
+
+-(void)willDisplayPage:(DWReaderPageViewController *)page {
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:willDisplayPage:)]) {
+        [self.readerDelegate reader:self willDisplayPage:page];
+    } else if (self.willDisplayPageCallback) {
+        self.willDisplayPageCallback(self,page);
+    }
+}
+
+-(void)didEndDisplayingPage:(DWReaderPageViewController *)page {
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:didEndDisplayingPage:)]) {
+        [self.readerDelegate reader:self didEndDisplayingPage:page];
+    } else if (self.didEndDisplayingPageCallback) {
+        self.didEndDisplayingPageCallback(self, page);
     }
 }
 
@@ -362,17 +382,26 @@
 }
 
 ///避免连续翻页渲染失败（翻页开始时关闭交互防止二次翻页，翻页结束时再打开交互）
--(void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<UIViewController *> *)pendingViewControllers {
+-(void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<DWReaderPageViewController *> *)pendingViewControllers {
     pageViewController.view.userInteractionEnabled = NO;
+    [self willDisplayPage:pendingViewControllers.firstObject];
 }
 
 -(void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray<DWReaderPageViewController *> *)previousViewControllers transitionCompleted:(BOOL)completed {
     pageViewController.view.userInteractionEnabled = YES;
     
+    ///如果动画完成，则上一个控制器结束展示，否则刚刚出现的控制器结束展示
+    DWReaderPageViewController * previousPageVC = previousViewControllers.firstObject;
+    if (completed) {
+        [self didEndDisplayingPage:previousPageVC];
+    } else {
+        [self didEndDisplayingPage:previousPageVC.nextPage];
+    }
+    
     ///如果进行的是可取消的切章且的确取消切章的话，要恢复原始章节及页面控制器
     if (!completed && self.cancelableChangingChapter) {
-        self.currentChapter = previousViewControllers.firstObject.pageInfo.chapter;
-        self.currentPageVC = previousViewControllers.firstObject;
+        self.currentChapter = previousPageVC.pageInfo.chapter;
+        self.currentPageVC = previousPageVC;
     }
     self.cancelableChangingChapter = NO;
     

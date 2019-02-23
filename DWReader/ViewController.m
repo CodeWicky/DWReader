@@ -7,8 +7,6 @@
 //
 
 #import "ViewController.h"
-#import "DWReaderChapter.h"
-#import "DWReaderPageViewController.h"
 #import "DWReaderViewController.h"
 
 @interface ViewController ()<UIPageViewControllerDelegate, UIPageViewControllerDataSource, DWReaderDataDelegate>
@@ -186,18 +184,18 @@
 }
 
 -(void)reader:(DWReaderViewController *)reader reprocessChapter:(DWReaderChapter *)chapter configChapterCallback:(DWReaderReprocessorCallback)callback {
-    DWReaderPageInfo * page = [[DWReaderPageInfo alloc] init];
+    DWReaderPageInfo * page = [DWReaderPageInfo pageInfoWithChapter:chapter];
     NSMutableAttributedString * attr = [[NSMutableAttributedString alloc] initWithString:@"测试首页"];
     [attr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:28] range:NSMakeRange(0, attr.length)];
     [attr addAttribute:NSForegroundColorAttributeName value:[UIColor yellowColor] range:NSMakeRange(0, attr.length)];
     page.pageContent = attr;
-    
     ///修改新首页
     chapter.firstPageInfo.previousPageInfo = page;
     page.nextPageInfo = chapter.firstPageInfo;
     
     DWReaderPageInfo * tmpPage = chapter.firstPageInfo;
-    while (tmpPage) {
+    ///最后一页之后不加广告
+    while (tmpPage && tmpPage.nextPageInfo) {
         
         if (tmpPage.page % 4 != 3) {
             tmpPage = tmpPage.nextPageInfo;
@@ -206,9 +204,8 @@
         
         NSMutableAttributedString * attr = [[NSMutableAttributedString alloc] initWithString:@"测试广告"];
         [attr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:56] range:NSMakeRange(0, attr.length)];
-        DWReaderPageInfo * adPage = [[DWReaderPageInfo alloc] init];
+        DWReaderPageInfo * adPage = [DWReaderPageInfo pageInfoWithChapter:chapter];
         adPage.pageContent = attr;
-
         DWReaderPageInfo * nextPage = tmpPage.nextPageInfo;
 
         if (!nextPage) {
@@ -224,6 +221,14 @@
     }
     
     callback(page,nil,chapter.totalPage + 1);
+}
+
+-(void)reader:(DWReaderViewController *)reader willDisplayPage:(DWReaderPageViewController *)page {
+    NSLog(@"Will Display %@",page.pageInfo.pageContent.string);
+}
+
+-(void)reader:(DWReaderViewController *)reader didEndDisplayingPage:(DWReaderPageViewController *)page {
+    NSLog(@"Did End Displaying %@",page.pageInfo.pageContent.string);
 }
 
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {

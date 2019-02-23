@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DWReaderPageInfo : NSObject
 
-@property (nonatomic ,weak) DWReaderChapter * chapter;
+@property (nonatomic ,weak ,readonly) DWReaderChapter * chapter;
 
 ///下一页的页面信息
 @property (nonatomic ,strong) DWReaderPageInfo * nextPageInfo;
@@ -30,6 +30,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 ///本页需要绘制的富文本
 @property (nonatomic ,strong) NSMutableAttributedString * pageContent;
+
++(instancetype)pageInfoWithChapter:(DWReaderChapter *)chapter;
+
+-(instancetype)initWithChapter:(DWReaderChapter *)chapter NS_DESIGNATED_INITIALIZER;
+
+-(instancetype)init NS_UNAVAILABLE;
 
 @end
 
