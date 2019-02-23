@@ -207,7 +207,7 @@
     NSLog(@"availabelPage %@",availablePage);
     ///如果有百分比，调到对应页
     if (chapter.chapterInfo.percent > 0 && initializeReader) {
-        NSUInteger page = floor(chapter.chapterInfo.percent * chapter.totalPage);
+        NSUInteger page = floor(MIN(chapter.chapterInfo.percent, 1)  * chapter.totalPage);
         pageInfo = [chapter pageInfoOnPage:page];
         ///如果取不到则采用默认数据
         if (!pageInfo) {
