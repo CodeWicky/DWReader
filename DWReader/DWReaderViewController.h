@@ -125,6 +125,24 @@ typedef void(^DWReaderPageChangeCallback)(DWReaderViewController * reader, DWRea
  */
 -(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo;
 
+
+/**
+ 预加载下章节内容
+ */
+-(void)preloadNextChapter;
+
+
+/**
+ 翻到下一页
+ */
+-(void)showNextPage;
+
+
+/**
+ 翻到上一页
+ */
+-(void)showPreviousPage;
+
 @end
 
 NS_ASSUME_NONNULL_END
