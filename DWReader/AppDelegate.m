@@ -21,6 +21,7 @@
         [DWLogManager shareLogManager].saveLocalLog = NO;
         [DWLogManager printLoggerMainPath];
     });
+    
     return YES;
 }
 
