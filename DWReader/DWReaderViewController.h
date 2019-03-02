@@ -12,6 +12,7 @@
 #import "DWReaderDisplayConfiguration.h"
 #import "DWReaderChapter.h"
 #import "DWReaderPageInfo.h"
+#import "DWReaderPageViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,6 +23,7 @@ typedef void(^DWReaderReprocessorCallback)(DWReaderPageInfo * _Nullable  newFirs
 typedef NSString *(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID ,BOOL nextChapter);
 typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * chapterID ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
 typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader ,DWReaderChapter * chapter ,DWReaderReprocessorCallback reprocessor);
+typedef void(^DWReaderPageChangeCallback)(DWReaderViewController * reader, DWReaderPageViewController * page);
 
 @protocol DWReaderDataDelegate <NSObject>
 
@@ -58,6 +60,24 @@ typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader 
  */
 -(void)reader:(DWReaderViewController *)reader reprocessChapter:(DWReaderChapter *)chapter configChapterCallback:(DWReaderReprocessorCallback)callback;
 
+
+/**
+ 将要展示指定页面
+
+ @param reader 当前阅读器对象
+ @param page 将要展示的页面控制器
+ */
+-(void)reader:(DWReaderViewController *)reader willDisplayPage:(DWReaderPageViewController *)page;
+
+
+/**
+ 结束展示指定页面
+
+ @param reader 当前阅读器对象
+ @param page 结束展示的页面控制器
+ */
+-(void)reader:(DWReaderViewController *)reader didEndDisplayingPage:(DWReaderPageViewController *)page;
+
 @end
 
 @interface DWReaderViewController : UIPageViewController
@@ -73,6 +93,12 @@ typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader 
 
 ///分页完成后完成对页面的二次修改
 @property (nonatomic ,copy) DWReaderReprocessChapterCallback reprocessChapterCallback;
+
+///将要展示指定页面
+@property (nonatomic ,copy) DWReaderPageChangeCallback willDisplayPageCallback;
+
+///结束展示指定页面
+@property (nonatomic ,copy) DWReaderPageChangeCallback didEndDisplayingPageCallback;
 
 ///需要展示Loading的回调，通常出现在请求章节内容时（非预加载）
 @property (nonatomic ,copy) void (^loadingAction) (BOOL show);
@@ -98,6 +124,24 @@ typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader 
  @param chapterInfo 章节信息
  */
 -(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo;
+
+
+/**
+ 预加载下章节内容
+ */
+-(void)preloadNextChapter;
+
+
+/**
+ 翻到下一页
+ */
+-(void)showNextPage;
+
+
+/**
+ 翻到上一页
+ */
+-(void)showPreviousPage;
 
 @end
 

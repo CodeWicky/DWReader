@@ -34,7 +34,7 @@
 
 @property (nonatomic ,strong) DWReaderPageViewController * currentPageVC;
 
-@property (nonatomic ,assign) BOOL cancelableChangingChapter;
+@property (nonatomic ,assign) BOOL cancelableChangingPage;
 
 @end
 
@@ -68,6 +68,122 @@
     [self requestChapter:chapterInfo nextChapter:YES preload:NO];
 }
 
+-(void)preloadNextChapter {
+    
+    ///获取下一章章节ID，如果获取不到则返回
+    NSString * chapterId = [self queryChapterId:YES];
+    if (!chapterId.length) {
+        return;
+    }
+    
+    ///组装章节信息
+    DWReaderChapterInfo * chapterInfo = [[DWReaderChapterInfo alloc] init];
+    chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
+    chapterInfo.chapter_id = chapterId;
+    [self requestChapter:chapterInfo nextChapter:YES preload:YES];
+}
+
+-(void)showNextPage {
+    ///首先取出下一页信息，在同一章中，页面信息存有链表关系，如果取到为nil说明这一章结束了，这时候要考虑下一章
+    
+    DWReaderPageViewController * currentVC = self.currentPageVC;
+    DWReaderPageInfo * nextPage = currentVC.pageInfo.nextPageInfo;
+    
+    if (nextPage) {
+        ///先取出可用于渲染下一页的页面控制器，在更新页面配置信息
+        DWReaderPageViewController * nextPageVC = currentVC.nextPage;
+        [nextPageVC updateInfo:nextPage];
+        self.currentPageVC = nextPageVC;
+        [self showPageVC:nextPageVC from:nextPageVC.previousPage nextPage:YES initial:NO];
+        return;
+    }
+    
+    ///如果当前无页面配置信息代表要切章了，首先找到下一章
+    NSString * nextChapterID = [self queryChapterId:YES];
+    ///如果获取不到章节ID则代表是最后一章了，询问外部动作,并返回
+    if (!nextChapterID.length) {
+        if (self.noMoreChapter) {
+            self.noMoreChapter(YES);
+        }
+        return ;
+    }
+    ///获取到下章ID，先查询本地是否存在下一章，不存在直接请求下章即可，同时要将等待翻页置位真，让请求完成后自动翻页
+    DWReaderChapter * nextChapter = [self.chapterTbl valueForKey:nextChapterID];
+    if (nextChapter) {
+        ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转（由于直接返回vc的都是可以取消的翻页，所以如果翻页取消了，要将章节和控制器恢复成切章之前的状态）
+        if (!nextChapter.parsing) {
+            ///切换章节并找到章节中第一页
+            ///记录当前进行的是可取消的切章状态
+            self.currentChapter = nextChapter;
+            nextPage = nextChapter.firstPageInfo;
+            DWReaderPageViewController * nextPageVC = currentVC.nextPage;
+            [nextPageVC updateInfo:nextPage];
+            ///记录原始页面控制器
+            self.currentPageVC = nextPageVC;
+            [self showPageVC:nextPageVC from:nextPageVC.previousPage nextPage:YES initial:NO];
+        }
+        return ;
+    }
+    
+    ///如果不存在下一章直接请求下一章即可
+    DWReaderChapterInfo * chapterInfo = [[DWReaderChapterInfo alloc] init];
+    chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
+    chapterInfo.chapter_id = nextChapterID;
+    self.waitingChangeNextChapter = YES;
+    ///异步提交请求任务，如果同步的话会造成当整个数据获取过程是同步时（即读取本地缓存数据），同步设置了pageViewController的vc，然后又立刻返回了nil。UIPageViewController如果短时间内改变两次vc（在一个动画未完成即开始另一个动画）避险黑屏。所以分成两次提交。
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self requestChapter:chapterInfo nextChapter:YES preload:NO];
+    });
+}
+
+-(void)showPreviousPage {
+    DWReaderPageViewController * currentVC = self.currentPageVC;
+    DWReaderPageInfo * previousPage = currentVC.pageInfo.previousPageInfo;
+    if (previousPage) {
+        DWReaderPageViewController * previousPageVC = currentVC.previousPage;
+        [previousPageVC updateInfo:previousPage];
+        self.currentPageVC = previousPageVC;
+        [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO];
+        return ;
+    }
+    
+    NSString * previousChapterID = [self queryChapterId:NO];
+    if (!previousChapterID.length) {
+        if (self.noMoreChapter) {
+            self.noMoreChapter(YES);
+        }
+        return ;
+    }
+    
+    DWReaderChapter * previousChapter = [self.chapterTbl valueForKey:previousChapterID];
+    if (previousChapter) {
+        if (!previousChapter.parsing) {
+            self.currentChapter = previousChapter;
+            previousPage = previousChapter.lastPageInfo;
+            DWReaderPageViewController * previousPageVC = currentVC.previousPage;
+            [previousPageVC updateInfo:previousPage];
+            self.currentPageVC = previousPageVC;
+            [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO];
+        }
+        return ;
+    }
+    
+    DWReaderChapterInfo * chapterInfo = [[DWReaderChapterInfo alloc] init];
+    chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
+    chapterInfo.chapter_id = previousChapterID;
+    self.waitingChangePreviousChapter = YES;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self requestChapter:chapterInfo nextChapter:NO preload:NO];
+    });
+}
+
+#pragma mark --- life cycle ---
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view.
+}
+
+#pragma mark --- tool method ---
 -(instancetype)initWithConfiguration:(DWReaderTextConfiguration *)conf renderFrame:(CGRect)renderFrame textColor:(UIColor *)textColor transitionStyle:(UIPageViewControllerTransitionStyle)transitionStyle {
     if (self = [super initWithTransitionStyle:transitionStyle navigationOrientation:(UIPageViewControllerNavigationOrientationHorizontal) options:nil]) {
         self.delegate = self;
@@ -80,13 +196,6 @@
     return self;
 }
 
-#pragma mark --- life cycle ---
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view.
-}
-
-#pragma mark --- tool method ---
 -(void)configPages {
     ///建立一个重用池，降低内存中VC数量
     DWReaderPageViewController * tmp1 = [DWReaderPageViewController pageWithRenderFrame:self.renderFrame];
@@ -207,7 +316,7 @@
     NSLog(@"availabelPage %@",availablePage);
     ///如果有百分比，调到对应页
     if (chapter.chapterInfo.percent > 0 && initializeReader) {
-        NSUInteger page = floor(chapter.chapterInfo.percent * chapter.totalPage);
+        NSUInteger page = floor(MIN(chapter.chapterInfo.percent, 1)  * chapter.totalPage);
         pageInfo = [chapter pageInfoOnPage:page];
         ///如果取不到则采用默认数据
         if (!pageInfo) {
@@ -226,12 +335,8 @@
         self.currentPageVC = availablePage;
         ///切换当前章节为指定章节
         self.currentChapter = chapter;
-        ///关闭交互避免连续翻页
-        self.view.userInteractionEnabled = NO;
-        __weak typeof(self)weakSelf = self;
-        [self setViewControllers:@[availablePage] direction:nextChapter?UIPageViewControllerNavigationDirectionForward:UIPageViewControllerNavigationDirectionReverse animated:YES completion:^(BOOL finished) {
-            weakSelf.view.userInteractionEnabled = YES;
-        }];
+        ///切换页面控制器
+        [self showPageVC:availablePage from:availablePage.nextPage nextPage:nextChapter initial:initializeReader];
     });
     
     if (nextChapter) {
@@ -265,6 +370,35 @@
     }
 }
 
+-(void)willDisplayPage:(DWReaderPageViewController *)page {
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:willDisplayPage:)]) {
+        [self.readerDelegate reader:self willDisplayPage:page];
+    } else if (self.willDisplayPageCallback) {
+        self.willDisplayPageCallback(self,page);
+    }
+}
+
+-(void)didEndDisplayingPage:(DWReaderPageViewController *)page {
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:didEndDisplayingPage:)]) {
+        [self.readerDelegate reader:self didEndDisplayingPage:page];
+    } else if (self.didEndDisplayingPageCallback) {
+        self.didEndDisplayingPageCallback(self, page);
+    }
+}
+
+-(void)showPageVC:(DWReaderPageViewController *)desVC from:(DWReaderPageViewController *)srcVC nextPage:(BOOL)nextPage initial:(BOOL)initial {
+    ///关闭交互避免连续翻页
+    self.view.userInteractionEnabled = NO;
+    __weak typeof(self)weakSelf = self;
+    [self willDisplayPage:desVC];
+    [self setViewControllers:@[desVC] direction:nextPage?UIPageViewControllerNavigationDirectionForward:UIPageViewControllerNavigationDirectionReverse animated:YES completion:^(BOOL finished) {
+        weakSelf.view.userInteractionEnabled = YES;
+        if (!initial) {
+            [weakSelf didEndDisplayingPage:srcVC];
+        }
+    }];
+}
+
 #pragma mark --- UIPageViewController Delegate ---
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {
     
@@ -275,6 +409,8 @@
         ///先取出可用于渲染下一页的页面控制器，在更新页面配置信息
         DWReaderPageViewController * nextPageVC = viewController.nextPage;
         [nextPageVC updateInfo:nextPage];
+        ///直接返回vc的都是可取消的翻页，要标记可取消状态
+        self.cancelableChangingPage = YES;
         self.currentPageVC = nextPageVC;
         return nextPageVC;
     }
@@ -295,7 +431,7 @@
         if (!nextChapter.parsing) {
             ///切换章节并找到章节中第一页
             ///记录当前进行的是可取消的切章状态
-            self.cancelableChangingChapter = YES;
+            self.cancelableChangingPage = YES;
             self.currentChapter = nextChapter;
             nextPage = nextChapter.firstPageInfo;
             DWReaderPageViewController * nextPageVC = viewController.nextPage;
@@ -325,6 +461,7 @@
     if (previousPage) {
         DWReaderPageViewController * previousPageVC = viewController.previousPage;
         [previousPageVC updateInfo:previousPage];
+        self.cancelableChangingPage = YES;
         self.currentPageVC = previousPageVC;
         return previousPageVC;
     }
@@ -340,7 +477,7 @@
     DWReaderChapter * previousChapter = [self.chapterTbl valueForKey:previousChapterID];
     if (previousChapter) {
         if (!previousChapter.parsing) {
-            self.cancelableChangingChapter = YES;
+            self.cancelableChangingPage = YES;
             self.currentChapter = previousChapter;
             previousPage = previousChapter.lastPageInfo;
             DWReaderPageViewController * previousPageVC = viewController.previousPage;
@@ -362,19 +499,28 @@
 }
 
 ///避免连续翻页渲染失败（翻页开始时关闭交互防止二次翻页，翻页结束时再打开交互）
--(void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<UIViewController *> *)pendingViewControllers {
+-(void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<DWReaderPageViewController *> *)pendingViewControllers {
     pageViewController.view.userInteractionEnabled = NO;
+    [self willDisplayPage:pendingViewControllers.firstObject];
 }
 
 -(void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray<DWReaderPageViewController *> *)previousViewControllers transitionCompleted:(BOOL)completed {
     pageViewController.view.userInteractionEnabled = YES;
     
-    ///如果进行的是可取消的切章且的确取消切章的话，要恢复原始章节及页面控制器
-    if (!completed && self.cancelableChangingChapter) {
-        self.currentChapter = previousViewControllers.firstObject.pageInfo.chapter;
-        self.currentPageVC = previousViewControllers.firstObject;
+    ///如果动画完成，则上一个控制器结束展示，否则刚刚出现的控制器结束展示
+    DWReaderPageViewController * previousPageVC = previousViewControllers.firstObject;
+    if (completed) {
+        [self didEndDisplayingPage:previousPageVC];
+    } else {
+        [self didEndDisplayingPage:previousPageVC.nextPage];
     }
-    self.cancelableChangingChapter = NO;
+    
+    ///如果进行的是可取消的切章且的确取消切章的话，要恢复原始章节及页面控制器
+    if (!completed && self.cancelableChangingPage) {
+        self.currentChapter = previousPageVC.pageInfo.chapter;
+        self.currentPageVC = previousPageVC;
+    }
+    self.cancelableChangingPage = NO;
     
     NSLog(@"finish %@",self.currentPageVC);
 }

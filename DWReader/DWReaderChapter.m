@@ -216,12 +216,11 @@ a = NULL;\
         }
         
         ///配置分页信息
-        DWReaderPageInfo * pageInfo = [[DWReaderPageInfo alloc] init];
+        DWReaderPageInfo * pageInfo = [DWReaderPageInfo pageInfoWithChapter:self];
         pageInfo.range = range;
         pageInfo.page = pageCount + 1;
         pageInfo.pageContent = (NSMutableAttributedString *)[drawString attributedSubstringFromRange:range];
         pageInfo.previousPageInfo = lastPageInfo;
-        pageInfo.chapter = self;
         lastPageInfo.nextPageInfo = pageInfo;
         pageCount += 1;
         if (!firstPageInfo) {
