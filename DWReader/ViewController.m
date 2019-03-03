@@ -151,7 +151,6 @@
     disCon.textColor = [UIColor redColor];
     disCon.transitionStyle = UIPageViewControllerTransitionStylePageCurl;
 
-
     DWReaderChapterInfo * info = [[DWReaderChapterInfo alloc] init];
     info.book_id = @"1000";
     info.chapter_id = @"10002";
