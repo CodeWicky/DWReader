@@ -472,7 +472,7 @@
     NSString * previousChapterID = [self queryChapterId:NO];
     if (!previousChapterID.length) {
         if (self.noMoreChapter) {
-            self.noMoreChapter(YES);
+            self.noMoreChapter(NO);
         }
         return nil;
     }
