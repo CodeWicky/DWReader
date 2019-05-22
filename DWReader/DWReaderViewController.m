@@ -257,6 +257,7 @@
 
 -(void)requestCompleteWithInfo:(DWReaderChapterInfo *)info preload:(BOOL)preload title:(NSString *)title content:(NSString *)content bookID:(NSString *)bookID chapterID:(NSString *)chapterID percent:(CGFloat)percent chapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter userInfo:(id)userInfo {
     info.percent = percent;
+    info.chapter_id = chapterID;
     ///请求完成后先取消请求状态
     if (info.chapter_id) {
         [self.requestingChapterIDs removeObject:info.chapter_id];
@@ -269,7 +270,9 @@
     ///如果是预加载，分页等工作要异步完成。由于异步自动跳转，同步不会，所以存入表中的时机要正确。按照下列的策略可以保证从表中获取的章节只有两种状态，一种是异步解析会自动跳转的状态，一种是同步解析不会自动跳转的状态
     if (preload) {
         ///如果是预加载是异步解析，且解析完成后会自动切章，所以在解析之前存储到章节表中
-        [self.chapterTbl setValue:chapter forKey:info.chapter_id];
+        if (info.chapter_id) {
+            [self.chapterTbl setValue:chapter forKey:info.chapter_id];
+        }
         ///如果是预加载，异步分页完成后应检测是否在等待切章
         [chapter asyncParseChapterToPageWithConfiguration:_textConf textColor:_textColor reprocess:^{
             [self reprocessChapterIfNeeded:chapter];
@@ -281,7 +284,9 @@
         [chapter parseChapterToPageWithConfiguration:_textConf textColor:_textColor reprocess:^{
             [self reprocessChapterIfNeeded:chapter];
         }];
-        [self.chapterTbl setValue:chapter forKey:info.chapter_id];
+        if (info.chapter_id) {
+            [self.chapterTbl setValue:chapter forKey:info.chapter_id];
+        }
     }
     
     
