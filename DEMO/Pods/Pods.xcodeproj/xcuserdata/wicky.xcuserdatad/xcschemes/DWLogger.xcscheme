@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F05DA903A9B4ED92BDDE5EB04A7FEA75"
+               BlueprintIdentifier = "FEF01D9DB9529B4E1D2BF7151414DE88"
+               BuildableName = "libDWLogger.a"
                BlueprintName = "DWLogger"
-               ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "libDWLogger.a">
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

@@ -246,8 +246,9 @@
 
 -(void)prepareForRequestData:(DWReaderChapterInfo *)info preload:(BOOL)preload {
     ///标志正在进行请求
-    [self.requestingChapterIDs addObject:info.chapter_id];
-    
+    if (info.chapter_id) {
+        [self.requestingChapterIDs addObject:info.chapter_id];
+    }
     ///如果不是预加载应该有Loading，询问外部展示Loading
     if (!preload && self.loadingAction) {
         self.loadingAction(YES);
@@ -257,7 +258,9 @@
 -(void)requestCompleteWithInfo:(DWReaderChapterInfo *)info preload:(BOOL)preload title:(NSString *)title content:(NSString *)content bookID:(NSString *)bookID chapterID:(NSString *)chapterID percent:(CGFloat)percent chapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter userInfo:(id)userInfo {
     info.percent = percent;
     ///请求完成后先取消请求状态
-    [self.requestingChapterIDs removeObject:info.chapter_id];
+    if (info.chapter_id) {
+        [self.requestingChapterIDs removeObject:info.chapter_id];
+    }
     
     ///配置章节信息
     DWReaderChapter * chapter = [DWReaderChapter chapterWithOriginString:content title:title renderFrame:self.renderFrame info:info];

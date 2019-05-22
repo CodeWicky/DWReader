@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "6C351B1FD654E517E5D12FA1122D2230"
+               BlueprintIdentifier = "C016F345757F9E0CD3B917661D963BA8"
+               BuildableName = "libDWTableViewHelper.a"
                BlueprintName = "DWTableViewHelper"
-               ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "libDWTableViewHelper.a">
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

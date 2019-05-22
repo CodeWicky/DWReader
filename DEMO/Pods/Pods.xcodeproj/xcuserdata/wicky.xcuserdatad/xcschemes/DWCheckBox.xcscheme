@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F72DDB3641C36B0F59CF4AD57706AC33"
+               BlueprintIdentifier = "4AB08BE0D19DB31D34C6BB6923B3CD5C"
+               BuildableName = "libDWCheckBox.a"
                BlueprintName = "DWCheckBox"
-               ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "libDWCheckBox.a">
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

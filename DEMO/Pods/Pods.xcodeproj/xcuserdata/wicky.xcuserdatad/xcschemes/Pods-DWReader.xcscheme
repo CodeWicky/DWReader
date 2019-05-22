@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0930"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "F63CB7CC6D527B8729A860A61FC8B753"
+               BlueprintIdentifier = "41E6049335CAD0427E6AD25D8EDB1A10"
+               BuildableName = "libPods-DWReader.a"
                BlueprintName = "Pods-DWReader"
-               ReferencedContainer = "container:Pods.xcodeproj"
-               BuildableName = "libPods-DWReader.a">
+               ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
