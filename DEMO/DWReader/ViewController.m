@@ -176,7 +176,8 @@
     }
 }
 
--(NSString *)reader:(DWReaderViewController *)reader queryChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID nextChapter:(BOOL)nextChapter {
+-(NSString *)reader:(DWReaderViewController *)reader queryChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID
+currentChapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter {
     
     NSInteger step = nextChapter ? 1 : -1;
     

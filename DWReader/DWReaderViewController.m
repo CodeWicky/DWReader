@@ -258,6 +258,7 @@
 -(void)requestCompleteWithInfo:(DWReaderChapterInfo *)info preload:(BOOL)preload title:(NSString *)title content:(NSString *)content bookID:(NSString *)bookID chapterID:(NSString *)chapterID percent:(CGFloat)percent chapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter userInfo:(id)userInfo {
     info.percent = percent;
     info.chapter_id = chapterID;
+    info.chapter_index = chapterIndex;
     ///请求完成后先取消请求状态
     if (info.chapter_id) {
         [self.requestingChapterIDs removeObject:info.chapter_id];
@@ -368,10 +369,10 @@
 
 -(NSString *)queryChapterId:(BOOL)nextChapter {
     DWReaderChapterInfo * currentChapterInfo = self.currentChapter.chapterInfo;
-    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:queryChapterIdForBook:currentChapterID:nextChapter:)]) {
-        return [self.readerDelegate reader:self queryChapterIdForBook:currentChapterInfo.book_id currentChapterID:currentChapterInfo.chapter_id nextChapter:nextChapter];
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:queryChapterIdForBook:currentChapterID:currentChapterIndex:nextChapter:)]) {
+        return [self.readerDelegate reader:self queryChapterIdForBook:currentChapterInfo.book_id currentChapterID:currentChapterInfo.chapter_id currentChapterIndex:currentChapterInfo.chapter_index nextChapter:nextChapter];
     } else if (self.queryChapterIdCallback) {
-        return self.queryChapterIdCallback(self,currentChapterInfo.book_id,currentChapterInfo.chapter_id,nextChapter);
+        return self.queryChapterIdCallback(self,currentChapterInfo.book_id,currentChapterInfo.chapter_id,currentChapterInfo.chapter_index,nextChapter);
     } else {
         NSAssert(NO, @"DWReader can't query chapter_id.You must either implement -reader:queryChapterIdForBook:currentChapterID:currentChapterIndex:nextChapter or set queryChapterIdCallback.");
         return nil;

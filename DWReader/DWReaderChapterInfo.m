@@ -10,4 +10,11 @@
 
 @implementation DWReaderChapterInfo
 
+-(instancetype)init {
+    if (self = [super init]) {
+        _chapter_index = NSNotFound;
+    }
+    return self;
+}
+
 @end

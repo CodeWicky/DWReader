@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^DWReaderRequestDataCompleteCallback)(NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,_Nullable id userInfo);
 typedef void(^DWReaderReprocessorCallback)(DWReaderPageInfo * _Nullable  newFirstPage, DWReaderPageInfo * _Nullable newLastPage,NSUInteger fixTotalPage);
-typedef NSString *(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID ,BOOL nextChapter);
+typedef NSString *_Nullable(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID ,NSInteger currentChapterIndex ,BOOL nextChapter);
 typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * chapterID ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
 typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader ,DWReaderChapter * chapter ,DWReaderReprocessorCallback reprocessor);
 typedef void(^DWReaderPageChangeCallback)(DWReaderViewController * reader, DWReaderPageViewController * page);
@@ -35,10 +35,11 @@ typedef void(^DWReaderPageChangeCallback)(DWReaderViewController * reader, DWRea
  @param reader 当前阅读器对象
  @param bookID 当前书籍的bookID
  @param chapterID 当前章节的chapterID
+ @param chapterIndex 当前章节的角标
  @param nextChapter 是否询问的是下一章节
  @return 返回指定的章节ID
  */
--(NSString *)reader:(DWReaderViewController *)reader queryChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID nextChapter:(BOOL)nextChapter;
+-(NSString *)reader:(DWReaderViewController *)reader queryChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID currentChapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter;
 
 /**
  请求对应章节内容

@@ -63,7 +63,6 @@
     if (!_contentLb) {
         _contentLb = [[UILabel alloc] initWithFrame:self.renderFrame];
         _contentLb.numberOfLines = 0;
-        _contentLb.backgroundColor = [UIColor greenColor];
     }
     return _contentLb;
 }
