@@ -28,7 +28,7 @@
 }
 
 -(NSString *)description {
-    return [NSString stringWithFormat:@"Page range is %@,index is %ld,pageContent is %@",NSStringFromRange(self.range),self.page,self.pageContent.string];
+    return [NSString stringWithFormat:@"Page range is %@,index is %lu,pageContent is %@",NSStringFromRange(self.range),(unsigned long)self.page,self.pageContent.string];
 }
  
 @end

@@ -24,6 +24,7 @@ typedef NSString *_Nullable(^DWReaderQueryChapterIDCallback)(DWReaderViewControl
 typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * chapterID ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
 typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader ,DWReaderChapter * chapter ,DWReaderReprocessorCallback reprocessor);
 typedef void(^DWReaderPageChangeCallback)(DWReaderViewController * reader, DWReaderPageViewController * page);
+typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NSString * desChapterID ,NSString * srcChapterID);
 
 @protocol DWReaderDataDelegate <NSObject>
 
@@ -79,6 +80,16 @@ typedef void(^DWReaderPageChangeCallback)(DWReaderViewController * reader, DWRea
  */
 -(void)reader:(DWReaderViewController *)reader didEndDisplayingPage:(DWReaderPageViewController *)page;
 
+
+/**
+ 章节切换
+
+ @param reader 当前阅读器对象
+ @param desChapterID 目标章节
+ @param srcChapterID 源章节
+ */
+-(void)reader:(DWReaderViewController *)reader changeToChapter:(NSString *)desChapterID fromChapter:(NSString *)srcChapterID;
+
 @end
 
 @interface DWReaderViewController : UIPageViewController
@@ -100,6 +111,8 @@ typedef void(^DWReaderPageChangeCallback)(DWReaderViewController * reader, DWRea
 
 ///结束展示指定页面
 @property (nonatomic ,copy) DWReaderPageChangeCallback didEndDisplayingPageCallback;
+
+@property (nonatomic ,copy) DWReaderChapterChangeCallback changeToChapterCallback;
 
 ///需要展示Loading的回调，通常出现在请求章节内容时（非预加载）
 @property (nonatomic ,copy) void (^loadingAction) (BOOL show);

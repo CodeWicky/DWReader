@@ -411,7 +411,16 @@
         if (!initial) {
             [weakSelf didEndDisplayingPage:srcVC];
         }
+        [weakSelf changeToChapter:desVC.pageInfo.chapter.chapterInfo.chapter_id from:srcVC.pageInfo.chapter.chapterInfo.chapter_id];
     }];
+}
+
+-(void)changeToChapter:(NSString *)desChapterID from:(NSString *)srcChapterID {
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:changeToChapter:fromChapter:)]) {
+        [self.readerDelegate reader:self changeToChapter:desChapterID fromChapter:srcChapterID];
+    } else if (self.changeToChapterCallback) {
+        self.changeToChapterCallback(self, desChapterID, srcChapterID);
+    }
 }
 
 #pragma mark --- UIPageViewController Delegate ---
