@@ -250,7 +250,6 @@ a = NULL;\
     
     ///至此分页完成，事实上关于影响布局的富文本至此才配置完成，文字颜色要在配置画笔颜色时再改变
     [self reprocessChapterWithFirstPageInfo:firstPageInfo lastPageInfo:lastPageInfo totalPage:pageCount];
-    NSLog(@"%lu",pageCount);
 }
 
 -(NSRange)calculateVisibleRangeWithString:(NSAttributedString *)string renderSize:(CGSize)size location:(NSUInteger)loc {
