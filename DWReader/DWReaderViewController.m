@@ -77,6 +77,11 @@
         return;
     }
     
+    ///如果本地有缓存好的章节，直接返回
+    if ([self.chapterTbl valueForKey:chapterId]) {
+        return;
+    }
+    
     ///组装章节信息
     DWReaderChapterInfo * chapterInfo = [[DWReaderChapterInfo alloc] init];
     chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
