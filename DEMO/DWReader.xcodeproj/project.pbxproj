@@ -21,6 +21,8 @@
 		9B6ED68F2212FE84003BB1EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B6ED68E2212FE84003BB1EA /* Assets.xcassets */; };
 		9B6ED6922212FE84003BB1EA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B6ED6902212FE84003BB1EA /* LaunchScreen.storyboard */; };
 		9B6ED6952212FE84003BB1EA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED6942212FE84003BB1EA /* main.m */; };
+		9BE977302296C01C00FB43B3 /* DWReaderADViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE9772F2296C01C00FB43B3 /* DWReaderADViewController.m */; };
+		9BE977332296C03F00FB43B3 /* DWReaderADInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE977322296C03F00FB43B3 /* DWReaderADInfo.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +53,10 @@
 		9B6ED6912212FE84003BB1EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9B6ED6932212FE84003BB1EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9B6ED6942212FE84003BB1EA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		9BE9772E2296C01C00FB43B3 /* DWReaderADViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderADViewController.h; sourceTree = "<group>"; };
+		9BE9772F2296C01C00FB43B3 /* DWReaderADViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderADViewController.m; sourceTree = "<group>"; };
+		9BE977312296C03F00FB43B3 /* DWReaderADInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderADInfo.h; sourceTree = "<group>"; };
+		9BE977322296C03F00FB43B3 /* DWReaderADInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderADInfo.m; sourceTree = "<group>"; };
 		C2B2B369920AE1989A49159C /* Pods-DWReader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DWReader.release.xcconfig"; path = "Pods/Target Support Files/Pods-DWReader/Pods-DWReader.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -129,6 +135,10 @@
 				9B6ED6932212FE84003BB1EA /* Info.plist */,
 				9B6ED6942212FE84003BB1EA /* main.m */,
 				9B53084A222048AD00400132 /* PrefixHeader.pch */,
+				9BE9772E2296C01C00FB43B3 /* DWReaderADViewController.h */,
+				9BE9772F2296C01C00FB43B3 /* DWReaderADViewController.m */,
+				9BE977312296C03F00FB43B3 /* DWReaderADInfo.h */,
+				9BE977322296C03F00FB43B3 /* DWReaderADInfo.m */,
 			);
 			path = DWReader;
 			sourceTree = "<group>";
@@ -257,6 +267,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9B2EEA472291B47400D7B7FF /* DWReaderPageInfo.m in Sources */,
+				9BE977302296C01C00FB43B3 /* DWReaderADViewController.m in Sources */,
 				9B2EEA452291B47400D7B7FF /* DWReaderViewController.m in Sources */,
 				9B6ED68A2212FE83003BB1EA /* ViewController.m in Sources */,
 				9B2EEA412291B47400D7B7FF /* DWReaderPageViewController.m in Sources */,
@@ -265,6 +276,7 @@
 				9B6ED6952212FE84003BB1EA /* main.m in Sources */,
 				9B6ED6872212FE83003BB1EA /* AppDelegate.m in Sources */,
 				9B2EEA422291B47400D7B7FF /* DWReaderTextConfiguration.m in Sources */,
+				9BE977332296C03F00FB43B3 /* DWReaderADInfo.m in Sources */,
 				9B2EEA432291B47400D7B7FF /* DWReaderChapterInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

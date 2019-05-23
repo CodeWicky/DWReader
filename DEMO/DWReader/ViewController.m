@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "DWReaderViewController.h"
+#import "DWReaderADInfo.h"
+#import "DWReaderADViewController.h"
 
 @interface ViewController ()<UIPageViewControllerDelegate, UIPageViewControllerDataSource, DWReaderDataDelegate>
 
@@ -55,41 +57,6 @@
 //    testString = @"\n\nabc\n\nde\nf\n";
     
     
-}
-
--(void)viewDidLayoutSubviews {
-    [super viewDidLayoutSubviews];
-    NSString * tmp = @"豪华的别墅酒店。\n年轻俊美的男人刚刚从浴室里洗澡出来，健硕的腰身只围着一条浴巾，充满了力与美的身躯，仿佛西方阿波罗临世。\n“该死的。”一声低咒，男人低下头，一脸烦燥懊恼。\n他拿起手机，拔通了助手的电话，“给我找个干净的女人进来。”\n“少爷，怎么今晚有兴趣了？”\n\n“在酒会上喝错了东西，快点。”低沉的声线已经不奈烦了。\n“好的，马上。”\n一处景观灯的牌子面前，穿着清凉的女孩抬起头，看着那蛇线一样的线路图，感到相当的无语。\n明明就是来旅个游的，竟然迷路了。\n";
-    NSString * testString = @"";
-    for (int i = 0; i < 15; ++i) {
-        testString = [testString stringByAppendingString:tmp];
-    }
-    
-    NSLog(@"%lu",testString.length);
-
-    NSString * titleString = @"霸道总裁爱上我\n";
-
-    CGRect renderFrame = CGRectMake(15, self.view.safeAreaInsets.top, self.view.bounds.size.width - 30, self.view.bounds.size.height - self.view.safeAreaInsets.top - self.view.safeAreaInsets.bottom);
-    
-    NSLog(@"start");
-    
-    DWReaderChapter * c = [DWReaderChapter chapterWithOriginString:testString title:titleString renderFrame:renderFrame info:[DWReaderChapterInfo new]];
-    [c parseChapter];
-
-    DWReaderTextConfiguration * conf = [[DWReaderTextConfiguration alloc] init];
-    conf.titleFontSize = 28;
-    conf.titleLineSpacing = 18;
-    conf.titleSpacing = 28;
-    conf.contentFontSize = 24;
-    conf.contentLineSpacing = 18;
-    conf.paragraphSpacing = 28;
-    conf.paragraphHeaderSpacing = 30;
-
-    [c seperatePageWithPageConfiguration:conf];
-    [c configTextColor: [UIColor redColor]];
-    
-    NSLog(@"end");
-    self.c = c;
 }
 
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
@@ -158,7 +125,7 @@
     self.reader = [DWReaderViewController readerWithTextConfiguration:conf displayConfiguration:disCon];
     self.reader.readerDelegate = self;
     [self.reader fetchChapter:info];
-
+    [self.reader registerClass:[DWReaderADViewController class] forPageViewControllerReuseIdentifier:@"ad"];
     [self presentViewController:self.reader animated:YES completion:nil];
 }
 
@@ -167,7 +134,7 @@
         
         NSString * tmp = @"豪华的别墅酒店。\n年轻俊美的男人刚刚从浴室里洗澡出来，健硕的腰身只围着一条浴巾，充满了力与美的身躯，仿佛西方阿波罗临世。\n“该死的。”一声低咒，男人低下头，一脸烦燥懊恼。\n他拿起手机，拔通了助手的电话，“给我找个干净的女人进来。”\n“少爷，怎么今晚有兴趣了？”\n\n“在酒会上喝错了东西，快点。”低沉的声线已经不奈烦了。\n“好的，马上。”\n一处景观灯的牌子面前，穿着清凉的女孩抬起头，看着那蛇线一样的线路图，感到相当的无语。\n明明就是来旅个游的，竟然迷路了。\n";
         NSString * testString = @"";
-        for (int i = 0; i < 1; ++i) {
+        for (int i = 0; i < 3; ++i) {
             testString = [testString stringByAppendingString:tmp];
         }
         
@@ -206,7 +173,7 @@ currentChapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter {
         
         NSMutableAttributedString * attr = [[NSMutableAttributedString alloc] initWithString:@"测试广告"];
         [attr addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:56] range:NSMakeRange(0, attr.length)];
-        DWReaderPageInfo * adPage = [DWReaderPageInfo pageInfoWithChapter:chapter];
+        DWReaderADInfo * adPage = [DWReaderADInfo pageInfoWithChapter:chapter];
         adPage.pageContent = attr;
         DWReaderPageInfo * nextPage = tmpPage.nextPageInfo;
 
@@ -225,33 +192,25 @@ currentChapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter {
     callback(page,nil,chapter.totalPage + 1);
 }
 
+-(DWReaderPageViewController *)reader:(DWReaderViewController *)reader pageControllerForPageInfo:(DWReaderPageInfo *)pageInfo renderFrame:(CGRect)renderFrame {
+    if ([pageInfo isKindOfClass:[DWReaderADInfo class]]) {
+        DWReaderADViewController * ad = [reader dequeueReusablePageViewControllerWithIdentifier:@"ad"];
+        [ad updateInfo:pageInfo];
+        ad.renderFrame = renderFrame;
+        return ad;
+    }
+    DWReaderPageViewController * r = [reader dequeueDefaultReusablePageViewController];
+    [r updateInfo:pageInfo];
+    r.renderFrame = renderFrame;
+    return r;
+}
+
 -(void)reader:(DWReaderViewController *)reader willDisplayPage:(DWReaderPageViewController *)page {
     NSLog(@"Will Display %@,%@",page.pageInfo.pageContent.string,page);
 }
 
 -(void)reader:(DWReaderViewController *)reader didEndDisplayingPage:(DWReaderPageViewController *)page {
     NSLog(@"Did End Displaying %@,%@",page.pageInfo.pageContent.string,page);
-}
-
--(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {
-    return viewController.nextPage;
-}
-
--(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(DWReaderPageViewController *)viewController {
-    return viewController.previousPage;
-}
-
-- (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray<UIViewController *> *)previousViewControllers transitionCompleted:(BOOL)completed {
-    
-}
-
--(UIPageViewController *)pageVC {
-    if (!_pageVC) {
-        _pageVC = [[UIPageViewController alloc] initWithTransitionStyle:(UIPageViewControllerTransitionStylePageCurl) navigationOrientation:(UIPageViewControllerNavigationOrientationHorizontal) options:nil];
-        _pageVC.delegate = self;
-        _pageVC.dataSource = self;
-    }
-    return _pageVC;
 }
 
 

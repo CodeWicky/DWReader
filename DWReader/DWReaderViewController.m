@@ -128,7 +128,7 @@
     [self requestChapter:chapterInfo nextChapter:YES preload:NO];
 }
 
--(void)registerClass:(Class)pageControllerClass forCellReuseIdentifier:(NSString *)reuseIdentifier {
+-(void)registerClass:(Class)pageControllerClass forPageViewControllerReuseIdentifier:(nonnull NSString *)reuseIdentifier {
     if (!pageControllerClass || !reuseIdentifier.length) {
         return;
     }
@@ -136,12 +136,16 @@
     self.reusePoolContainer[reuseIdentifier] = reusePool;
 }
 
--(DWReaderPageViewController *)dequeueReusableCellWithIdentifier:(NSString *)reuseIdentifier {
+-(DWReaderPageViewController *)dequeueReusablePageViewControllerWithIdentifier:(NSString *)reuseIdentifier {
     if (!reuseIdentifier.length) {
         return nil;
     }
     DWReaderReuseInternal * reusePool = self.reusePoolContainer[reuseIdentifier];
     return reusePool.availablePage;
+}
+
+-(DWReaderPageViewController *)dequeueDefaultReusablePageViewController {
+    return self.defaultReusePool.availablePage;
 }
 
 -(void)preloadNextChapter {

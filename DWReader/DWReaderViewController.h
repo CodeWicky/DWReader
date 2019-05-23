@@ -164,7 +164,7 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
  @param pageControllerClass pageController对应的类
  @param reuseIdentifier 复用ID
  */
--(void)registerClass:(Class)pageControllerClass forCellReuseIdentifier:(NSString *)reuseIdentifier;
+-(void)registerClass:(Class)pageControllerClass forPageViewControllerReuseIdentifier:(NSString *)reuseIdentifier;
 
 
 /**
@@ -173,7 +173,15 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
  @param reuseIdentifier 复用ID
  @return 可用的pageViewController
  */
--(__kindof DWReaderPageViewController *)dequeueReusableCellWithIdentifier:(NSString *)reuseIdentifier;
+-(__kindof DWReaderPageViewController *)dequeueReusablePageViewControllerWithIdentifier:(NSString *)reuseIdentifier;
+
+
+/**
+ 返回默认的可复用的PageViewController
+
+ @return 默认的可复用的PageViewController
+ */
+-(DWReaderPageViewController *)dequeueDefaultReusablePageViewController;
 
 
 /**
