@@ -18,7 +18,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     dispatch_async(dispatch_get_main_queue(), ^{
         [DWLogManager configDefaultLogger];
-        [DWLogManager shareLogManager].saveLocalLog = NO;
+        [DWLogManager shareLogManager].saveLocalLog = YES;
         [DWLogManager printLoggerMainPath];
     });
     return YES;

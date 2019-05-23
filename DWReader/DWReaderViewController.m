@@ -36,6 +36,8 @@
 
 @property (nonatomic ,assign) BOOL cancelableChangingPage;
 
+@property (nonatomic ,assign) BOOL changingPageOnChangingChapter;
+
 @end
 
 @implementation DWReaderViewController
@@ -51,7 +53,6 @@
 
 -(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo {
     ///先查缓存
-    
     ///获取到下章ID，先查询本地是否存在下一章，不存在直接请求下章即可，同时要将等待翻页置位真，让请求完成后自动翻页
     DWReaderChapter * nextChapter = [self.chapterTbl valueForKey:chapterInfo.chapter_id];
     if (nextChapter) {
@@ -232,6 +233,7 @@
             [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex nextChapter:nextChapter userInfo:userInfo];
         }];
     } else if (self.requestBookDataCallback) {
+        [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
         self.requestBookDataCallback(self, info.book_id, info.chapter_id, next, ^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nonnull userInfo) {
             [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex nextChapter:nextChapter userInfo:userInfo];
@@ -266,7 +268,6 @@
     
     ///配置章节信息
     DWReaderChapter * chapter = [DWReaderChapter chapterWithOriginString:content title:title renderFrame:self.renderFrame info:info];
-    
     
     ///如果是预加载，分页等工作要异步完成。由于异步自动跳转，同步不会，所以存入表中的时机要正确。按照下列的策略可以保证从表中获取的章节只有两种状态，一种是异步解析会自动跳转的状态，一种是同步解析不会自动跳转的状态
     if (preload) {
@@ -322,7 +323,6 @@
     DWReaderPageViewController * availablePage = self.currentPageVC.nextPage;
     ///找到页面后配置页面信息(往后翻页则找到下一章的第一页，往前翻页则找到上一章的最后一页)
     DWReaderPageInfo * pageInfo = nil;
-    NSLog(@"availabelPage %@",availablePage);
     ///如果有百分比，调到对应页
     if (chapter.chapterInfo.percent > 0 && initializeReader) {
         NSUInteger page = floor(MIN(chapter.chapterInfo.percent, 1)  * chapter.totalPage);
@@ -398,6 +398,7 @@
 -(void)showPageVC:(DWReaderPageViewController *)desVC from:(DWReaderPageViewController *)srcVC nextPage:(BOOL)nextPage initial:(BOOL)initial {
     ///关闭交互避免连续翻页
     self.view.userInteractionEnabled = NO;
+    
     __weak typeof(self)weakSelf = self;
     [self willDisplayPage:desVC];
     [self setViewControllers:@[desVC] direction:nextPage?UIPageViewControllerNavigationDirectionForward:UIPageViewControllerNavigationDirectionReverse animated:YES completion:^(BOOL finished) {
@@ -411,6 +412,10 @@
 #pragma mark --- UIPageViewController Delegate ---
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {
     
+    ///如果正在切章翻页过程中，则不进行手动翻页
+    if (self.changingPageOnChangingChapter) {
+        return nil;
+    }
     ///首先取出下一页信息，在同一章中，页面信息存有链表关系，如果取到为nil说明这一章结束了，这时候要考虑下一章
     DWReaderPageInfo * nextPage = viewController.pageInfo.nextPageInfo;
     
@@ -465,6 +470,11 @@
 }
 
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(DWReaderPageViewController *)viewController {
+    
+    ///如果正在切章翻页过程中，则不进行手动翻页
+    if (self.changingPageOnChangingChapter) {
+        return nil;
+    }
     
     DWReaderPageInfo * previousPage = viewController.pageInfo.previousPageInfo;
     if (previousPage) {
@@ -530,8 +540,6 @@
         self.currentPageVC = previousPageVC;
     }
     self.cancelableChangingPage = NO;
-    
-    NSLog(@"finish %@",self.currentPageVC);
 }
 
 #pragma mark --- setter/getter ---
@@ -555,6 +563,10 @@
         _pageVCs = [NSMutableArray arrayWithCapacity:2];
     }
     return _pageVCs;
+}
+
+-(BOOL)changingPageOnChangingChapter {
+    return !self.view.userInteractionEnabled;
 }
 
 @end

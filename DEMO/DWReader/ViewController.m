@@ -168,11 +168,13 @@
         
         NSString * tmp = @"豪华的别墅酒店。\n年轻俊美的男人刚刚从浴室里洗澡出来，健硕的腰身只围着一条浴巾，充满了力与美的身躯，仿佛西方阿波罗临世。\n“该死的。”一声低咒，男人低下头，一脸烦燥懊恼。\n他拿起手机，拔通了助手的电话，“给我找个干净的女人进来。”\n“少爷，怎么今晚有兴趣了？”\n\n“在酒会上喝错了东西，快点。”低沉的声线已经不奈烦了。\n“好的，马上。”\n一处景观灯的牌子面前，穿着清凉的女孩抬起头，看着那蛇线一样的线路图，感到相当的无语。\n明明就是来旅个游的，竟然迷路了。\n";
         NSString * testString = @"";
-        for (int i = 0; i < 3; ++i) {
+        for (int i = 0; i < 1; ++i) {
             testString = [testString stringByAppendingString:tmp];
         }
         
-        callback(@"霸道总裁爱上我",testString,bookID,chapterID,0.5,3,next,nil);
+//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            callback(@"霸道总裁爱上我",testString,bookID,chapterID,0.5,3,next,nil);
+//        });
     }
 }
 
@@ -225,11 +227,11 @@ currentChapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter {
 }
 
 -(void)reader:(DWReaderViewController *)reader willDisplayPage:(DWReaderPageViewController *)page {
-    NSLog(@"Will Display %@",page.pageInfo.pageContent.string);
+    NSLog(@"Will Display %@,%@",page.pageInfo.pageContent.string,page);
 }
 
 -(void)reader:(DWReaderViewController *)reader didEndDisplayingPage:(DWReaderPageViewController *)page {
-    NSLog(@"Did End Displaying %@",page.pageInfo.pageContent.string);
+    NSLog(@"Did End Displaying %@,%@",page.pageInfo.pageContent.string,page);
 }
 
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {
