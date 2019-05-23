@@ -23,6 +23,9 @@ typedef void(^DWReaderReprocessorCallback)(DWReaderPageInfo * _Nullable  newFirs
 typedef NSString *_Nullable(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID ,NSInteger currentChapterIndex ,BOOL nextChapter);
 typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * chapterID ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
 typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader ,DWReaderChapter * chapter ,DWReaderReprocessorCallback reprocessor);
+
+typedef __kindof DWReaderPageViewController *_Nonnull(^DWPageControllerForPageInfoCallback)(DWReaderViewController * reader ,DWReaderPageInfo * pageInfo ,CGRect renderFrame);
+
 typedef void(^DWReaderPageChangeCallback)(DWReaderViewController * reader, DWReaderPageViewController * page);
 typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NSString * desChapterID ,NSString * srcChapterID);
 
@@ -61,6 +64,17 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
  @param callback 修改当前章节实例首尾页面及总页面数的回调
  */
 -(void)reader:(DWReaderViewController *)reader reprocessChapter:(DWReaderChapter *)chapter configChapterCallback:(DWReaderReprocessorCallback)callback;
+
+
+/**
+ 返回指定pageInfo对应的controller
+
+ @param reader 当前阅读器对象
+ @param pageInfo 页面信息对象
+ @param renderFrame 默认的渲染区域
+ @return 指定pageInfo对应的controller
+ */
+-(__kindof DWReaderPageViewController *)reader:(DWReaderViewController *)reader pageControllerForPageInfo:(DWReaderPageInfo *)pageInfo renderFrame:(CGRect)renderFrame;
 
 
 /**
@@ -106,12 +120,16 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 ///分页完成后完成对页面的二次修改
 @property (nonatomic ,copy) DWReaderReprocessChapterCallback reprocessChapterCallback;
 
+///指定pageInfo对应的pageController
+@property (nonatomic ,copy) DWPageControllerForPageInfoCallback pageControllerForPageInfoCallback;
+
 ///将要展示指定页面
 @property (nonatomic ,copy) DWReaderPageChangeCallback willDisplayPageCallback;
 
 ///结束展示指定页面
 @property (nonatomic ,copy) DWReaderPageChangeCallback didEndDisplayingPageCallback;
 
+///章节切换
 @property (nonatomic ,copy) DWReaderChapterChangeCallback changeToChapterCallback;
 
 ///需要展示Loading的回调，通常出现在请求章节内容时（非预加载）
@@ -138,6 +156,24 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
  @param chapterInfo 章节信息
  */
 -(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo;
+
+
+/**
+ 注册PageController给reader
+
+ @param pageControllerClass pageController对应的类
+ @param reuseIdentifier 复用ID
+ */
+-(void)registerClass:(Class)pageControllerClass forCellReuseIdentifier:(NSString *)reuseIdentifier;
+
+
+/**
+ 根据复用ID返回可用控制器
+
+ @param reuseIdentifier 复用ID
+ @return 可用的pageViewController
+ */
+-(__kindof DWReaderPageViewController *)dequeueReusableCellWithIdentifier:(NSString *)reuseIdentifier;
 
 
 /**

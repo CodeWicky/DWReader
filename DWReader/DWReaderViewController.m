@@ -10,6 +10,61 @@
 #import "DWReaderChapter.h"
 #import "DWReaderPageViewController.h"
 
+@interface DWReaderReuseInternal : NSObject
+
+@property (nonatomic ,strong) Class registClass;
+
+@property (nonatomic ,weak) __kindof DWReaderPageViewController * availablePage;
+
+@property (nonatomic ,strong) NSMutableArray * reusePool;
+
++(instancetype)registClass:(Class)class;
+
+@end
+
+@interface DWReaderPageViewController ()
+
+@property (nonatomic ,weak) DWReaderReuseInternal * reuseInternal;
+
+@end
+
+@implementation DWReaderPageViewController (Private)
+
+///切换currentVC
+-(void)configCurrentVCInUsing {
+    self.reuseInternal.availablePage = self.nextPage;
+}
+
+@end
+
+@implementation DWReaderReuseInternal
+
++(instancetype)registClass:(Class)class {
+    if (!class) {
+        return nil;
+    }
+    DWReaderReuseInternal * reuseInternal = [[self alloc] init];
+    reuseInternal.registClass = class;
+    reuseInternal.reusePool = [NSMutableArray arrayWithCapacity:2];
+    [reuseInternal configPages];
+    return reuseInternal;
+}
+
+-(void)configPages {
+    ///建立一个重用池，降低内存中VC数量
+    __kindof DWReaderPageViewController * tmp1 = [self.registClass pageWithRenderFrame:CGRectZero];
+    tmp1.reuseInternal = self;
+    __kindof DWReaderPageViewController * tmp2 = [self.registClass pageWithRenderFrame:CGRectZero];
+    tmp2.reuseInternal = self;
+    [tmp1 configNextPage:tmp2];
+    [tmp2 configNextPage:tmp1];
+    [self.reusePool addObject:tmp1];
+    [self.reusePool addObject:tmp2];
+    self.availablePage = tmp1;
+}
+
+@end
+
 @interface DWReaderViewController ()<UIPageViewControllerDelegate ,UIPageViewControllerDataSource>
 
 @property (nonatomic ,strong) DWReaderTextConfiguration * textConf;
@@ -30,13 +85,17 @@
 
 @property (nonatomic ,strong) DWReaderChapter * currentChapter;
 
-@property (nonatomic ,strong) NSMutableArray <DWReaderPageViewController *>* pageVCs;
+@property (nonatomic ,strong) DWReaderReuseInternal * defaultReusePool;
 
 @property (nonatomic ,strong) DWReaderPageViewController * currentPageVC;
+
+@property (nonatomic ,strong) DWReaderPageViewController * lastPageVC;
 
 @property (nonatomic ,assign) BOOL cancelableChangingPage;
 
 @property (nonatomic ,assign) BOOL changingPageOnChangingChapter;
+
+@property (nonatomic ,strong) NSMutableDictionary * reusePoolContainer;
 
 @end
 
@@ -69,6 +128,22 @@
     [self requestChapter:chapterInfo nextChapter:YES preload:NO];
 }
 
+-(void)registerClass:(Class)pageControllerClass forCellReuseIdentifier:(NSString *)reuseIdentifier {
+    if (!pageControllerClass || !reuseIdentifier.length) {
+        return;
+    }
+    DWReaderReuseInternal * reusePool = [DWReaderReuseInternal registClass:pageControllerClass];
+    self.reusePoolContainer[reuseIdentifier] = reusePool;
+}
+
+-(DWReaderPageViewController *)dequeueReusableCellWithIdentifier:(NSString *)reuseIdentifier {
+    if (!reuseIdentifier.length) {
+        return nil;
+    }
+    DWReaderReuseInternal * reusePool = self.reusePoolContainer[reuseIdentifier];
+    return reusePool.availablePage;
+}
+
 -(void)preloadNextChapter {
     
     ///获取下一章章节ID，如果获取不到则返回
@@ -97,10 +172,9 @@
     
     if (nextPage) {
         ///先取出可用于渲染下一页的页面控制器，在更新页面配置信息
-        DWReaderPageViewController * nextPageVC = currentVC.nextPage;
-        [nextPageVC updateInfo:nextPage];
+        DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
         self.currentPageVC = nextPageVC;
-        [self showPageVC:nextPageVC from:nextPageVC.previousPage nextPage:YES initial:NO];
+        [self showPageVC:nextPageVC from:self.lastPageVC nextPage:YES initial:NO];
         return;
     }
     
@@ -122,11 +196,11 @@
             ///记录当前进行的是可取消的切章状态
             self.currentChapter = nextChapter;
             nextPage = nextChapter.firstPageInfo;
-            DWReaderPageViewController * nextPageVC = currentVC.nextPage;
-            [nextPageVC updateInfo:nextPage];
+            
+            DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
             ///记录原始页面控制器
             self.currentPageVC = nextPageVC;
-            [self showPageVC:nextPageVC from:nextPageVC.previousPage nextPage:YES initial:NO];
+            [self showPageVC:nextPageVC from:self.lastPageVC nextPage:YES initial:NO];
         }
         return ;
     }
@@ -146,8 +220,7 @@
     DWReaderPageViewController * currentVC = self.currentPageVC;
     DWReaderPageInfo * previousPage = currentVC.pageInfo.previousPageInfo;
     if (previousPage) {
-        DWReaderPageViewController * previousPageVC = currentVC.previousPage;
-        [previousPageVC updateInfo:previousPage];
+        DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
         self.currentPageVC = previousPageVC;
         [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO];
         return ;
@@ -166,8 +239,8 @@
         if (!previousChapter.parsing) {
             self.currentChapter = previousChapter;
             previousPage = previousChapter.lastPageInfo;
-            DWReaderPageViewController * previousPageVC = currentVC.previousPage;
-            [previousPageVC updateInfo:previousPage];
+            
+            DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
             self.currentPageVC = previousPageVC;
             [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO];
         }
@@ -197,20 +270,9 @@
         _textConf = conf;
         _textColor = textColor;
         _renderFrame = renderFrame;
-        [self configPages];
+        self.currentPageVC = self.defaultReusePool.availablePage;
     }
     return self;
-}
-
--(void)configPages {
-    ///建立一个重用池，降低内存中VC数量
-    DWReaderPageViewController * tmp1 = [DWReaderPageViewController pageWithRenderFrame:self.renderFrame];
-    DWReaderPageViewController * tmp2 = [DWReaderPageViewController pageWithRenderFrame:self.renderFrame];
-    [tmp1 configNextPage:tmp2];
-    [tmp2 configNextPage:tmp1];
-    [self.pageVCs addObject:tmp1];
-    [self.pageVCs addObject:tmp2];
-    self.currentPageVC = tmp1;
 }
 
 -(void)requestChapter:(DWReaderChapterInfo *)info nextChapter:(BOOL)next preload:(BOOL)preload {
@@ -323,9 +385,6 @@
     
     ///获取到首次加载和正常加载的状态（因为如果是首次加载代表阅读器初始化，此时如果远端进度为50%，应该跳转至50%，如果不是首次加载，切章发生在翻页过程中，切章过程中均应该保证连续性，故进度不为50%。self.currentChapter为nil刚好可以标志阅读器初始化的状态）
     BOOL initializeReader = (self.currentChapter == nil);
-    
-    ///找到当前未使用的页面控制器(当前采取复用模式，总共只有两个页面控制器)
-    DWReaderPageViewController * availablePage = self.currentPageVC.nextPage;
     ///找到页面后配置页面信息(往后翻页则找到下一章的第一页，往前翻页则找到上一章的最后一页)
     DWReaderPageInfo * pageInfo = nil;
     ///如果有百分比，调到对应页
@@ -341,7 +400,8 @@
         pageInfo = nextChapter ? chapter.firstPageInfo : chapter.lastPageInfo;
     }
     
-    [availablePage updateInfo:pageInfo];
+    ///找到当前未使用的页面控制器(当前采取复用模式，总共只有两个页面控制器)
+    DWReaderPageViewController * availablePage = [self pageControllerFromInfo:pageInfo];
     
     ///然后进行翻页即可(翻页操作必须在主线程)
     dispatch_async(dispatch_get_main_queue(), ^{
@@ -350,7 +410,7 @@
         ///切换当前章节为指定章节
         self.currentChapter = chapter;
         ///切换页面控制器
-        [self showPageVC:availablePage from:availablePage.nextPage nextPage:nextChapter initial:initializeReader];
+        [self showPageVC:availablePage from:self.lastPageVC nextPage:nextChapter initial:initializeReader];
     });
     
     if (nextChapter) {
@@ -412,6 +472,7 @@
             [weakSelf didEndDisplayingPage:srcVC];
         }
         [weakSelf changeToChapter:desVC.pageInfo.chapter.chapterInfo.chapter_id from:srcVC.pageInfo.chapter.chapterInfo.chapter_id];
+        [desVC configCurrentVCInUsing];
     }];
 }
 
@@ -420,6 +481,22 @@
         [self.readerDelegate reader:self changeToChapter:desChapterID fromChapter:srcChapterID];
     } else if (self.changeToChapterCallback) {
         self.changeToChapterCallback(self, desChapterID, srcChapterID);
+    }
+}
+
+-(__kindof DWReaderPageViewController *)pageControllerFromInfo:(DWReaderPageInfo *)pageInfo {
+    if (!pageInfo) {
+        return nil;
+    }
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:pageControllerForPageInfo:renderFrame:)]) {
+        return [self.readerDelegate reader:self pageControllerForPageInfo:pageInfo renderFrame:self.renderFrame];
+    } else if (self.pageControllerForPageInfoCallback) {
+        return self.pageControllerForPageInfoCallback(self,pageInfo,self.renderFrame);
+    } else {
+        DWReaderPageViewController * page = self.defaultReusePool.availablePage;
+        [page updateInfo:pageInfo];
+        page.renderFrame = self.renderFrame;
+        return page;
     }
 }
 
@@ -435,8 +512,7 @@
     
     if (nextPage) {
         ///先取出可用于渲染下一页的页面控制器，在更新页面配置信息
-        DWReaderPageViewController * nextPageVC = viewController.nextPage;
-        [nextPageVC updateInfo:nextPage];
+        DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
         ///直接返回vc的都是可取消的翻页，要标记可取消状态
         self.cancelableChangingPage = YES;
         self.currentPageVC = nextPageVC;
@@ -462,8 +538,7 @@
             self.cancelableChangingPage = YES;
             self.currentChapter = nextChapter;
             nextPage = nextChapter.firstPageInfo;
-            DWReaderPageViewController * nextPageVC = viewController.nextPage;
-            [nextPageVC updateInfo:nextPage];
+            DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
             ///记录原始页面控制器
             self.currentPageVC = nextPageVC;
             return nextPageVC;
@@ -492,8 +567,7 @@
     
     DWReaderPageInfo * previousPage = viewController.pageInfo.previousPageInfo;
     if (previousPage) {
-        DWReaderPageViewController * previousPageVC = viewController.previousPage;
-        [previousPageVC updateInfo:previousPage];
+        DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
         self.cancelableChangingPage = YES;
         self.currentPageVC = previousPageVC;
         return previousPageVC;
@@ -513,8 +587,7 @@
             self.cancelableChangingPage = YES;
             self.currentChapter = previousChapter;
             previousPage = previousChapter.lastPageInfo;
-            DWReaderPageViewController * previousPageVC = viewController.previousPage;
-            [previousPageVC updateInfo:previousPage];
+            DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
             self.currentPageVC = previousPageVC;
             return previousPageVC;
         }
@@ -541,17 +614,18 @@
     pageViewController.view.userInteractionEnabled = YES;
     
     ///如果动画完成，则上一个控制器结束展示，否则刚刚出现的控制器结束展示
-    DWReaderPageViewController * previousPageVC = previousViewControllers.firstObject;
     if (completed) {
-        [self didEndDisplayingPage:previousPageVC];
+        [self didEndDisplayingPage:previousViewControllers.firstObject];
+        [self.currentPageVC configCurrentVCInUsing];
     } else {
-        [self didEndDisplayingPage:previousPageVC.nextPage];
+        [self didEndDisplayingPage:self.currentPageVC];
     }
     
     ///如果进行的是可取消的切章且的确取消切章的话，要恢复原始章节及页面控制器
     if (!completed && self.cancelableChangingPage) {
-        self.currentChapter = previousPageVC.pageInfo.chapter;
-        self.currentPageVC = previousPageVC;
+        self.currentChapter = self.lastPageVC.pageInfo.chapter;
+        self.currentPageVC = self.lastPageVC;
+        self.lastPageVC = nil;
     }
     self.cancelableChangingPage = NO;
 }
@@ -572,15 +646,27 @@
     return _chapterTbl;
 }
 
--(NSMutableArray<DWReaderPageViewController *> *)pageVCs {
-    if (!_pageVCs) {
-        _pageVCs = [NSMutableArray arrayWithCapacity:2];
-    }
-    return _pageVCs;
-}
-
 -(BOOL)changingPageOnChangingChapter {
     return !self.view.userInteractionEnabled;
+}
+
+-(DWReaderReuseInternal *)defaultReusePool {
+    if (!_defaultReusePool) {
+        _defaultReusePool = [DWReaderReuseInternal registClass:[DWReaderPageViewController class]];
+    }
+    return _defaultReusePool;
+}
+
+-(NSMutableDictionary *)reusePoolContainer {
+    if (!_reusePoolContainer) {
+        _reusePoolContainer = [NSMutableDictionary dictionary];
+    }
+    return _reusePoolContainer;
+}
+
+-(void)setCurrentPageVC:(DWReaderPageViewController *)currentPageVC {
+    _lastPageVC = _currentPageVC;
+    _currentPageVC = currentPageVC;
 }
 
 @end

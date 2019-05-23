@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic ,strong ,readonly) DWReaderPageInfo * pageInfo;
 
-@property (nonatomic ,assign ,readonly) CGRect renderFrame;
+@property (nonatomic ,assign) CGRect renderFrame;
 
 +(instancetype)pageWithRenderFrame:(CGRect)renderFrame;
 -(instancetype)initWithRenderFrame:(CGRect)renderFrame;

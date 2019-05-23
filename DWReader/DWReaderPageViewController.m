@@ -12,6 +12,9 @@
 
 @property (nonatomic ,strong) UILabel * contentLb;
 
+///隐藏私有属性，为extention中属性提供setter/getter
+@property (nonatomic ,strong) id reuseInternal;
+
 @end
 
 @implementation DWReaderPageViewController
@@ -65,6 +68,16 @@
         _contentLb.numberOfLines = 0;
     }
     return _contentLb;
+}
+
+-(void)setRenderFrame:(CGRect)renderFrame {
+    if (!CGRectEqualToRect(renderFrame, _renderFrame)) {
+        _renderFrame = renderFrame;
+        self.contentLb.frame = _renderFrame;
+        if (self.pageInfo) {
+            [self draw];
+        }
+    }
 }
 
 @end

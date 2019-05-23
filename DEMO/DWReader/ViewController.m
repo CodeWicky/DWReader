@@ -87,7 +87,6 @@
 
     [c seperatePageWithPageConfiguration:conf];
     [c configTextColor: [UIColor redColor]];
-
     
     NSLog(@"end");
     self.c = c;
