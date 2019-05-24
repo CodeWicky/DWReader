@@ -265,7 +265,7 @@
     });
 }
 
--(void)updateWithDisplayConfiguration:(DWReaderDisplayConfiguration *)conf {
+-(void)updateDisplayConfiguration:(DWReaderDisplayConfiguration *)conf {
     if ([conf isEqual:_internalDisplayConf]) {
         return;
     }
@@ -274,7 +274,7 @@
     [self reload];
 }
 
--(void)updateWithRenderConfiguration:(DWReaderRenderConfiguration *)conf {
+-(void)updateRenderConfiguration:(DWReaderRenderConfiguration *)conf {
     if ([conf isEqual:_internalRenderConf]) {
         return;
     }
@@ -296,6 +296,18 @@
     [self reprocessChapterIfNeeded:self.currentChapter];
     NSUInteger page = floor(MIN(percent, 1) * self.currentChapter.totalPage);
     BOOL nextPage = page >= oriPage;
+    [self changeToPage:page nextPage:nextPage animated:NO completion:^{
+        if (self.loadingAction) {
+            self.loadingAction(NO);
+        }
+    }];
+}
+
+-(void)reload {
+    [self.currentPageVC reload];
+}
+
+-(void)changeToPage:(NSInteger)page nextPage:(BOOL)nextPage animated:(BOOL)animated completion:(dispatch_block_t)completion {
     DWReaderPageInfo * pageInfo = [self.currentChapter pageInfoOnPage:page];
     ///如果取不到则采用默认数据
     if (!pageInfo) {
@@ -308,15 +320,11 @@
     ///然后进行翻页即可(翻页操作必须在主线程)
     dispatch_async(dispatch_get_main_queue(), ^{
         ///切换页面控制器
-        [self showPageVC:availablePage from:self.lastPageVC nextPage:nextPage initial:NO chapterChange:NO animated:NO];
-        if (self.loadingAction) {
-            self.loadingAction(NO);
+        [self showPageVC:availablePage from:self.lastPageVC nextPage:nextPage initial:NO chapterChange:NO animated:animated];
+        if (completion) {
+            completion();
         }
     });
-}
-
--(void)reload {
-    [self.currentPageVC reload];
 }
 
 #pragma mark --- life cycle ---

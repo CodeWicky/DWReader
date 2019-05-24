@@ -213,7 +213,7 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 
  @param conf 配置项
  */
--(void)updateWithDisplayConfiguration:(DWReaderDisplayConfiguration *)conf;
+-(void)updateDisplayConfiguration:(DWReaderDisplayConfiguration *)conf;
 
 
 /**
@@ -221,13 +221,24 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 
  @param conf 配置项
  */
--(void)updateWithRenderConfiguration:(DWReaderRenderConfiguration *)conf;
+-(void)updateRenderConfiguration:(DWReaderRenderConfiguration *)conf;
 
 
 /**
  重新装载本页内容
  */
 -(void)reload;
+
+
+/**
+ 翻到当前章节的指定页码
+
+ @param page 指定页码
+ @param nextPage 描述是否是后续页码
+ @param animated 是否需要动画
+ @param completion 完成回调
+ */
+-(void)changeToPage:(NSInteger)page nextPage:(BOOL)nextPage animated:(BOOL)animated completion:(dispatch_block_t)completion;
 
 @end
 
