@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)configNextPage:(DWReaderPageViewController *)nextPage;
 
 -(void)updateInfo:(DWReaderPageInfo *)info;
+-(void)reload;
 
 @end
 

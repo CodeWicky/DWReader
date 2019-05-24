@@ -20,7 +20,8 @@
 }
 
 -(BOOL)isEqual:(__kindof DWReaderTextConfiguration *)object {
-    if ([self.fontName isEqualToString:object.fontName] &&
+    if (CGRectEqualToRect(self.renderFrame, object.renderFrame) &&
+        [self.fontName isEqualToString:object.fontName] &&
         self.titleFontSize == object.titleFontSize &&
         self.titleLineSpacing == object.titleLineSpacing &&
         self.titleSpacing == object.titleSpacing &&

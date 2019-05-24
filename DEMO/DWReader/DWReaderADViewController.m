@@ -8,11 +8,18 @@
 
 #import "DWReaderADViewController.h"
 
+
 @implementation DWReaderADViewController
 
 -(void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor blueColor];
+}
+
+-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
+    DWReaderDisplayConfiguration * conf = [DWReaderDisplayConfiguration new];
+    conf.textColor = [UIColor yellowColor];
+    [self.reader updateWithDisplayConfiguration:conf];
 }
 
 @end

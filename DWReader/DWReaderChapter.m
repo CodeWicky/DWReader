@@ -89,11 +89,10 @@ a = NULL;\
 -(void)configTextColor:(UIColor *)textColor {
     if (![self.textColor isEqual:textColor]) {
         _textColor = textColor;
-        
         DWReaderPageInfo * page = _firstPageInfo;
-        
         while (page) {
             [page.pageContent addAttribute:NSForegroundColorAttributeName value:textColor range:NSMakeRange(0, page.pageContent.length)];
+            [page setNeedsReload];
             page = page.nextPageInfo;
         }
     }

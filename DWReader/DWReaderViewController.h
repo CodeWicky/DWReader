@@ -201,6 +201,28 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
  */
 -(void)showPreviousPage;
 
+
+/**
+ 更新展示配置项
+
+ @param conf 配置项
+ */
+-(void)updateWithDisplayConfiguration:(DWReaderDisplayConfiguration *)conf;
+
+
+/**
+ 更新渲染配置项
+
+ @param conf 配置项
+ */
+-(void)updateWithTextConfiguration:(DWReaderTextConfiguration *)conf;
+
+
+/**
+ 重新装载本页内容
+ */
+-(void)reload;
+
 @end
 
 NS_ASSUME_NONNULL_END

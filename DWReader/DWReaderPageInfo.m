@@ -8,6 +8,12 @@
 
 #import "DWReaderPageInfo.h"
 
+@interface DWReaderPageInfo ()
+
+@property (nonatomic ,assign) BOOL needsReloadFlag;
+
+@end
+
 @implementation DWReaderPageInfo
 
 +(instancetype)pageInfoWithChapter:(DWReaderChapter *)chapter {
@@ -19,6 +25,10 @@
         _chapter = chapter;
     }
     return self;
+}
+
+-(void)setNeedsReload {
+    self.needsReloadFlag = YES;
 }
 
 #pragma mark --- override ---

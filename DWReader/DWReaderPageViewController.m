@@ -8,6 +8,12 @@
 
 #import "DWReaderPageViewController.h"
 
+@interface DWReaderPageInfo (Private_Page)
+
+@property (nonatomic ,assign) BOOL needsReloadFlag;
+
+@end
+
 @interface DWReaderPageViewController ()
 
 @property (nonatomic ,strong) UILabel * contentLb;
@@ -37,11 +43,16 @@
 }
 
 -(void)updateInfo:(DWReaderPageInfo *)info {
-    if (![_pageInfo isEqual:info]) {
+    if (info.needsReloadFlag || ![_pageInfo isEqual:info]) {
+        info.needsReloadFlag = NO;
         _pageInfo = info;
-        self.contentLb.frame = self.renderFrame;
-        [self draw];
+        [self reload];
     }
+}
+
+-(void)reload {
+    self.contentLb.frame = self.renderFrame;
+    [self draw];
 }
 
 #pragma mark --- life cycle ---

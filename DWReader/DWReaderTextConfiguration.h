@@ -15,6 +15,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @interface DWReaderTextConfiguration : NSObject
 
+///渲染尺寸
+@property (nonatomic ,assign) CGRect renderFrame;
+
 ///文字字体(如果展示中文，建议采用中文字体。否则系统细算分页的时候存在问题)
 @property (nonatomic ,copy) NSString * fontName;
 

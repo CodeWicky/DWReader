@@ -7,10 +7,13 @@
 //
 
 #import "DWReaderPageViewController.h"
+#import "DWReaderViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DWReaderADViewController : DWReaderPageViewController
+
+@property (nonatomic ,weak) DWReaderViewController * reader;
 
 @end
 

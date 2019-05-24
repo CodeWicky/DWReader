@@ -101,7 +101,10 @@
 //    [self.pageVC setViewControllers:@[pageVCs.firstObject] direction:UIPageViewControllerNavigationDirectionForward animated:YES completion:nil];
 //    [self.navigationController pushViewController:self.pageVC animated:YES];
     
+    CGRect renderFrame = CGRectMake(15, self.view.safeAreaInsets.top, self.view.bounds.size.width - 30, self.view.bounds.size.height - self.view.safeAreaInsets.top - self.view.safeAreaInsets.bottom);
+    
     DWReaderTextConfiguration * conf = [[DWReaderTextConfiguration alloc] init];
+    conf.renderFrame = renderFrame;
     conf.titleFontSize = 28;
     conf.titleLineSpacing = 18;
     conf.titleSpacing = 28;
@@ -110,10 +113,8 @@
     conf.paragraphSpacing = 28;
     conf.paragraphHeaderSpacing = 30;
 
-    CGRect renderFrame = CGRectMake(15, self.view.safeAreaInsets.top, self.view.bounds.size.width - 30, self.view.bounds.size.height - self.view.safeAreaInsets.top - self.view.safeAreaInsets.bottom);
-
     DWReaderDisplayConfiguration * disCon = [[DWReaderDisplayConfiguration alloc] init];
-    disCon.renderFrame = renderFrame;
+    
     disCon.textColor = [UIColor redColor];
     disCon.transitionStyle = UIPageViewControllerTransitionStylePageCurl;
 
@@ -196,6 +197,7 @@ currentChapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter {
     if ([pageInfo isKindOfClass:[DWReaderADInfo class]]) {
         DWReaderADViewController * ad = [reader dequeueReusablePageViewControllerWithIdentifier:@"ad"];
         [ad updateInfo:pageInfo];
+        ad.reader = reader;
         ad.renderFrame = renderFrame;
         return ad;
     }
