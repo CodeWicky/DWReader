@@ -26,22 +26,26 @@ a = NULL;\
 ///绘制文本
 @property (nonatomic ,strong) NSMutableAttributedString * drawString;
 
+@property (nonatomic ,strong) DWReaderRenderConfiguration * internalPageConf;
+
+@property (nonatomic ,assign) BOOL needSetColor;
+
 @end
 
 @implementation DWReaderChapter
 
 #pragma mark --- interface method ---
-+(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame info:(DWReaderChapterInfo *)info {
-    return [[self alloc] initWithOriginString:oriStr title:title renderFrame:renderFrame info:info];
++(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info {
+    return [[self alloc] initWithOriginString:oriStr title:title info:info];
 }
 
--(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame info:(DWReaderChapterInfo *)info {
+-(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info {
     if (self = [super init]) {
         _originString = oriStr;
         _title = title;
-        _renderFrame = renderFrame;
         _chapterInfo = info;
         _pageConf = nil;
+        _internalPageConf = nil;
         _textColor = nil;
         _content = nil;
         _firstPageInfo = nil;
@@ -69,12 +73,12 @@ a = NULL;\
     _content = content;
 }
 
--(void)seperatePageWithPageConfiguration:(DWReaderTextConfiguration *)conf {
+-(void)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf {
     ///当任意一个影响分页的数据改变时才重新计算分页
-    if (![self.pageConf isEqual:conf]) {
+    if (![_internalPageConf isEqual:conf]) {
         
         ///赋值基础属性并清空之前的分页数据
-        _pageConf = conf;
+        self.pageConf = conf;
         _firstPageInfo = nil;
         _lastPageInfo = nil;
         
@@ -83,11 +87,16 @@ a = NULL;\
         
         ///富文本组装完成后可以开始分页
         [self seperatePage];
+        ///由于重新组装了富文本，所以要重新设置颜色
+        if (self.textColor) {
+            [self configTextColor:self.textColor];
+        }
     }
 }
 
 -(void)configTextColor:(UIColor *)textColor {
-    if (![self.textColor isEqual:textColor]) {
+    if (![self.textColor isEqual:textColor] || _needSetColor) {
+        _needSetColor = NO;
         _textColor = textColor;
         DWReaderPageInfo * page = _firstPageInfo;
         while (page) {
@@ -98,10 +107,10 @@ a = NULL;\
     }
 }
 
--(void)asyncParseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor reprocess:(dispatch_block_t)reprocess completion:(dispatch_block_t)completion {
+-(void)asyncParseChapterToPageWithConfiguration:(DWReaderRenderConfiguration *)conf reprocess:(dispatch_block_t)reprocess completion:(dispatch_block_t)completion {
     [self configAsyncParseStatus:YES];
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        [self parseChapterToPageWithConfiguration:conf textColor:textColor reprocess:reprocess];
+        [self parseChapterToPageWithConfiguration:conf reprocess:reprocess];
         [self configAsyncParseStatus:NO];
         if (completion) {
             completion();
@@ -109,10 +118,9 @@ a = NULL;\
     });
 }
 
--(void)parseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor reprocess:(nonnull dispatch_block_t)reprocess {
+-(void)parseChapterToPageWithConfiguration:(DWReaderRenderConfiguration *)conf reprocess:( dispatch_block_t)reprocess {
     [self parseChapter];
     [self seperatePageWithPageConfiguration:conf];
-    [self configTextColor:textColor];
     if (reprocess) {
         reprocess();
     }
@@ -169,8 +177,8 @@ a = NULL;\
     NSMutableAttributedString * titleAttr = [self createAttrWithString:[self.title stringByAppendingString:@"\n"] fontName:_pageConf.fontName fontSize:_pageConf.titleFontSize lineSpacing:_pageConf.titleLineSpacing paragraphSpacing:_pageConf.titleSpacing paragraphHeaderSpacing:0];
     NSMutableAttributedString * contentAttr = [self createAttrWithString:self.content fontName:_pageConf.fontName fontSize:_pageConf.contentFontSize lineSpacing:_pageConf.contentLineSpacing paragraphSpacing:_pageConf.paragraphSpacing paragraphHeaderSpacing:_pageConf.paragraphHeaderSpacing];
     [titleAttr appendAttributedString:contentAttr];
-
     self.drawString = titleAttr;
+    _needSetColor = YES;
 }
 
 -(NSMutableAttributedString *)createAttrWithString:(NSString *)string fontName:(NSString *)fontName fontSize:(CGFloat)fontSize lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing paragraphHeaderSpacing:(CGFloat)paragraphHeaderSpacing {
@@ -196,7 +204,7 @@ a = NULL;\
     ///当前手机以xs max做最大屏幕，14号字做最小字号，18像素为最小行间距，最大展示字数为564个字，取整估算为600字，为避免因数字较多在成的字形大小差距的影响，乘以1.2倍的安全余量，故当前安全阈值为720字
     NSUInteger totalLen = self.drawString.length;
     NSUInteger length = totalLen;
-    CGSize renderSize = self.renderFrame.size;
+    CGSize renderSize = self.pageConf.renderFrame.size;
     DWReaderPageInfo * lastPageInfo = nil;
     DWReaderPageInfo * firstPageInfo = nil;
     NSMutableAttributedString * drawString = self.drawString;
@@ -282,6 +290,14 @@ a = NULL;\
         return NO;
     }
     return YES;
+}
+
+#pragma mark --- setter/getter ---
+-(void)setPageConf:(DWReaderRenderConfiguration * _Nonnull)pageConf {
+    if (![_internalPageConf isEqual:pageConf]) {
+        _pageConf = pageConf;
+        _internalPageConf = [pageConf copy];
+    }
 }
 
 @end

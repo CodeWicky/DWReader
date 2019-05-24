@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "DWReaderChapterInfo.h"
-#import "DWReaderTextConfiguration.h"
+#import "DWReaderRenderConfiguration.h"
 #import "DWReaderDisplayConfiguration.h"
 #import "DWReaderChapter.h"
 #import "DWReaderPageInfo.h"
@@ -108,6 +108,12 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 
 @interface DWReaderViewController : UIPageViewController
 
+///当前渲染配置
+@property (nonatomic ,strong ,readonly) DWReaderRenderConfiguration * renderConf;
+
+///当前展示配置
+@property (nonatomic ,strong ,readonly) DWReaderDisplayConfiguration * displayConf;
+
 ///获取书籍数据代理（如果指定代理且代理实现对应方法则优先是否代理方法，否则使用回调方法）
 @property (nonatomic ,weak) id<DWReaderDataDelegate> readerDelegate;
 
@@ -142,12 +148,12 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 /**
  初始化阅读器
 
- @param textConf 阅读器文字配置信息
+ @param renderConf 阅读器文字配置信息
  @param displayConf 阅读器展示配置信息
 
  @return 阅读器实例
  */
-+(instancetype)readerWithTextConfiguration:(DWReaderTextConfiguration *)textConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf;
++(instancetype)readerWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf;
 
 
 /**
@@ -215,7 +221,7 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 
  @param conf 配置项
  */
--(void)updateWithTextConfiguration:(DWReaderTextConfiguration *)conf;
+-(void)updateWithRenderConfiguration:(DWReaderRenderConfiguration *)conf;
 
 
 /**

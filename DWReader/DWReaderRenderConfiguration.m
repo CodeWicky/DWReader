@@ -1,14 +1,14 @@
 //
-//  DWReaderTextConfiguration.m
+//  DWReaderRenderConfiguration.m
 //  DWReader
 //
 //  Created by Wicky on 2019/2/16.
 //  Copyright © 2019 Wicky. All rights reserved.
 //
 
-#import "DWReaderTextConfiguration.h"
+#import "DWReaderRenderConfiguration.h"
 
-@implementation DWReaderTextConfiguration
+@implementation DWReaderRenderConfiguration
 
 #pragma mark --- override ---
 -(instancetype)init {
@@ -19,7 +19,7 @@
     return self;
 }
 
--(BOOL)isEqual:(__kindof DWReaderTextConfiguration *)object {
+-(BOOL)isEqual:(__kindof DWReaderRenderConfiguration *)object {
     if (CGRectEqualToRect(self.renderFrame, object.renderFrame) &&
         [self.fontName isEqualToString:object.fontName] &&
         self.titleFontSize == object.titleFontSize &&
@@ -32,6 +32,20 @@
         return YES;
     }
     return NO;
+}
+
+-(id)copyWithZone:(NSZone *)zone {
+    typeof(self) newInstance = [[[self class] alloc] init];
+    newInstance.renderFrame = self.renderFrame;
+    newInstance.fontName = self.fontName;
+    newInstance.titleFontSize = self.titleFontSize;
+    newInstance.titleLineSpacing = self.titleSpacing;
+    newInstance.titleSpacing = self.titleSpacing;
+    newInstance.contentFontSize = self.contentFontSize;
+    newInstance.contentLineSpacing = self.contentLineSpacing;
+    newInstance.paragraphSpacing = self.paragraphSpacing;
+    newInstance.paragraphHeaderSpacing = self.paragraphHeaderSpacing;
+    return newInstance;
 }
 
 @end

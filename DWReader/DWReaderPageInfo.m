@@ -8,6 +8,7 @@
 
 #import "DWReaderPageInfo.h"
 
+NSInteger const DWReaderPageUndefined = -1;
 @interface DWReaderPageInfo ()
 
 @property (nonatomic ,assign) BOOL needsReloadFlag;
@@ -23,6 +24,7 @@
 -(instancetype)initWithChapter:(DWReaderChapter *)chapter {
     if (self = [super init]) {
         _chapter = chapter;
+        _page = DWReaderPageUndefined;
     }
     return self;
 }

@@ -1,5 +1,5 @@
 //
-//  DWReaderTextConfiguration.h
+//  DWReaderRenderConfiguration.h
 //  DWReader
 //
 //  Created by Wicky on 2019/2/16.
@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 /*
  页面文字配置
  */
-@interface DWReaderTextConfiguration : NSObject
+@interface DWReaderRenderConfiguration : NSObject<NSCopying>
 
 ///渲染尺寸
 @property (nonatomic ,assign) CGRect renderFrame;

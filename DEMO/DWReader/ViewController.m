@@ -103,7 +103,7 @@
     
     CGRect renderFrame = CGRectMake(15, self.view.safeAreaInsets.top, self.view.bounds.size.width - 30, self.view.bounds.size.height - self.view.safeAreaInsets.top - self.view.safeAreaInsets.bottom);
     
-    DWReaderTextConfiguration * conf = [[DWReaderTextConfiguration alloc] init];
+    DWReaderRenderConfiguration * conf = [[DWReaderRenderConfiguration alloc] init];
     conf.renderFrame = renderFrame;
     conf.titleFontSize = 28;
     conf.titleLineSpacing = 18;
@@ -123,7 +123,7 @@
     info.book_id = @"1000";
     info.chapter_id = @"10002";
 
-    self.reader = [DWReaderViewController readerWithTextConfiguration:conf displayConfiguration:disCon];
+    self.reader = [DWReaderViewController readerWithRenderConfiguration:conf displayConfiguration:disCon];
     self.reader.readerDelegate = self;
     [self.reader fetchChapter:info];
     [self.reader registerClass:[DWReaderADViewController class] forPageViewControllerReuseIdentifier:@"ad"];

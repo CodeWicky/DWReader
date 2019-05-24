@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-
+UIKIT_EXTERN NSInteger const DWReaderPageUndefined;
 @class DWReaderChapter;
 NS_ASSUME_NONNULL_BEGIN
 

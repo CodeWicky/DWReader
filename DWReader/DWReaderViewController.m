@@ -52,9 +52,9 @@
 
 -(void)configPages {
     ///建立一个重用池，降低内存中VC数量
-    __kindof DWReaderPageViewController * tmp1 = [self.registClass pageWithRenderFrame:CGRectZero];
+    __kindof DWReaderPageViewController * tmp1 = [self.registClass new];
     tmp1.reuseInternal = self;
-    __kindof DWReaderPageViewController * tmp2 = [self.registClass pageWithRenderFrame:CGRectZero];
+    __kindof DWReaderPageViewController * tmp2 = [self.registClass new];
     tmp2.reuseInternal = self;
     [tmp1 configNextPage:tmp2];
     [tmp2 configNextPage:tmp1];
@@ -67,13 +67,15 @@
 
 @interface DWReaderViewController ()<UIPageViewControllerDelegate ,UIPageViewControllerDataSource>
 
-@property (nonatomic ,strong) DWReaderTextConfiguration * textConf;
+@property (nonatomic ,strong) DWReaderRenderConfiguration * renderConf;
 
-@property (nonatomic ,strong) UIColor * textColor;
+@property (nonatomic ,strong) DWReaderDisplayConfiguration * displayConf;
+
+@property (nonatomic ,strong) DWReaderRenderConfiguration * internalRenderConf;
+
+@property (nonatomic ,strong) DWReaderDisplayConfiguration * internalDisplayConf;
 
 @property (nonatomic ,strong) DWReaderChapterInfo * info;
-
-@property (nonatomic ,assign) CGRect renderFrame;
 
 @property (nonatomic ,assign) BOOL waitingChangeNextChapter;
 
@@ -101,12 +103,12 @@
 
 @implementation DWReaderViewController
 
-+(instancetype)readerWithTextConfiguration:(DWReaderTextConfiguration *)textConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf {
-    if (CGRectEqualToRect(textConf.renderFrame, CGRectNull) || CGRectEqualToRect(textConf.renderFrame, CGRectZero)) {
++(instancetype)readerWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf {
+    if (CGRectEqualToRect(renderConf.renderFrame, CGRectNull) || CGRectEqualToRect(renderConf.renderFrame, CGRectZero)) {
         NSAssert(NO, @"DWReader can't initialize a reader with renderFrame is either CGRectNull or CGRectZero.");
         return nil;
     }
-    __kindof DWReaderViewController * reader = [[[self class] alloc] initWithConfiguration:textConf renderFrame:textConf.renderFrame textColor:displayConf.textColor transitionStyle:displayConf.transitionStyle];
+    __kindof DWReaderViewController * reader = [[[self class] alloc] initWithRenderConfiguration:renderConf displayConfiguration:displayConf];
     return reader;
 }
 
@@ -115,8 +117,8 @@
     ///获取到下章ID，先查询本地是否存在下一章，不存在直接请求下章即可，同时要将等待翻页置位真，让请求完成后自动翻页
     DWReaderChapter * nextChapter = [self.chapterTbl valueForKey:chapterInfo.chapter_id];
     if (nextChapter) {
-        [nextChapter configTextColor:_textColor];
-        ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转
+        ///若取出缓存，先配置颜色等相关配置，以免当前主题已经发生改变
+        [self changeChapterConfigurationIfNeeded:nextChapter]; ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转
         if (!nextChapter.parsing) {
             ///切换章节并找到章节中第一页
             self.waitingChangeNextChapter = YES;
@@ -179,7 +181,7 @@
         ///先取出可用于渲染下一页的页面控制器，在更新页面配置信息
         DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
         self.currentPageVC = nextPageVC;
-        [self showPageVC:nextPageVC from:self.lastPageVC nextPage:YES initial:NO];
+        [self showPageVC:nextPageVC from:self.lastPageVC nextPage:YES initial:NO chapterChange:YES animated:YES];
         return;
     }
     
@@ -195,6 +197,7 @@
     ///获取到下章ID，先查询本地是否存在下一章，不存在直接请求下章即可，同时要将等待翻页置位真，让请求完成后自动翻页
     DWReaderChapter * nextChapter = [self.chapterTbl valueForKey:nextChapterID];
     if (nextChapter) {
+        [self changeChapterConfigurationIfNeeded:nextChapter];
         ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转（由于直接返回vc的都是可以取消的翻页，所以如果翻页取消了，要将章节和控制器恢复成切章之前的状态）
         if (!nextChapter.parsing) {
             ///切换章节并找到章节中第一页
@@ -205,7 +208,7 @@
             DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
             ///记录原始页面控制器
             self.currentPageVC = nextPageVC;
-            [self showPageVC:nextPageVC from:self.lastPageVC nextPage:YES initial:NO];
+            [self showPageVC:nextPageVC from:self.lastPageVC nextPage:YES initial:NO chapterChange:YES animated:YES];
         }
         return ;
     }
@@ -215,7 +218,7 @@
     chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
     chapterInfo.chapter_id = nextChapterID;
     self.waitingChangeNextChapter = YES;
-    ///异步提交请求任务，如果同步的话会造成当整个数据获取过程是同步时（即读取本地缓存数据），同步设置了pageViewController的vc，然后又立刻返回了nil。UIPageViewController如果短时间内改变两次vc（在一个动画未完成即开始另一个动画）避险黑屏。所以分成两次提交。
+    ///异步提交请求任务，如果同步的话会造成当整个数据获取过程是同步时（即读取本地缓存数据），同步设置了pageViewController的vc，然后又立刻返回了nil。UIPageViewController如果短时间内改变两次vc（在一个动画未完成即开始另一个动画）避免黑屏。所以分成两次提交。
     dispatch_async(dispatch_get_main_queue(), ^{
         [self requestChapter:chapterInfo nextChapter:YES preload:NO];
     });
@@ -227,7 +230,7 @@
     if (previousPage) {
         DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
         self.currentPageVC = previousPageVC;
-        [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO];
+        [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO chapterChange:YES animated:YES];
         return ;
     }
     
@@ -241,13 +244,14 @@
     
     DWReaderChapter * previousChapter = [self.chapterTbl valueForKey:previousChapterID];
     if (previousChapter) {
+        [self changeChapterConfigurationIfNeeded:previousChapter];
         if (!previousChapter.parsing) {
             self.currentChapter = previousChapter;
             previousPage = previousChapter.lastPageInfo;
             
             DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
             self.currentPageVC = previousPageVC;
-            [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO];
+            [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO chapterChange:YES animated:YES];
         }
         return ;
     }
@@ -262,13 +266,53 @@
 }
 
 -(void)updateWithDisplayConfiguration:(DWReaderDisplayConfiguration *)conf {
-    _textColor = conf.textColor;
+    if ([conf isEqual:_internalDisplayConf]) {
+        return;
+    }
+    self.displayConf = conf;
     [self.currentChapter configTextColor:conf.textColor];
     [self reload];
 }
 
--(void)updateWithTextConfiguration:(DWReaderTextConfiguration *)conf {
+-(void)updateWithRenderConfiguration:(DWReaderRenderConfiguration *)conf {
+    if ([conf isEqual:_internalRenderConf]) {
+        return;
+    }
+    self.renderConf = conf;
+    if (self.loadingAction) {
+        self.loadingAction(YES);
+    }
+    NSInteger oriPage = self.currentPageVC.pageInfo.page;
+    if (oriPage == DWReaderPageUndefined) {
+        DWReaderPageInfo * tmpInfo = self.currentPageVC.pageInfo.previousPageInfo;
+        while (tmpInfo.page == DWReaderPageUndefined) {
+            tmpInfo = tmpInfo.previousPageInfo;
+        }
+        oriPage = tmpInfo.page;
+    }
+    CGFloat percent = oriPage * 1.0 / self.currentChapter.totalPage;
+    ///重新分页后要重新二次处理
+    [self.currentChapter seperatePageWithPageConfiguration:conf];
+    [self reprocessChapterIfNeeded:self.currentChapter];
+    NSUInteger page = floor(MIN(percent, 1) * self.currentChapter.totalPage);
+    BOOL nextPage = page >= oriPage;
+    DWReaderPageInfo * pageInfo = [self.currentChapter pageInfoOnPage:page];
+    ///如果取不到则采用默认数据
+    if (!pageInfo) {
+        pageInfo = nextPage ? self.currentChapter.lastPageInfo : self.currentChapter.firstPageInfo;
+    }
     
+    DWReaderPageViewController * availablePage = [self pageControllerFromInfo:pageInfo];
+    ///切换当前使用的控制器
+    self.currentPageVC = availablePage;
+    ///然后进行翻页即可(翻页操作必须在主线程)
+    dispatch_async(dispatch_get_main_queue(), ^{
+        ///切换页面控制器
+        [self showPageVC:availablePage from:self.lastPageVC nextPage:nextPage initial:NO chapterChange:NO animated:NO];
+        if (self.loadingAction) {
+            self.loadingAction(NO);
+        }
+    });
 }
 
 -(void)reload {
@@ -282,16 +326,20 @@
 }
 
 #pragma mark --- tool method ---
--(instancetype)initWithConfiguration:(DWReaderTextConfiguration *)conf renderFrame:(CGRect)renderFrame textColor:(UIColor *)textColor transitionStyle:(UIPageViewControllerTransitionStyle)transitionStyle {
-    if (self = [super initWithTransitionStyle:transitionStyle navigationOrientation:(UIPageViewControllerNavigationOrientationHorizontal) options:nil]) {
+-(instancetype)initWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf {
+    if (self = [super initWithTransitionStyle:displayConf.transitionStyle navigationOrientation:(UIPageViewControllerNavigationOrientationHorizontal) options:nil]) {
         self.delegate = self;
         self.dataSource = self;
-        _textConf = conf;
-        _textColor = textColor;
-        _renderFrame = renderFrame;
+        self.renderConf = renderConf;
+        self.displayConf = displayConf;
         self.currentPageVC = self.defaultReusePool.availablePage;
     }
     return self;
+}
+
+-(void)changeChapterConfigurationIfNeeded:(DWReaderChapter *)chapter {
+    [chapter seperatePageWithPageConfiguration:_internalRenderConf];
+    [chapter configTextColor:_internalDisplayConf.textColor];
 }
 
 -(void)requestChapter:(DWReaderChapterInfo *)info nextChapter:(BOOL)next preload:(BOOL)preload {
@@ -353,7 +401,7 @@
     }
     
     ///配置章节信息
-    DWReaderChapter * chapter = [DWReaderChapter chapterWithOriginString:content title:title renderFrame:self.renderFrame info:info];
+    DWReaderChapter * chapter = [DWReaderChapter chapterWithOriginString:content title:title info:info];
     
     ///如果是预加载，分页等工作要异步完成。由于异步自动跳转，同步不会，所以存入表中的时机要正确。按照下列的策略可以保证从表中获取的章节只有两种状态，一种是异步解析会自动跳转的状态，一种是同步解析不会自动跳转的状态
     if (preload) {
@@ -362,14 +410,19 @@
             [self.chapterTbl setValue:chapter forKey:info.chapter_id];
         }
         ///如果是预加载，异步分页完成后应检测是否在等待切章
-        [chapter asyncParseChapterToPageWithConfiguration:_textConf textColor:_textColor reprocess:^{
+        __weak typeof(self)weakSelf = self;
+        [chapter asyncParseChapterToPageWithConfiguration:_internalRenderConf reprocess:^{
+            ///做完二次处理后要将颜色文字颜色改变为当前主题颜色
+            [chapter configTextColor:weakSelf.internalDisplayConf.textColor];
             [self reprocessChapterIfNeeded:chapter];
         } completion:^{
             [self changeChapterIfNeeded:chapter nextChapter:nextChapter];
         }];
     } else {
         ///如果不是预加载，是同步解析，当解析完成后再加入到章节表中
-        [chapter parseChapterToPageWithConfiguration:_textConf textColor:_textColor reprocess:^{
+        __weak typeof(self)weakSelf = self;
+        [chapter parseChapterToPageWithConfiguration:_internalRenderConf reprocess:^{
+            [chapter configTextColor:weakSelf.internalDisplayConf.textColor];
             [self reprocessChapterIfNeeded:chapter];
         }];
         if (info.chapter_id) {
@@ -401,7 +454,6 @@
     if (self.waitingChangePreviousChapter && nextChapter) {
         return;
     }
-    
     ///获取到首次加载和正常加载的状态（因为如果是首次加载代表阅读器初始化，此时如果远端进度为50%，应该跳转至50%，如果不是首次加载，切章发生在翻页过程中，切章过程中均应该保证连续性，故进度不为50%。self.currentChapter为nil刚好可以标志阅读器初始化的状态）
     BOOL initializeReader = (self.currentChapter == nil);
     ///找到页面后配置页面信息(往后翻页则找到下一章的第一页，往前翻页则找到上一章的最后一页)
@@ -429,7 +481,7 @@
         ///切换当前章节为指定章节
         self.currentChapter = chapter;
         ///切换页面控制器
-        [self showPageVC:availablePage from:self.lastPageVC nextPage:nextChapter initial:initializeReader];
+        [self showPageVC:availablePage from:self.lastPageVC nextPage:nextChapter initial:initializeReader chapterChange:YES animated:YES];
     });
     
     if (nextChapter) {
@@ -479,18 +531,20 @@
     }
 }
 
--(void)showPageVC:(DWReaderPageViewController *)desVC from:(DWReaderPageViewController *)srcVC nextPage:(BOOL)nextPage initial:(BOOL)initial {
+-(void)showPageVC:(DWReaderPageViewController *)desVC from:(DWReaderPageViewController *)srcVC nextPage:(BOOL)nextPage initial:(BOOL)initial chapterChange:(BOOL)chapterChange animated:(BOOL)animated {
     ///关闭交互避免连续翻页
     self.view.userInteractionEnabled = NO;
     
     __weak typeof(self)weakSelf = self;
     [self willDisplayPage:desVC];
-    [self setViewControllers:@[desVC] direction:nextPage?UIPageViewControllerNavigationDirectionForward:UIPageViewControllerNavigationDirectionReverse animated:YES completion:^(BOOL finished) {
+    [self setViewControllers:@[desVC] direction:nextPage?UIPageViewControllerNavigationDirectionForward:UIPageViewControllerNavigationDirectionReverse animated:animated completion:^(BOOL finished) {
         weakSelf.view.userInteractionEnabled = YES;
         if (!initial) {
             [weakSelf didEndDisplayingPage:srcVC];
         }
-        [weakSelf changeToChapter:desVC.pageInfo.chapter.chapterInfo.chapter_id from:srcVC.pageInfo.chapter.chapterInfo.chapter_id];
+        if (chapterChange) {
+            [weakSelf changeToChapter:desVC.pageInfo.chapter.chapterInfo.chapter_id from:srcVC.pageInfo.chapter.chapterInfo.chapter_id];
+        }
         [desVC configCurrentVCInUsing];
     }];
 }
@@ -508,13 +562,13 @@
         return nil;
     }
     if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:pageControllerForPageInfo:renderFrame:)]) {
-        return [self.readerDelegate reader:self pageControllerForPageInfo:pageInfo renderFrame:self.renderFrame];
+        return [self.readerDelegate reader:self pageControllerForPageInfo:pageInfo renderFrame:_internalRenderConf.renderFrame];
     } else if (self.pageControllerForPageInfoCallback) {
-        return self.pageControllerForPageInfoCallback(self,pageInfo,self.renderFrame);
+        return self.pageControllerForPageInfoCallback(self,pageInfo,_internalRenderConf.renderFrame);
     } else {
         DWReaderPageViewController * page = self.defaultReusePool.availablePage;
         [page updateInfo:pageInfo];
-        page.renderFrame = self.renderFrame;
+        page.renderFrame = _internalRenderConf.renderFrame;
         return page;
     }
 }
@@ -550,7 +604,7 @@
     ///获取到下章ID，先查询本地是否存在下一章，不存在直接请求下章即可，同时要将等待翻页置位真，让请求完成后自动翻页
     DWReaderChapter * nextChapter = [self.chapterTbl valueForKey:nextChapterID];
     if (nextChapter) {
-        ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转（由于直接返回vc的都是可以取消的翻页，所以如果翻页取消了，要将章节和控制器恢复成切章之前的状态）
+        [self changeChapterConfigurationIfNeeded:nextChapter]; ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转（由于直接返回vc的都是可以取消的翻页，所以如果翻页取消了，要将章节和控制器恢复成切章之前的状态）
         if (!nextChapter.parsing) {
             ///切换章节并找到章节中第一页
             ///记录当前进行的是可取消的切章状态
@@ -602,6 +656,7 @@
     
     DWReaderChapter * previousChapter = [self.chapterTbl valueForKey:previousChapterID];
     if (previousChapter) {
+        [self changeChapterConfigurationIfNeeded:previousChapter];
         if (!previousChapter.parsing) {
             self.cancelableChangingPage = YES;
             self.currentChapter = previousChapter;
@@ -686,6 +741,20 @@
 -(void)setCurrentPageVC:(DWReaderPageViewController *)currentPageVC {
     _lastPageVC = _currentPageVC;
     _currentPageVC = currentPageVC;
+}
+
+-(void)setRenderConf:(DWReaderRenderConfiguration *)renderConf {
+    if (![_internalRenderConf isEqual:renderConf]) {
+        _renderConf = renderConf;
+        _internalRenderConf = [renderConf copy];
+    }
+}
+
+-(void)setDisplayConf:(DWReaderDisplayConfiguration *)displayConf {
+    if (![_internalDisplayConf isEqual:displayConf]) {
+        _displayConf = displayConf;
+        _internalDisplayConf = [displayConf copy];
+    }
 }
 
 @end

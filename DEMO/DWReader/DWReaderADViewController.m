@@ -17,9 +17,12 @@
 }
 
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    DWReaderDisplayConfiguration * conf = [DWReaderDisplayConfiguration new];
-    conf.textColor = [UIColor yellowColor];
-    [self.reader updateWithDisplayConfiguration:conf];
+    DWReaderDisplayConfiguration * dis = [DWReaderDisplayConfiguration new];
+    dis.textColor = [UIColor yellowColor];
+    [self.reader updateWithDisplayConfiguration:dis];
+    DWReaderRenderConfiguration * conf = self.reader.renderConf;
+    conf.contentFontSize = 30;
+    [self.reader updateWithRenderConfiguration:conf];
 }
 
 @end

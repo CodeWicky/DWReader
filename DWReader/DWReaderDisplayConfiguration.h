@@ -11,7 +11,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 ///阅读器展示配置
-@interface DWReaderDisplayConfiguration : NSObject
+@interface DWReaderDisplayConfiguration : NSObject<NSCopying>
 
 ///翻页效果
 @property (nonatomic ,assign) UIPageViewControllerTransitionStyle transitionStyle;

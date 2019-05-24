@@ -21,8 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic ,assign) CGRect renderFrame;
 
-+(instancetype)pageWithRenderFrame:(CGRect)renderFrame;
--(instancetype)initWithRenderFrame:(CGRect)renderFrame;
 -(void)configNextPage:(DWReaderPageViewController *)nextPage;
 
 -(void)updateInfo:(DWReaderPageInfo *)info;

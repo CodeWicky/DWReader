@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "DWReaderPageInfo.h"
-#import "DWReaderTextConfiguration.h"
+#import "DWReaderRenderConfiguration.h"
 #import "DWReaderChapterInfo.h"
 
 
@@ -24,15 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 ///标题
 @property (nonatomic ,copy ,readonly) NSString * title;
 
-///渲染尺寸
-@property (nonatomic ,assign ,readonly) CGRect renderFrame;
-
 ///章节信息
 @property (nonatomic ,strong) DWReaderChapterInfo * chapterInfo;
 
 #pragma mark --- 可配置项 ---
 ///页面配置项
-@property (nonatomic ,strong ,readonly) DWReaderTextConfiguration * pageConf;
+@property (nonatomic ,strong ,readonly) DWReaderRenderConfiguration * pageConf;
 
 ///字体颜色
 @property (nonatomic ,strong ,readonly) UIColor * textColor;
@@ -58,11 +55,10 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param oriStr 原始数据
  @param title 标题
- @param renderFrame 渲染尺寸
  @return 章节内容
  */
-+(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame info:(DWReaderChapterInfo *)info;
--(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title renderFrame:(CGRect)renderFrame info:(DWReaderChapterInfo *)info;
++(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info;
+-(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info;
 
 
 /**
@@ -79,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param conf 页面配置
  */
--(void)seperatePageWithPageConfiguration:(DWReaderTextConfiguration *)conf;
+-(void)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf;
 
 
 /**
@@ -94,12 +90,11 @@ NS_ASSUME_NONNULL_BEGIN
  解析内容并分段
 
  @param conf 页面配置
- @param textColor 文字颜色
  @param reprocess 分页完成后想做的额外操作
  @param completion 异步完成回调
  */
--(void)asyncParseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor reprocess:(dispatch_block_t)reprocess completion:(dispatch_block_t)completion;
--(void)parseChapterToPageWithConfiguration:(DWReaderTextConfiguration *)conf textColor:(UIColor *)textColor reprocess:(dispatch_block_t)reprocess;
+-(void)asyncParseChapterToPageWithConfiguration:(DWReaderRenderConfiguration *)conf reprocess:(nullable dispatch_block_t)reprocess completion:(dispatch_block_t)completion;
+-(void)parseChapterToPageWithConfiguration:(DWReaderRenderConfiguration *)conf reprocess:(nullable dispatch_block_t)reprocess;
 
 
 /**

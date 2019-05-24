@@ -26,17 +26,6 @@
 @implementation DWReaderPageViewController
 
 #pragma mark --- interface method ---
-+(instancetype)pageWithRenderFrame:(CGRect)renderFrame {
-    return [[[self class] alloc] initWithRenderFrame:renderFrame];
-}
-
--(instancetype)initWithRenderFrame:(CGRect)renderFrame {
-    if (self = [super init]) {
-        _renderFrame = renderFrame;
-    }
-    return self;
-}
-
 -(void)configNextPage:(DWReaderPageViewController *)nextPage {
     self.nextPage = nextPage;
     nextPage.previousPage = self;
