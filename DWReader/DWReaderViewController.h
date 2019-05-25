@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class DWReaderViewController;
 
+typedef void(^DWReaderTapGestureActionCallback)(DWReaderViewController * reader,DWReaderPageViewController * currentPage,UITapGestureRecognizer * tapGes);
+
 typedef void(^DWReaderRequestDataCompleteCallback)(NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,_Nullable id userInfo);
 typedef void(^DWReaderReprocessorCallback)(DWReaderPageInfo * _Nullable  newFirstPage, DWReaderPageInfo * _Nullable newLastPage,NSUInteger fixTotalPage);
 typedef NSString *_Nullable(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID ,NSInteger currentChapterIndex ,BOOL nextChapter);
@@ -32,6 +34,16 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 @protocol DWReaderDataDelegate <NSObject>
 
 @optional
+
+
+/**
+ 阅读器上的点击事件代理
+
+ @param reader 当前阅读器对象
+ @param currentPage 当前页面控制器
+ @param tapGes 当前响应的手势
+ */
+-(void)reader:(DWReaderViewController *)reader currentPage:(DWReaderPageViewController *)currentPage tapGesture:(UITapGestureRecognizer *)tapGes;
 
 /**
  根据给定信息返回关联的章节ID
@@ -116,6 +128,12 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 
 ///获取书籍数据代理（如果指定代理且代理实现对应方法则优先是否代理方法，否则使用回调方法）
 @property (nonatomic ,weak) id<DWReaderDataDelegate> readerDelegate;
+
+///阅读器上的手势点击，可以设置其代理来自定义响应实际
+@property (nonatomic ,strong ,readonly) UITapGestureRecognizer * tapGestureOnReader;
+
+///阅读器上的手势点击响应回调，可自己决定动作
+@property (nonatomic ,copy) DWReaderTapGestureActionCallback tapGestureOnReaderCallback;
 
 ///根据给定信息返回指定的章节ID
 @property (nonatomic ,copy) DWReaderQueryChapterIDCallback queryChapterIdCallback;
@@ -209,6 +227,17 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 
 
 /**
+ 翻到当前章节的指定页码
+ 
+ @param page 指定页码
+ @param nextPage 描述是否是后续页码
+ @param animated 是否需要动画
+ @param completion 完成回调
+ */
+-(void)showPage:(NSInteger)page nextPage:(BOOL)nextPage animated:(BOOL)animated completion:(dispatch_block_t)completion;
+
+
+/**
  更新展示配置项
 
  @param conf 配置项
@@ -228,17 +257,6 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
  重新装载本页内容
  */
 -(void)reload;
-
-
-/**
- 翻到当前章节的指定页码
-
- @param page 指定页码
- @param nextPage 描述是否是后续页码
- @param animated 是否需要动画
- @param completion 完成回调
- */
--(void)changeToPage:(NSInteger)page nextPage:(BOOL)nextPage animated:(BOOL)animated completion:(dispatch_block_t)completion;
 
 @end
 

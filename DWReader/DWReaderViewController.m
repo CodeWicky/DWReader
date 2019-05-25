@@ -65,6 +65,25 @@
 
 @end
 
+@interface DWReaderGestureProxy : NSObject<UIGestureRecognizerDelegate>
+
+@end
+
+@implementation DWReaderGestureProxy
+
+-(BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
+    UIView * view = gestureRecognizer.view;
+    CGPoint point = [gestureRecognizer locationInView:view];
+    CGFloat width = view.bounds.size.width;
+    if (point.x < width / 3.0 || point.x > width * 2.0 / 3.0) {
+        return NO;
+    } else {
+        return YES;
+    }
+}
+
+@end
+
 @interface DWReaderViewController ()<UIPageViewControllerDelegate ,UIPageViewControllerDataSource>
 
 @property (nonatomic ,strong) DWReaderRenderConfiguration * renderConf;
@@ -98,6 +117,10 @@
 @property (nonatomic ,assign) BOOL changingPageOnChangingChapter;
 
 @property (nonatomic ,strong) NSMutableDictionary * reusePoolContainer;
+
+@property (nonatomic ,strong) UITapGestureRecognizer * tapGes;
+
+@property (nonatomic ,strong) DWReaderGestureProxy * tapGesProxy;
 
 @end
 
@@ -265,6 +288,26 @@
     });
 }
 
+-(void)showPage:(NSInteger)page nextPage:(BOOL)nextPage animated:(BOOL)animated completion:(dispatch_block_t)completion {
+    DWReaderPageInfo * pageInfo = [self.currentChapter pageInfoOnPage:page];
+    ///如果取不到则采用默认数据
+    if (!pageInfo) {
+        pageInfo = nextPage ? self.currentChapter.lastPageInfo : self.currentChapter.firstPageInfo;
+    }
+    
+    DWReaderPageViewController * availablePage = [self pageControllerFromInfo:pageInfo];
+    ///切换当前使用的控制器
+    self.currentPageVC = availablePage;
+    ///然后进行翻页即可(翻页操作必须在主线程)
+    dispatch_async(dispatch_get_main_queue(), ^{
+        ///切换页面控制器
+        [self showPageVC:availablePage from:self.lastPageVC nextPage:nextPage initial:NO chapterChange:NO animated:animated];
+        if (completion) {
+            completion();
+        }
+    });
+}
+
 -(void)updateDisplayConfiguration:(DWReaderDisplayConfiguration *)conf {
     if ([conf isEqual:_internalDisplayConf]) {
         return;
@@ -296,7 +339,7 @@
     [self reprocessChapterIfNeeded:self.currentChapter];
     NSUInteger page = floor(MIN(percent, 1) * self.currentChapter.totalPage);
     BOOL nextPage = page >= oriPage;
-    [self changeToPage:page nextPage:nextPage animated:NO completion:^{
+    [self showPage:page nextPage:nextPage animated:NO completion:^{
         if (self.loadingAction) {
             self.loadingAction(NO);
         }
@@ -305,26 +348,6 @@
 
 -(void)reload {
     [self.currentPageVC reload];
-}
-
--(void)changeToPage:(NSInteger)page nextPage:(BOOL)nextPage animated:(BOOL)animated completion:(dispatch_block_t)completion {
-    DWReaderPageInfo * pageInfo = [self.currentChapter pageInfoOnPage:page];
-    ///如果取不到则采用默认数据
-    if (!pageInfo) {
-        pageInfo = nextPage ? self.currentChapter.lastPageInfo : self.currentChapter.firstPageInfo;
-    }
-    
-    DWReaderPageViewController * availablePage = [self pageControllerFromInfo:pageInfo];
-    ///切换当前使用的控制器
-    self.currentPageVC = availablePage;
-    ///然后进行翻页即可(翻页操作必须在主线程)
-    dispatch_async(dispatch_get_main_queue(), ^{
-        ///切换页面控制器
-        [self showPageVC:availablePage from:self.lastPageVC nextPage:nextPage initial:NO chapterChange:NO animated:animated];
-        if (completion) {
-            completion();
-        }
-    });
 }
 
 #pragma mark --- life cycle ---
@@ -341,6 +364,7 @@
         self.renderConf = renderConf;
         self.displayConf = displayConf;
         self.currentPageVC = self.defaultReusePool.availablePage;
+        [self.view addGestureRecognizer:self.tapGes];
     }
     return self;
 }
@@ -581,6 +605,14 @@
     }
 }
 
+-(void)responseToTap:(UITapGestureRecognizer *)tap {
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:currentPage:tapGesture:)]) {
+        [self.readerDelegate reader:self currentPage:self.currentPageVC tapGesture:tap];
+    } else if (self.tapGestureOnReaderCallback) {
+        self.tapGestureOnReaderCallback(self, self.currentPageVC, tap);
+    }
+}
+
 #pragma mark --- UIPageViewController Delegate ---
 -(UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(DWReaderPageViewController *)viewController {
     
@@ -712,6 +744,11 @@
     self.cancelableChangingPage = NO;
 }
 
+#pragma mark --- tap action ---
+-(void)tapAction:(UITapGestureRecognizer *)tap {
+    [self responseToTap:tap];
+}
+
 #pragma mark --- setter/getter ---
 
 -(NSMutableSet *)requestingChapterIDs {
@@ -763,6 +800,25 @@
         _displayConf = displayConf;
         _internalDisplayConf = [displayConf copy];
     }
+}
+
+-(UITapGestureRecognizer *)tapGes {
+    if (!_tapGes) {
+        _tapGes = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapAction:)];
+        _tapGes.delegate = self.tapGesProxy;
+    }
+    return _tapGes;
+}
+
+-(DWReaderGestureProxy *)tapGesProxy {
+    if (!_tapGesProxy) {
+        _tapGesProxy = [[DWReaderGestureProxy alloc] init];
+    }
+    return _tapGesProxy;
+}
+
+-(UITapGestureRecognizer *)tapGestureOnReader {
+    return self.tapGes;
 }
 
 @end

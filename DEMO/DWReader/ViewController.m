@@ -215,5 +215,9 @@ currentChapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter {
     NSLog(@"Did End Displaying %@,%@",page.pageInfo.pageContent.string,page);
 }
 
+-(void)reader:(DWReaderViewController *)reader currentPage:(DWReaderPageViewController *)currentPage tapGesture:(UITapGestureRecognizer *)tapGes {
+    NSLog(@"Has tap page");
+}
+
 
 @end
