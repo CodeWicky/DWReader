@@ -226,7 +226,10 @@ a = NULL;\
         DWReaderPageInfo * pageInfo = [DWReaderPageInfo pageInfoWithChapter:self];
         pageInfo.range = range;
         pageInfo.page = pageCount + 1;
-        pageInfo.pageContent = (NSMutableAttributedString *)[drawString attributedSubstringFromRange:range];
+        ///这里不直接用subStringFromRange是因为，实测偶尔会返回一个不可变字符串，具体原因未知。后续有人想知道问题或者想复现问题，请使用以下字符串生成一个可变字符串：
+        
+        ///@"暗夜亡灵\n付　强\n付强，北京大学物理系博士，从事科研工作多年，目前主攻绿色低碳管理。科幻迷、推理迷、动漫迷；自称死逻辑派、死理性派，却能被一首歌、一段剧情感动得稀里哗啦。发誓要将推理科幻进行到底。已出版科幻长篇《时间深渊》、中篇系列作品《孤独者游戏》。"
+        pageInfo.pageContent = [[NSMutableAttributedString alloc] initWithAttributedString:[drawString attributedSubstringFromRange:range]];
         pageInfo.previousPageInfo = lastPageInfo;
         lastPageInfo.nextPageInfo = pageInfo;
         pageCount += 1;

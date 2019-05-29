@@ -420,16 +420,17 @@
 			baseConfigurationReference = 5262A722229219828E2D36BE /* Pods-DWReader.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Z26Y87B8NH;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 36WT396TPZ;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/DWReader/PrefixHeader.pch";
 				INFOPLIST_FILE = DWReader/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.DWReader;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wemomo.testReader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Xcode iOS Wildcard";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -439,16 +440,18 @@
 			baseConfigurationReference = C2B2B369920AE1989A49159C /* Pods-DWReader.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Z26Y87B8NH;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 72CZEEPG39;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/DWReader/PrefixHeader.pch";
 				INFOPLIST_FILE = DWReader/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.DWReader;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wemomo.testReader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = EnterpriseProfile1613;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
