@@ -183,9 +183,10 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 /**
  按章节信息配置阅读器
 
- @param chapterInfo 章节信息
+ @param chapterInfo chapterInfo 章节信息
+ @param nextAnimation 展示向后的动画或者向前的动画
  */
--(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo;
+-(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo nextAnimation:(BOOL)nextAnimation;
 
 
 /**

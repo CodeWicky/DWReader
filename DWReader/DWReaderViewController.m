@@ -135,7 +135,7 @@
     return reader;
 }
 
--(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo {
+-(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo nextAnimation:(BOOL)nextAnimation {
     ///先查缓存
     ///获取到下章ID，先查询本地是否存在下一章，不存在直接请求下章即可，同时要将等待翻页置位真，让请求完成后自动翻页
     DWReaderChapter * nextChapter = [self.chapterTbl valueForKey:chapterInfo.chapter_id];
@@ -144,14 +144,22 @@
         [self changeChapterConfigurationIfNeeded:nextChapter]; ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转
         if (!nextChapter.parsing) {
             ///切换章节并找到章节中第一页
-            self.waitingChangeNextChapter = YES;
-            [self changeChapterIfNeeded:nextChapter nextChapter:YES];
+            if (nextAnimation) {
+                self.waitingChangeNextChapter = YES;
+            } else {
+                self.waitingChangePreviousChapter = YES;
+            }
+            [self changeChapterIfNeeded:nextChapter nextChapter:nextAnimation];
         }
         return ;
     }
     
-    self.waitingChangeNextChapter = YES;
-    [self requestChapter:chapterInfo nextChapter:YES preload:NO];
+    if (nextAnimation) {
+        self.waitingChangeNextChapter = YES;
+    } else {
+        self.waitingChangePreviousChapter = YES;
+    }
+    [self requestChapter:chapterInfo nextChapter:nextAnimation preload:NO];
 }
 
 -(void)registerClass:(Class)pageControllerClass forPageViewControllerReuseIdentifier:(nonnull NSString *)reuseIdentifier {
