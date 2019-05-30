@@ -149,7 +149,8 @@
             } else {
                 self.waitingChangePreviousChapter = YES;
             }
-            [self changeChapterIfNeeded:nextChapter nextChapter:nextAnimation];
+            ///直接切章强制从章首开始
+            [self changeChapterIfNeeded:nextChapter nextChapter:nextAnimation forceSeekingStart:YES];
         }
         return ;
     }
@@ -159,7 +160,8 @@
     } else {
         self.waitingChangePreviousChapter = YES;
     }
-    [self requestChapter:chapterInfo nextChapter:nextAnimation preload:NO];
+    ///直接切章强制从章首开始
+    [self requestChapter:chapterInfo nextChapter:nextAnimation forceSeekingStart:YES preload:NO];
 }
 
 -(void)registerClass:(Class)pageControllerClass forPageViewControllerReuseIdentifier:(nonnull NSString *)reuseIdentifier {
@@ -199,7 +201,7 @@
     DWReaderChapterInfo * chapterInfo = [[DWReaderChapterInfo alloc] init];
     chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
     chapterInfo.chapter_id = chapterId;
-    [self requestChapter:chapterInfo nextChapter:YES preload:YES];
+    [self requestChapter:chapterInfo nextChapter:YES forceSeekingStart:NO preload:YES];
 }
 
 -(void)showNextPage {
@@ -251,7 +253,7 @@
     self.waitingChangeNextChapter = YES;
     ///异步提交请求任务，如果同步的话会造成当整个数据获取过程是同步时（即读取本地缓存数据），同步设置了pageViewController的vc，然后又立刻返回了nil。UIPageViewController如果短时间内改变两次vc（在一个动画未完成即开始另一个动画）避免黑屏。所以分成两次提交。
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self requestChapter:chapterInfo nextChapter:YES preload:NO];
+        [self requestChapter:chapterInfo nextChapter:YES forceSeekingStart:NO preload:NO];
     });
 }
 
@@ -292,7 +294,7 @@
     chapterInfo.chapter_id = previousChapterID;
     self.waitingChangePreviousChapter = YES;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self requestChapter:chapterInfo nextChapter:NO preload:NO];
+        [self requestChapter:chapterInfo nextChapter:NO forceSeekingStart:NO preload:NO];
     });
 }
 
@@ -382,7 +384,7 @@
     [chapter configTextColor:_internalDisplayConf.textColor];
 }
 
--(void)requestChapter:(DWReaderChapterInfo *)info nextChapter:(BOOL)next preload:(BOOL)preload {
+-(void)requestChapter:(DWReaderChapterInfo *)info nextChapter:(BOOL)next forceSeekingStart:(BOOL)forceSeekingStart preload:(BOOL)preload {
     ///避免重复请求
     if ([self.requestingChapterIDs containsObject:info.chapter_id]) {
         if (!preload) {
@@ -404,13 +406,13 @@
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
         [self.readerDelegate reader:self requestBookDataForBook:info.book_id chapterID:info.chapter_id nextChapter:next requestCompleteCallback:^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nonnull userInfo) {
-            [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex nextChapter:nextChapter userInfo:userInfo];
+            [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex nextChapter:nextChapter forceSeekingStart:forceSeekingStart userInfo:userInfo];
         }];
     } else if (self.requestBookDataCallback) {
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
         self.requestBookDataCallback(self, info.book_id, info.chapter_id, next, ^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nonnull userInfo) {
-            [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex nextChapter:nextChapter userInfo:userInfo];
+            [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex nextChapter:nextChapter forceSeekingStart:forceSeekingStart userInfo:userInfo];
         });
     } else {
         ///如果没有请求方式就将等待至NO，实际没有请求方式这不就凉凉了么
@@ -431,7 +433,7 @@
     }
 }
 
--(void)requestCompleteWithInfo:(DWReaderChapterInfo *)info preload:(BOOL)preload title:(NSString *)title content:(NSString *)content bookID:(NSString *)bookID chapterID:(NSString *)chapterID percent:(CGFloat)percent chapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter userInfo:(id)userInfo {
+-(void)requestCompleteWithInfo:(DWReaderChapterInfo *)info preload:(BOOL)preload title:(NSString *)title content:(NSString *)content bookID:(NSString *)bookID chapterID:(NSString *)chapterID percent:(CGFloat)percent chapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter forceSeekingStart:(BOOL)forceSeekingStart userInfo:(id)userInfo {
     info.percent = percent;
     info.chapter_id = chapterID;
     info.chapter_index = chapterIndex;
@@ -456,7 +458,7 @@
             [chapter configTextColor:weakSelf.internalDisplayConf.textColor];
             [self reprocessChapterIfNeeded:chapter];
         } completion:^{
-            [self changeChapterIfNeeded:chapter nextChapter:nextChapter];
+            [self changeChapterIfNeeded:chapter nextChapter:nextChapter forceSeekingStart:forceSeekingStart];
         }];
     } else {
         ///如果不是预加载，是同步解析，当解析完成后再加入到章节表中
@@ -478,11 +480,11 @@
     
     ///当不是预加载时，如果正在等待切章且与请求方向一致，应该切章
     if (!preload) {
-        [self changeChapterIfNeeded:chapter nextChapter:nextChapter];
+        [self changeChapterIfNeeded:chapter nextChapter:nextChapter forceSeekingStart:forceSeekingStart];
     }
 }
 
--(void)changeChapterIfNeeded:(DWReaderChapter *)chapter nextChapter:(BOOL)nextChapter {
+-(void)changeChapterIfNeeded:(DWReaderChapter *)chapter nextChapter:(BOOL)nextChapter forceSeekingStart:(BOOL)forceSeekingStart {
     ///如果没有等待切章需求则返回
     if (!self.waitingChangeNextChapter && !self.waitingChangePreviousChapter) {
         return;
@@ -498,7 +500,7 @@
     BOOL initializeReader = (self.currentChapter == nil);
     ///找到页面后配置页面信息(往后翻页则找到下一章的第一页，往前翻页则找到上一章的最后一页)
     DWReaderPageInfo * pageInfo = nil;
-    ///如果有百分比，调到对应页
+    ///如果有百分比且为初始化，调到对应页
     if (chapter.chapterInfo.percent > 0 && initializeReader) {
         NSUInteger page = floor(MIN(chapter.chapterInfo.percent, 1)  * chapter.totalPage);
         pageInfo = [chapter pageInfoOnPage:page];
@@ -506,6 +508,9 @@
         if (!pageInfo) {
             pageInfo = nextChapter ? chapter.firstPageInfo : chapter.lastPageInfo;
         }
+    } else if (forceSeekingStart) {
+        ///如果强制首页，则跳转至首页
+        pageInfo = chapter.firstPageInfo;
     } else {
         ///否则直接跳至首页或者尾页
         pageInfo = nextChapter ? chapter.firstPageInfo : chapter.lastPageInfo;
@@ -674,7 +679,7 @@
     self.waitingChangeNextChapter = YES;
     ///异步提交请求任务，如果同步的话会造成当整个数据获取过程是同步时（即读取本地缓存数据），同步设置了pageViewController的vc，然后又立刻返回了nil。UIPageViewController如果短时间内改变两次vc（在一个动画未完成即开始另一个动画）避险黑屏。所以分成两次提交。
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self requestChapter:chapterInfo nextChapter:YES preload:NO];
+        [self requestChapter:chapterInfo nextChapter:YES forceSeekingStart:NO preload:NO];
     });
     return nil;
 }
@@ -721,7 +726,7 @@
     chapterInfo.chapter_id = previousChapterID;
     self.waitingChangePreviousChapter = YES;
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self requestChapter:chapterInfo nextChapter:NO preload:NO];
+        [self requestChapter:chapterInfo nextChapter:NO forceSeekingStart:NO preload:NO];
     });
     return nil;
 }
