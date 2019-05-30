@@ -120,6 +120,12 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 
 @interface DWReaderViewController : UIPageViewController
 
+///当前展示的页面控制器
+@property (nonatomic ,strong) DWReaderPageViewController * currentPage;
+
+///当前章节信息
+@property (nonatomic ,strong ,readonly) DWReaderChapter * currentChapter;
+
 ///当前渲染配置
 @property (nonatomic ,strong ,readonly) DWReaderRenderConfiguration * renderConf;
 

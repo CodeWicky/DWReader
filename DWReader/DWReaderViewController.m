@@ -821,4 +821,8 @@
     return self.tapGes;
 }
 
+-(DWReaderPageViewController *)currentPage {
+    return self.currentPageVC;
+}
+
 @end
