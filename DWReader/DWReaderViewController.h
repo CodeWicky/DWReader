@@ -181,12 +181,21 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 
 
 /**
- 按章节信息配置阅读器
+ 
 
  @param chapterInfo chapterInfo 章节信息
- @param nextAnimation 展示向后的动画或者向前的动画
+ @param animationType 展示向后的动画或者向前的动画
  */
--(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo nextAnimation:(BOOL)nextAnimation;
+
+
+/**
+ 按章节信息配置阅读器
+
+ @param chapterInfo 章节信息
+ @param nextChapter 是否是下一章节
+ @param animated 是否需要动画
+ */
+-(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo nextChapter:(BOOL)nextChapter animated:(BOOL)animated;
 
 
 /**
@@ -223,14 +232,18 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 
 /**
  翻到下一页
+
+ @param animated 是否需要动画
  */
--(void)showNextPage;
+-(void)showNextPageWithAnimated:(BOOL)animated;
 
 
 /**
  翻到上一页
+
+ @param animated 是否需要动画
  */
--(void)showPreviousPage;
+-(void)showPreviousPageWithAnimated:(BOOL)animated;
 
 
 /**

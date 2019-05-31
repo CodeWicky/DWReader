@@ -127,7 +127,7 @@
     vc.view.backgroundColor = [UIColor redColor];
     self.reader = [DWReaderViewController readerWithRenderConfiguration:conf displayConfiguration:disCon defaultPage:vc];
     self.reader.readerDelegate = self;
-    [self.reader fetchChapter:info nextAnimation:YES];
+    [self.reader fetchChapter:info nextChapter:YES animated:NO];
     [self.reader registerClass:[DWReaderADViewController class] forPageViewControllerReuseIdentifier:@"ad"];
     [self presentViewController:self.reader animated:YES completion:nil];
 }
