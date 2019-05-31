@@ -126,12 +126,12 @@
 
 @implementation DWReaderViewController
 
-+(instancetype)readerWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf {
++(instancetype)readerWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf defaultPage:(nonnull UIViewController *)defaultPage {
     if (CGRectEqualToRect(renderConf.renderFrame, CGRectNull) || CGRectEqualToRect(renderConf.renderFrame, CGRectZero)) {
         NSAssert(NO, @"DWReader can't initialize a reader with renderFrame is either CGRectNull or CGRectZero.");
         return nil;
     }
-    __kindof DWReaderViewController * reader = [[[self class] alloc] initWithRenderConfiguration:renderConf displayConfiguration:displayConf];
+    __kindof DWReaderViewController * reader = [[[self class] alloc] initWithRenderConfiguration:renderConf displayConfiguration:displayConf defaultPage:defaultPage];
     return reader;
 }
 
@@ -367,7 +367,7 @@
 }
 
 #pragma mark --- tool method ---
--(instancetype)initWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf {
+-(instancetype)initWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf defaultPage:(UIViewController *)defaultPage {
     if (self = [super initWithTransitionStyle:displayConf.transitionStyle navigationOrientation:(UIPageViewControllerNavigationOrientationHorizontal) options:nil]) {
         self.delegate = self;
         self.dataSource = self;
@@ -375,6 +375,9 @@
         self.displayConf = displayConf;
         self.currentPageVC = self.defaultReusePool.availablePage;
         [self.view addGestureRecognizer:self.tapGes];
+        if (defaultPage) {
+            [self setViewControllers:@[defaultPage] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+        }
     }
     return self;
 }

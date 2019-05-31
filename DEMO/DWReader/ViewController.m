@@ -123,7 +123,9 @@
     info.book_id = @"1000";
     info.chapter_id = @"10002";
 
-    self.reader = [DWReaderViewController readerWithRenderConfiguration:conf displayConfiguration:disCon];
+    UIViewController * vc = [UIViewController new];
+    vc.view.backgroundColor = [UIColor redColor];
+    self.reader = [DWReaderViewController readerWithRenderConfiguration:conf displayConfiguration:disCon defaultPage:vc];
     self.reader.readerDelegate = self;
     [self.reader fetchChapter:info nextAnimation:YES];
     [self.reader registerClass:[DWReaderADViewController class] forPageViewControllerReuseIdentifier:@"ad"];
@@ -139,9 +141,9 @@
             testString = [testString stringByAppendingString:tmp];
         }
         
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.4 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2* NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             callback(@"霸道总裁爱上我",testString,bookID,chapterID,0.5,3,next,nil);
-//        });
+        });
     }
 }
 

@@ -177,7 +177,7 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
 
  @return 阅读器实例
  */
-+(instancetype)readerWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf;
++(instancetype)readerWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf defaultPage:(UIViewController *)defaultPage;
 
 
 /**
