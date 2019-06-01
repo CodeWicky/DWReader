@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name = 'DWReader'
-s.version = '0.0.0.11'
+s.version = '0.0.0.12'
 s.license = { :type => 'MIT', :file => 'LICENSE' }
 s.summary = '尝试写一个阅读器核心。Try to build a reader core.'
 s.homepage = 'https://github.com/CodeWicky/DWReader'

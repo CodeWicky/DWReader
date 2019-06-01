@@ -441,6 +441,7 @@
     info.percent = percent;
     info.chapter_id = chapterID;
     info.chapter_index = chapterIndex;
+    info.title = title;
     ///请求完成后先取消请求状态
     if (info.chapter_id) {
         [self.requestingChapterIDs removeObject:info.chapter_id];

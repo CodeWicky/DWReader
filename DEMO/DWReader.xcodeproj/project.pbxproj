@@ -57,6 +57,7 @@
 		9BE977322296C03F00FB43B3 /* DWReaderADInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderADInfo.m; sourceTree = "<group>"; };
 		9BE9774522982CE800FB43B3 /* DWReaderRenderConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWReaderRenderConfiguration.h; sourceTree = "<group>"; };
 		9BE9774622982CE900FB43B3 /* DWReaderRenderConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWReaderRenderConfiguration.m; sourceTree = "<group>"; };
+		9BE9779522A2775F00FB43B3 /* DWReaderHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderHeader.h; sourceTree = "<group>"; };
 		C2B2B369920AE1989A49159C /* Pods-DWReader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DWReader.release.xcconfig"; path = "Pods/Target Support Files/Pods-DWReader/Pods-DWReader.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,6 +99,7 @@
 				9B2EEA3E2291B47400D7B7FF /* DWReaderViewController.m */,
 				9B2EEA3F2291B47400D7B7FF /* DWReaderDisplayConfiguration.m */,
 				9B2EEA402291B47400D7B7FF /* DWReaderPageInfo.m */,
+				9BE9779522A2775F00FB43B3 /* DWReaderHeader.h */,
 			);
 			name = DWReader;
 			path = ../../DWReader;
