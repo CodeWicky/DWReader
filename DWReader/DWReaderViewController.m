@@ -438,10 +438,11 @@
 
 -(void)requestCompleteWithInfo:(DWReaderChapterInfo *)info preload:(BOOL)preload title:(NSString *)title content:(NSString *)content bookID:(NSString *)bookID chapterID:(NSString *)chapterID percent:(CGFloat)percent chapterIndex:(NSInteger)chapterIndex
                       userInfo:(id)userInfo nextChapter:(BOOL)nextChapter forceSeekingStart:(BOOL)forceSeekingStart animated:(BOOL)animated {
+    info.title = title;
     info.percent = percent;
     info.chapter_id = chapterID;
     info.chapter_index = chapterIndex;
-    info.title = title;
+    info.userInfo = userInfo;
     ///请求完成后先取消请求状态
     if (info.chapter_id) {
         [self.requestingChapterIDs removeObject:info.chapter_id];

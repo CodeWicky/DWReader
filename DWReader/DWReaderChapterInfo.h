@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic ,assign) NSInteger chapter_index;
 
+@property (nonatomic ,strong) id userInfo;
+
 @end
 
 NS_ASSUME_NONNULL_END
