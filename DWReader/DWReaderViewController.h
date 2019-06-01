@@ -29,7 +29,7 @@ typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader 
 typedef __kindof DWReaderPageViewController *_Nonnull(^DWPageControllerForPageInfoCallback)(DWReaderViewController * reader ,DWReaderPageInfo * pageInfo ,CGRect renderFrame);
 
 typedef void(^DWReaderPageChangeCallback)(DWReaderViewController * reader, DWReaderPageViewController * page);
-typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NSString * desChapterID ,NSString * srcChapterID);
+typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,DWReaderChapter * desChapter ,DWReaderChapter * srcChapter);
 
 @protocol DWReaderDataDelegate <NSObject>
 
@@ -111,10 +111,10 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,NS
  章节切换
 
  @param reader 当前阅读器对象
- @param desChapterID 目标章节
- @param srcChapterID 源章节
+ @param desChapter 目标章节
+ @param srcChapter 源章节
  */
--(void)reader:(DWReaderViewController *)reader changeToChapter:(NSString *)desChapterID fromChapter:(NSString *)srcChapterID;
+-(void)reader:(DWReaderViewController *)reader changeToChapter:(DWReaderChapter *)desChapter fromChapter:(DWReaderChapter *)srcChapter;
 
 @end
 

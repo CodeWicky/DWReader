@@ -214,7 +214,7 @@
         ///先取出可用于渲染下一页的页面控制器，在更新页面配置信息
         DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
         self.currentPageVC = nextPageVC;
-        [self showPageVC:nextPageVC from:self.lastPageVC nextPage:YES initial:NO chapterChange:YES animated:YES];
+        [self showPageVC:nextPageVC from:self.lastPageVC nextPage:YES initial:NO chapterChange:NO animated:YES];
         return;
     }
     
@@ -263,7 +263,7 @@
     if (previousPage) {
         DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
         self.currentPageVC = previousPageVC;
-        [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO chapterChange:YES animated:YES];
+        [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO chapterChange:NO animated:YES];
         return ;
     }
     
@@ -594,17 +594,17 @@
             [weakSelf didEndDisplayingPage:srcVC];
         }
         if (chapterChange) {
-            [weakSelf changeToChapter:desVC.pageInfo.chapter.chapterInfo.chapter_id from:srcVC.pageInfo.chapter.chapterInfo.chapter_id];
+            [weakSelf changeToChapter:desVC.pageInfo.chapter from:srcVC.pageInfo.chapter];
         }
         [desVC configCurrentVCInUsing];
     }];
 }
 
--(void)changeToChapter:(NSString *)desChapterID from:(NSString *)srcChapterID {
+-(void)changeToChapter:(DWReaderChapter *)desChapter from:(DWReaderChapter *)srcChapter {
     if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:changeToChapter:fromChapter:)]) {
-        [self.readerDelegate reader:self changeToChapter:desChapterID fromChapter:srcChapterID];
+        [self.readerDelegate reader:self changeToChapter:desChapter fromChapter:srcChapter];
     } else if (self.changeToChapterCallback) {
-        self.changeToChapterCallback(self, desChapterID, srcChapterID);
+        self.changeToChapterCallback(self, desChapter, srcChapter);
     }
 }
 
@@ -750,6 +750,9 @@
     if (completed) {
         [self didEndDisplayingPage:previousViewControllers.firstObject];
         [self.currentPageVC configCurrentVCInUsing];
+        ///若以动画切章应在此处进行切章完成上报
+        [self changeToChapter:self.currentChapter from:self.lastPageVC.pageInfo.chapter];
+        
     } else {
         [self didEndDisplayingPage:self.currentPageVC];
     }
