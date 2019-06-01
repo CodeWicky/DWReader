@@ -126,6 +126,9 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,DW
 ///当前章节信息
 @property (nonatomic ,strong ,readonly) DWReaderChapter * currentChapter;
 
+///当前对象是否正在翻页动画进行中
+@property (nonatomic ,assign ,readonly) BOOL isTransitioning;
+
 ///当前渲染配置
 @property (nonatomic ,strong ,readonly) DWReaderRenderConfiguration * renderConf;
 

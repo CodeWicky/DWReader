@@ -94,6 +94,8 @@
 
 @property (nonatomic ,strong) DWReaderDisplayConfiguration * internalDisplayConf;
 
+@property (nonatomic ,assign) BOOL isTransitioning;
+
 @property (nonatomic ,strong) DWReaderChapterInfo * info;
 
 @property (nonatomic ,assign) BOOL waitingChangeNextChapter;
@@ -205,6 +207,10 @@
 }
 
 -(void)showNextPageWithAnimated:(BOOL)animated {
+    ///防止连续翻页
+    if (self.isTransitioning) {
+        return;
+    }
     ///首先取出下一页信息，在同一章中，页面信息存有链表关系，如果取到为nil说明这一章结束了，这时候要考虑下一章
     
     DWReaderPageViewController * currentVC = self.currentPageVC;
@@ -258,6 +264,9 @@
 }
 
 -(void)showPreviousPageWithAnimated:(BOOL)animated {
+    if (self.isTransitioning) {
+        return;
+    }
     DWReaderPageViewController * currentVC = self.currentPageVC;
     DWReaderPageInfo * previousPage = currentVC.pageInfo.previousPageInfo;
     if (previousPage) {
@@ -299,6 +308,9 @@
 }
 
 -(void)showPage:(NSInteger)page nextPage:(BOOL)nextPage animated:(BOOL)animated completion:(dispatch_block_t)completion {
+    if (self.isTransitioning) {
+        return;
+    }
     DWReaderPageInfo * pageInfo = [self.currentChapter pageInfoOnPage:page];
     ///如果取不到则采用默认数据
     if (!pageInfo) {
@@ -491,6 +503,9 @@
 }
 
 -(void)changeChapterIfNeeded:(DWReaderChapter *)chapter nextChapter:(BOOL)nextChapter forceSeekingStart:(BOOL)forceSeekingStart animated:(BOOL)animated {
+    if (self.isTransitioning) {
+        return;
+    }
     ///如果没有等待切章需求则返回
     if (!self.waitingChangeNextChapter && !self.waitingChangePreviousChapter) {
         return;
@@ -584,11 +599,13 @@
 
 -(void)showPageVC:(DWReaderPageViewController *)desVC from:(DWReaderPageViewController *)srcVC nextPage:(BOOL)nextPage initial:(BOOL)initial chapterChange:(BOOL)chapterChange animated:(BOOL)animated {
     ///关闭交互避免连续翻页
+    self.isTransitioning = YES;
     self.view.userInteractionEnabled = NO;
     
     __weak typeof(self)weakSelf = self;
     [self willDisplayPage:desVC];
     [self setViewControllers:@[desVC] direction:nextPage?UIPageViewControllerNavigationDirectionForward:UIPageViewControllerNavigationDirectionReverse animated:animated completion:^(BOOL finished) {
+        weakSelf.isTransitioning = NO;
         weakSelf.view.userInteractionEnabled = YES;
         if (!initial) {
             [weakSelf didEndDisplayingPage:srcVC];
@@ -739,13 +756,14 @@
 
 ///避免连续翻页渲染失败（翻页开始时关闭交互防止二次翻页，翻页结束时再打开交互）
 -(void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<DWReaderPageViewController *> *)pendingViewControllers {
+    self.isTransitioning = YES;
     pageViewController.view.userInteractionEnabled = NO;
     [self willDisplayPage:pendingViewControllers.firstObject];
 }
 
 -(void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray<DWReaderPageViewController *> *)previousViewControllers transitionCompleted:(BOOL)completed {
     pageViewController.view.userInteractionEnabled = YES;
-    
+    self.isTransitioning = NO;
     ///如果动画完成，则上一个控制器结束展示，否则刚刚出现的控制器结束展示
     if (completed) {
         [self didEndDisplayingPage:previousViewControllers.firstObject];
