@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^DWReaderTapGestureActionCallback)(DWReaderViewController * reader,DWReaderPageViewController * currentPage,UITapGestureRecognizer * tapGes);
 
-typedef void(^DWReaderRequestDataCompleteCallback)(NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,_Nullable id userInfo);
+typedef void(^DWReaderRequestDataCompleteCallback)(BOOL success,NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,_Nullable id userInfo);
 typedef void(^DWReaderReprocessorCallback)(DWReaderPageInfo * _Nullable  newFirstPage, DWReaderPageInfo * _Nullable newLastPage,NSUInteger fixTotalPage);
 typedef NSString *_Nullable(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,DWReaderChapter * currentChapter ,BOOL nextChapter);
 typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,DWReaderChapterInfo * chapterInfo ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);

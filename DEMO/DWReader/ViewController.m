@@ -142,7 +142,7 @@
         }
         
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2* NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            callback(@"霸道总裁爱上我",testString,chapterInfo.book_id,chapterInfo.chapter_id,0.5,3,next,nil);
+            callback(YES,@"霸道总裁爱上我",testString,chapterInfo.book_id,chapterInfo.chapter_id,0.5,3,next,nil);
         });
     }
 }

@@ -447,14 +447,26 @@
         ///为请求做准备工作
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
-        [self.readerDelegate reader:self requestBookDataWithChapterInfo:info nextChapter:next requestCompleteCallback:^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
-            [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex userInfo:userInfo nextChapter:nextChapter forceSeekingStart:forceSeekingStart animated:animated];
+        [self.readerDelegate reader:self requestBookDataWithChapterInfo:info nextChapter:next requestCompleteCallback:^(BOOL success,NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
+            if (success) {
+                [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex userInfo:userInfo nextChapter:nextChapter forceSeekingStart:forceSeekingStart animated:animated];
+            } else {
+                if (weakSelf.loadingAction) {
+                    weakSelf.loadingAction(NO);
+                }
+            }
         }];
     } else if (self.requestBookDataCallback) {
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
-        self.requestBookDataCallback(self, info, next, ^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
-            [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex userInfo:userInfo nextChapter:nextChapter forceSeekingStart:forceSeekingStart animated:animated];
+        self.requestBookDataCallback(self, info, next, ^(BOOL success,NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
+            if (success) {
+                [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex userInfo:userInfo nextChapter:nextChapter forceSeekingStart:forceSeekingStart animated:animated];
+            } else {
+                if (self.loadingAction) {
+                    self.loadingAction(NO);
+                }
+            }
         });
     } else {
         ///如果没有请求方式就将等待至NO，实际没有请求方式这不就凉凉了么
