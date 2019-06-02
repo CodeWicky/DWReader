@@ -148,8 +148,10 @@
             ///切换章节并找到章节中第一页
             if (nextChapter) {
                 self.waitingChangeNextChapter = YES;
+                self.waitingChangePreviousChapter = NO;
             } else {
                 self.waitingChangePreviousChapter = YES;
+                self.waitingChangeNextChapter = NO;
             }
             ///直接切章强制从章首开始
             [self changeChapterIfNeeded:chapter nextChapter:nextChapter forceSeekingStart:YES animated:animated];
@@ -159,8 +161,10 @@
     
     if (nextChapter) {
         self.waitingChangeNextChapter = YES;
+        self.waitingChangePreviousChapter = NO;
     } else {
         self.waitingChangePreviousChapter = YES;
+        self.waitingChangeNextChapter = NO;
     }
     ///直接切章强制从章首开始
     [self requestChapter:chapterInfo nextChapter:nextChapter forceSeekingStart:YES preload:NO aniamted:animated];
@@ -257,6 +261,7 @@
     chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
     chapterInfo.chapter_id = nextChapterID;
     self.waitingChangeNextChapter = YES;
+    self.waitingChangePreviousChapter = NO;
     ///异步提交请求任务，如果同步的话会造成当整个数据获取过程是同步时（即读取本地缓存数据），同步设置了pageViewController的vc，然后又立刻返回了nil。UIPageViewController如果短时间内改变两次vc（在一个动画未完成即开始另一个动画）避免黑屏。所以分成两次提交。
     dispatch_async(dispatch_get_main_queue(), ^{
         [self requestChapter:chapterInfo nextChapter:YES forceSeekingStart:NO preload:NO aniamted:animated];
@@ -302,6 +307,7 @@
     chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
     chapterInfo.chapter_id = previousChapterID;
     self.waitingChangePreviousChapter = YES;
+    self.waitingChangeNextChapter = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self requestChapter:chapterInfo nextChapter:NO forceSeekingStart:NO preload:NO aniamted:animated];
     });
@@ -550,11 +556,8 @@
         [self showPageVC:availablePage from:self.lastPageVC nextPage:nextChapter initial:initializeReader chapterChange:YES animated:animated];
     });
     
-    if (nextChapter) {
-        self.waitingChangeNextChapter = NO;
-    } else {
-        self.waitingChangePreviousChapter = NO;
-    }
+    self.waitingChangeNextChapter = NO;
+    self.waitingChangePreviousChapter = NO;
 }
 
 -(void)reprocessChapterIfNeeded:(DWReaderChapter *)chapter {
@@ -700,6 +703,7 @@
     chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
     chapterInfo.chapter_id = nextChapterID;
     self.waitingChangeNextChapter = YES;
+    self.waitingChangePreviousChapter = NO;
     ///异步提交请求任务，如果同步的话会造成当整个数据获取过程是同步时（即读取本地缓存数据），同步设置了pageViewController的vc，然后又立刻返回了nil。UIPageViewController如果短时间内改变两次vc（在一个动画未完成即开始另一个动画）避险黑屏。所以分成两次提交。
     dispatch_async(dispatch_get_main_queue(), ^{
         [self requestChapter:chapterInfo nextChapter:YES forceSeekingStart:NO preload:NO aniamted:YES];
@@ -748,6 +752,7 @@
     chapterInfo.book_id = self.currentChapter.chapterInfo.book_id;
     chapterInfo.chapter_id = previousChapterID;
     self.waitingChangePreviousChapter = YES;
+    self.waitingChangeNextChapter = NO;
     dispatch_async(dispatch_get_main_queue(), ^{
         [self requestChapter:chapterInfo nextChapter:NO forceSeekingStart:NO preload:NO aniamted:YES];
     });
