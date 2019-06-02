@@ -176,10 +176,11 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,DW
 
  @param renderConf 阅读器文字配置信息
  @param displayConf 阅读器展示配置信息
+ @param defaultPage 首次没有数据时，默认展示的控制器
 
  @return 阅读器实例
  */
-+(instancetype)readerWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf defaultPage:(UIViewController *)defaultPage;
++(instancetype)readerWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf defaultPage:(__kindof DWReaderPageViewController *)defaultPage;
 
 
 /**
@@ -198,6 +199,17 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,DW
  @param animated 是否需要动画
  */
 -(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo nextChapter:(BOOL)nextChapter animated:(BOOL)animated;
+
+
+/**
+ 更换一本当前正在展示的书籍
+
+ @param chapterInfo 章节信息
+ @param defaultPage 更换书籍时，无数据时默认展示的控制器
+ @param nextChapter 是否是下一章节
+ @param animated 是否需要动画
+ */
+-(void)changeBookWithChapterInfo:(DWReaderChapterInfo *)chapterInfo defaultPage:(__kindof DWReaderPageViewController *)defaultPage nextChapter:(BOOL)nextChapter animated:(BOOL)animated;
 
 
 /**
@@ -279,6 +291,18 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,DW
  重新装载本页内容
  */
 -(void)reload;
+
+
+/**
+ 清除缓存的章节信息
+ */
+-(void)clearCachedChapter;
+
+
+/**
+ 重置阅读器状态
+ */
+-(void)resetReader;
 
 @end
 

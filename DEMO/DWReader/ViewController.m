@@ -11,7 +11,7 @@
 #import "DWReaderADInfo.h"
 #import "DWReaderADViewController.h"
 
-@interface ViewController ()<UIPageViewControllerDelegate, UIPageViewControllerDataSource, DWReaderDataDelegate>
+@interface ViewController ()<DWReaderDataDelegate>
 
 @property (nonatomic ,strong) DWReaderChapter * c;
 
@@ -123,7 +123,7 @@
     info.book_id = @"1000";
     info.chapter_id = @"10002";
 
-    UIViewController * vc = [UIViewController new];
+    DWReaderPageViewController * vc = [DWReaderPageViewController new];
     vc.view.backgroundColor = [UIColor redColor];
     self.reader = [DWReaderViewController readerWithRenderConfiguration:conf displayConfiguration:disCon defaultPage:vc];
     self.reader.readerDelegate = self;
@@ -218,6 +218,5 @@
 -(void)reader:(DWReaderViewController *)reader currentPage:(DWReaderPageViewController *)currentPage tapGesture:(UITapGestureRecognizer *)tapGes {
     NSLog(@"Has tap page");
 }
-
 
 @end

@@ -96,15 +96,17 @@
 
 @property (nonatomic ,assign) BOOL isTransitioning;
 
-@property (nonatomic ,strong) DWReaderChapterInfo * info;
-
 @property (nonatomic ,assign) BOOL waitingChangeNextChapter;
 
 @property (nonatomic ,assign) BOOL waitingChangePreviousChapter;
 
+@property (nonatomic ,assign) BOOL cancelableChangingPage;
+
+@property (nonatomic ,assign) BOOL changingPageOnChangingChapter;
+
 @property (nonatomic ,strong) NSMutableSet * requestingChapterIDs;
 
-@property (nonatomic ,strong) NSMutableDictionary * chapterTbl;
+@property (nonatomic ,strong) NSCache * chapterTbl;
 
 @property (nonatomic ,strong) DWReaderChapter * currentChapter;
 
@@ -113,10 +115,6 @@
 @property (nonatomic ,strong) DWReaderPageViewController * currentPageVC;
 
 @property (nonatomic ,strong) DWReaderPageViewController * lastPageVC;
-
-@property (nonatomic ,assign) BOOL cancelableChangingPage;
-
-@property (nonatomic ,assign) BOOL changingPageOnChangingChapter;
 
 @property (nonatomic ,strong) NSMutableDictionary * reusePoolContainer;
 
@@ -128,7 +126,7 @@
 
 @implementation DWReaderViewController
 
-+(instancetype)readerWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf defaultPage:(nonnull UIViewController *)defaultPage {
++(instancetype)readerWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf defaultPage:(__kindof DWReaderPageViewController *)defaultPage {
     if (CGRectEqualToRect(renderConf.renderFrame, CGRectNull) || CGRectEqualToRect(renderConf.renderFrame, CGRectZero)) {
         NSAssert(NO, @"DWReader can't initialize a reader with renderFrame is either CGRectNull or CGRectZero.");
         return nil;
@@ -140,7 +138,7 @@
 -(void)fetchChapter:(DWReaderChapterInfo *)chapterInfo nextChapter:(BOOL)nextChapter animated:(BOOL)animated {
     ///先查缓存
     ///获取到下章ID，先查询本地是否存在下一章，不存在直接请求下章即可，同时要将等待翻页置位真，让请求完成后自动翻页
-    DWReaderChapter * chapter = [self.chapterTbl valueForKey:chapterInfo.chapter_id];
+    DWReaderChapter * chapter = [self.chapterTbl objectForKey:chapterInfo.chapter_id];
     if (chapter) {
         ///若取出缓存，先配置颜色等相关配置，以免当前主题已经发生改变
         [self changeChapterConfigurationIfNeeded:chapter]; ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转
@@ -168,6 +166,15 @@
     }
     ///直接切章强制从章首开始
     [self requestChapter:chapterInfo nextChapter:nextChapter forceSeekingStart:YES preload:NO aniamted:animated];
+}
+
+-(void)changeBookWithChapterInfo:(DWReaderChapterInfo *)chapterInfo defaultPage:(__kindof DWReaderPageViewController *)defaultPage nextChapter:(BOOL)nextChapter animated:(BOOL)animated {
+    [self resetReader];
+    if (defaultPage) {
+        self.currentPageVC = defaultPage;
+        [self setViewControllers:@[defaultPage] direction:(UIPageViewControllerNavigationDirectionForward) animated:NO completion:nil];
+    }
+    [self fetchChapter:chapterInfo nextChapter:nextChapter animated:animated];
 }
 
 -(void)registerClass:(Class)pageControllerClass forPageViewControllerReuseIdentifier:(nonnull NSString *)reuseIdentifier {
@@ -199,7 +206,7 @@
     }
     
     ///如果本地有缓存好的章节，直接返回
-    if ([self.chapterTbl valueForKey:chapterId]) {
+    if ([self.chapterTbl objectForKey:chapterId]) {
         return;
     }
     
@@ -238,7 +245,7 @@
         return ;
     }
     ///获取到下章ID，先查询本地是否存在下一章，不存在直接请求下章即可，同时要将等待翻页置位真，让请求完成后自动翻页
-    DWReaderChapter * nextChapter = [self.chapterTbl valueForKey:nextChapterID];
+    DWReaderChapter * nextChapter = [self.chapterTbl objectForKey:nextChapterID];
     if (nextChapter) {
         [self changeChapterConfigurationIfNeeded:nextChapter];
         ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转（由于直接返回vc的都是可以取消的翻页，所以如果翻页取消了，要将章节和控制器恢复成切章之前的状态）
@@ -277,7 +284,7 @@
     if (previousPage) {
         DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
         self.currentPageVC = previousPageVC;
-        [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO chapterChange:NO animated:YES];
+        [self showPageVC:previousPageVC from:self.lastPageVC nextPage:NO initial:NO chapterChange:NO animated:YES];
         return ;
     }
     
@@ -289,7 +296,7 @@
         return ;
     }
     
-    DWReaderChapter * previousChapter = [self.chapterTbl valueForKey:previousChapterID];
+    DWReaderChapter * previousChapter = [self.chapterTbl objectForKey:previousChapterID];
     if (previousChapter) {
         [self changeChapterConfigurationIfNeeded:previousChapter];
         if (!previousChapter.parsing) {
@@ -298,7 +305,7 @@
             
             DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
             self.currentPageVC = previousPageVC;
-            [self showPageVC:previousPageVC from:previousPageVC.nextPage nextPage:NO initial:NO chapterChange:YES animated:YES];
+            [self showPageVC:previousPageVC from:self.lastPageVC nextPage:NO initial:NO chapterChange:YES animated:YES];
         }
         return ;
     }
@@ -378,6 +385,20 @@
     [self.currentPageVC reload];
 }
 
+-(void)clearCachedChapter {
+    [self.chapterTbl removeAllObjects];
+}
+
+-(void)resetReader {
+    [self clearCachedChapter];
+    self.isTransitioning = NO;
+    self.waitingChangeNextChapter = NO;
+    self.waitingChangePreviousChapter = NO;
+    self.cancelableChangingPage = NO;
+    self.changingPageOnChangingChapter = NO;
+    [self.requestingChapterIDs removeAllObjects];
+}
+
 #pragma mark --- life cycle ---
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -385,13 +406,13 @@
 }
 
 #pragma mark --- tool method ---
--(instancetype)initWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf defaultPage:(UIViewController *)defaultPage {
+-(instancetype)initWithRenderConfiguration:(DWReaderRenderConfiguration *)renderConf displayConfiguration:(DWReaderDisplayConfiguration *)displayConf defaultPage:(__kindof DWReaderPageViewController *)defaultPage {
     if (self = [super initWithTransitionStyle:displayConf.transitionStyle navigationOrientation:(UIPageViewControllerNavigationOrientationHorizontal) options:nil]) {
         self.delegate = self;
         self.dataSource = self;
         self.renderConf = renderConf;
         self.displayConf = displayConf;
-        self.currentPageVC = self.defaultReusePool.availablePage;
+        self.currentPageVC = defaultPage?:self.defaultReusePool.availablePage;
         [self.view addGestureRecognizer:self.tapGes];
         if (defaultPage) {
             [self setViewControllers:@[defaultPage] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
@@ -473,7 +494,7 @@
     if (preload) {
         ///如果是预加载是异步解析，且解析完成后会自动切章，所以在解析之前存储到章节表中
         if (info.chapter_id) {
-            [self.chapterTbl setValue:chapter forKey:info.chapter_id];
+            [self.chapterTbl setObject:chapter forKey:info.chapter_id];
         }
         ///如果是预加载，异步分页完成后应检测是否在等待切章
         __weak typeof(self)weakSelf = self;
@@ -492,7 +513,7 @@
             [self reprocessChapterIfNeeded:chapter];
         }];
         if (info.chapter_id) {
-            [self.chapterTbl setValue:chapter forKey:info.chapter_id];
+            [self.chapterTbl setObject:chapter forKey:info.chapter_id];
         }
     }
     
@@ -680,7 +701,7 @@
         return nil;
     }
     ///获取到下章ID，先查询本地是否存在下一章，不存在直接请求下章即可，同时要将等待翻页置位真，让请求完成后自动翻页
-    DWReaderChapter * nextChapter = [self.chapterTbl valueForKey:nextChapterID];
+    DWReaderChapter * nextChapter = [self.chapterTbl objectForKey:nextChapterID];
     if (nextChapter) {
         [self changeChapterConfigurationIfNeeded:nextChapter]; ///如果存在，若当前正在解析，则状态已经记录下来，回调中会自动切章，不需额外切章，如果不是正在解析说明是解析过的章节且没有跳转功能，现在开始跳转（由于直接返回vc的都是可以取消的翻页，所以如果翻页取消了，要将章节和控制器恢复成切章之前的状态）
         if (!nextChapter.parsing) {
@@ -733,7 +754,7 @@
         return nil;
     }
     
-    DWReaderChapter * previousChapter = [self.chapterTbl valueForKey:previousChapterID];
+    DWReaderChapter * previousChapter = [self.chapterTbl objectForKey:previousChapterID];
     if (previousChapter) {
         [self changeChapterConfigurationIfNeeded:previousChapter];
         if (!previousChapter.parsing) {
@@ -802,9 +823,9 @@
     return _requestingChapterIDs;
 }
 
--(NSMutableDictionary *)chapterTbl {
+-(NSCache *)chapterTbl {
     if (!_chapterTbl) {
-        _chapterTbl = [NSMutableDictionary dictionary];
+        _chapterTbl = [[NSCache alloc] init];
     }
     return _chapterTbl;
 }
