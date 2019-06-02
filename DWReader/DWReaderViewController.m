@@ -422,17 +422,17 @@
     }
     
     ///优先使用代理模式，其次使用回调模式
-    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:requestBookDataForBook:chapterID:nextChapter:requestCompleteCallback:)]) {
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:requestBookDataWithChapterInfo:nextChapter:requestCompleteCallback:)]) {
         ///为请求做准备工作
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
-        [self.readerDelegate reader:self requestBookDataForBook:info.book_id chapterID:info.chapter_id nextChapter:next requestCompleteCallback:^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nonnull userInfo) {
+        [self.readerDelegate reader:self requestBookDataWithChapterInfo:info nextChapter:next requestCompleteCallback:^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
             [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex userInfo:userInfo nextChapter:nextChapter forceSeekingStart:forceSeekingStart animated:animated];
         }];
     } else if (self.requestBookDataCallback) {
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
-        self.requestBookDataCallback(self, info.book_id, info.chapter_id, next, ^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nonnull userInfo) {
+        self.requestBookDataCallback(self, info, next, ^(NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
             [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex userInfo:userInfo nextChapter:nextChapter forceSeekingStart:forceSeekingStart animated:animated];
         });
     } else {
@@ -573,11 +573,10 @@
 }
 
 -(NSString *)queryChapterId:(BOOL)nextChapter {
-    DWReaderChapterInfo * currentChapterInfo = self.currentChapter.chapterInfo;
-    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:queryChapterIdForBook:currentChapterID:currentChapterIndex:nextChapter:)]) {
-        return [self.readerDelegate reader:self queryChapterIdForBook:currentChapterInfo.book_id currentChapterID:currentChapterInfo.chapter_id currentChapterIndex:currentChapterInfo.chapter_index nextChapter:nextChapter];
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:queryChapterIdWithCurrentChapter:nextChapter:)]) {
+        return [self.readerDelegate reader:self queryChapterIdWithCurrentChapter:self.currentChapter nextChapter:nextChapter];
     } else if (self.queryChapterIdCallback) {
-        return self.queryChapterIdCallback(self,currentChapterInfo.book_id,currentChapterInfo.chapter_id,currentChapterInfo.chapter_index,nextChapter);
+        return self.queryChapterIdCallback(self,self.currentChapter,nextChapter);
     } else {
         NSAssert(NO, @"DWReader can't query chapter_id.You must either implement -reader:queryChapterIdForBook:currentChapterID:currentChapterIndex:nextChapter or set queryChapterIdCallback.");
         return nil;

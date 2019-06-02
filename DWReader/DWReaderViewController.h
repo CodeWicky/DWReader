@@ -22,8 +22,8 @@ typedef void(^DWReaderTapGestureActionCallback)(DWReaderViewController * reader,
 
 typedef void(^DWReaderRequestDataCompleteCallback)(NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,_Nullable id userInfo);
 typedef void(^DWReaderReprocessorCallback)(DWReaderPageInfo * _Nullable  newFirstPage, DWReaderPageInfo * _Nullable newLastPage,NSUInteger fixTotalPage);
-typedef NSString *_Nullable(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * currentChapterID ,NSInteger currentChapterIndex ,BOOL nextChapter);
-typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,NSString * bookID ,NSString * chapterID ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
+typedef NSString *_Nullable(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,DWReaderChapter * currentChapter ,BOOL nextChapter);
+typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,DWReaderChapterInfo * chapterInfo ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
 typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader ,DWReaderChapter * chapter ,DWReaderReprocessorCallback reprocessor);
 
 typedef __kindof DWReaderPageViewController *_Nonnull(^DWPageControllerForPageInfoCallback)(DWReaderViewController * reader ,DWReaderPageInfo * pageInfo ,CGRect renderFrame);
@@ -45,27 +45,26 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,DW
  */
 -(void)reader:(DWReaderViewController *)reader currentPage:(DWReaderPageViewController *)currentPage tapGesture:(UITapGestureRecognizer *)tapGes;
 
+
 /**
- 根据给定信息返回关联的章节ID
- 
+ 根据当前章节返回关联的章节ID
+
  @param reader 当前阅读器对象
- @param bookID 当前书籍的bookID
- @param chapterID 当前章节的chapterID
- @param chapterIndex 当前章节的角标
+ @param currentChapter 当前章节
  @param nextChapter 是否询问的是下一章节
  @return 返回指定的章节ID
  */
--(NSString *)reader:(DWReaderViewController *)reader queryChapterIdForBook:(NSString *)bookID currentChapterID:(NSString *)chapterID currentChapterIndex:(NSInteger)chapterIndex nextChapter:(BOOL)nextChapter;
+-(NSString *)reader:(DWReaderViewController *)reader queryChapterIdWithCurrentChapter:(DWReaderChapter *)currentChapter nextChapter:(BOOL)nextChapter;
+
 
 /**
  请求对应章节内容
 
  @param reader 当前阅读器对象
- @param bookID 请求的书籍ID
- @param chapterID 请求的章节ID
+ @param chapterInfo 请求的章节信息
  @param callback 请求后回调数据给reader的callback
  */
--(void)reader:(DWReaderViewController *)reader requestBookDataForBook:(NSString *)bookID chapterID:(NSString *)chapterID nextChapter:(BOOL)next requestCompleteCallback:(DWReaderRequestDataCompleteCallback)callback;
+-(void)reader:(DWReaderViewController *)reader requestBookDataWithChapterInfo:(DWReaderChapterInfo *)chapterInfo nextChapter:(BOOL)next requestCompleteCallback:(DWReaderRequestDataCompleteCallback)callback;
 
 
 /**
