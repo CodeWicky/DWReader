@@ -39,7 +39,7 @@
     newInstance.renderFrame = self.renderFrame;
     newInstance.fontName = self.fontName;
     newInstance.titleFontSize = self.titleFontSize;
-    newInstance.titleLineSpacing = self.titleSpacing;
+    newInstance.titleLineSpacing = self.titleLineSpacing;
     newInstance.titleSpacing = self.titleSpacing;
     newInstance.contentFontSize = self.contentFontSize;
     newInstance.contentLineSpacing = self.contentLineSpacing;
