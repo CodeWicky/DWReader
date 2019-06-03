@@ -381,7 +381,16 @@
     [self.currentChapter seperatePageWithPageConfiguration:conf];
     [self reprocessChapterIfNeeded:self.currentChapter];
     NSUInteger page = floor(MIN(percent, 1) * self.currentChapter.totalPage);
-    BOOL nextPage = page >= oriPage;
+    
+    BOOL nextPage = YES;
+    if (page == 0) {
+        nextPage = NO;
+    } else if (page == self.currentChapter.totalPage) {
+        nextPage = YES;
+    } else {
+        nextPage = page >= oriPage;
+    }
+    
     [self showPage:page nextPage:nextPage animated:NO completion:^{
         if (self.loadingAction) {
             self.loadingAction(NO);
