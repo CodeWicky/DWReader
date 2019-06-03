@@ -460,11 +460,11 @@
     }
     
     ///优先使用代理模式，其次使用回调模式
-    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:requestBookDataWithChapterInfo:nextChapter:requestCompleteCallback:)]) {
+    if (self.readerDelegate && [self.readerDelegate respondsToSelector:@selector(reader:requestBookDataWithChapterInfo:nextChapter:preload:requestCompleteCallback:)]) {
         ///为请求做准备工作
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
-        [self.readerDelegate reader:self requestBookDataWithChapterInfo:info nextChapter:next requestCompleteCallback:^(BOOL success,NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
+        [self.readerDelegate reader:self requestBookDataWithChapterInfo:info nextChapter:next preload:preload requestCompleteCallback:^(BOOL success,NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
             if (success) {
                 [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex userInfo:userInfo nextChapter:nextChapter forceSeekingStart:forceSeekingStart animated:animated];
             } else {
@@ -476,7 +476,7 @@
     } else if (self.requestBookDataCallback) {
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
-        self.requestBookDataCallback(self, info, next, ^(BOOL success,NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
+        self.requestBookDataCallback(self, info, next, preload, ^(BOOL success,NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
             if (success) {
                 [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex userInfo:userInfo nextChapter:nextChapter forceSeekingStart:forceSeekingStart animated:animated];
             } else {

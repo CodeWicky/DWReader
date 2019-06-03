@@ -23,7 +23,7 @@ typedef void(^DWReaderTapGestureActionCallback)(DWReaderViewController * reader,
 typedef void(^DWReaderRequestDataCompleteCallback)(BOOL success,NSString * title ,NSString * content ,NSString * bookID ,NSString * chapterID ,CGFloat percent,NSInteger chapterIndex ,BOOL nextChapter,_Nullable id userInfo);
 typedef void(^DWReaderReprocessorCallback)(DWReaderPageInfo * _Nullable  newFirstPage, DWReaderPageInfo * _Nullable newLastPage,NSUInteger fixTotalPage);
 typedef NSString *_Nullable(^DWReaderQueryChapterIDCallback)(DWReaderViewController * reader ,DWReaderChapter * currentChapter ,BOOL nextChapter);
-typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,DWReaderChapterInfo * chapterInfo ,BOOL nextChapter ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
+typedef void(^DWReaderRequestBookDataCallback)(DWReaderViewController * reader ,DWReaderChapterInfo * chapterInfo ,BOOL nextChapter ,BOOL preload ,DWReaderRequestDataCompleteCallback requestCompleteCallback);
 typedef void(^DWReaderReprocessChapterCallback)(DWReaderViewController * reader ,DWReaderChapter * chapter ,DWReaderReprocessorCallback reprocessor);
 
 typedef __kindof DWReaderPageViewController *_Nonnull(^DWPageControllerForPageInfoCallback)(DWReaderViewController * reader ,DWReaderPageInfo * pageInfo ,CGRect renderFrame);
@@ -62,9 +62,11 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,DW
 
  @param reader 当前阅读器对象
  @param chapterInfo 请求的章节信息
+ @param next 是否是下一章节
+ @param preload 是否是预加载
  @param callback 请求后回调数据给reader的callback
  */
--(void)reader:(DWReaderViewController *)reader requestBookDataWithChapterInfo:(DWReaderChapterInfo *)chapterInfo nextChapter:(BOOL)next requestCompleteCallback:(DWReaderRequestDataCompleteCallback)callback;
+-(void)reader:(DWReaderViewController *)reader requestBookDataWithChapterInfo:(DWReaderChapterInfo *)chapterInfo nextChapter:(BOOL)next preload:(BOOL)preload requestCompleteCallback:(DWReaderRequestDataCompleteCallback)callback;
 
 
 /**
