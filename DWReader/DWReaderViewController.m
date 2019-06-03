@@ -122,6 +122,8 @@
 
 @property (nonatomic ,strong) DWReaderGestureProxy * tapGesProxy;
 
+@property (nonatomic ,strong) DWReaderPageViewController * defaultPage;
+
 @end
 
 @implementation DWReaderViewController
@@ -402,7 +404,11 @@
 #pragma mark --- life cycle ---
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
+    [self.view addGestureRecognizer:self.tapGes];
+    if (self.defaultPage) {
+        [self setViewControllers:@[self.defaultPage] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+        self.defaultPage = nil;
+    }
 }
 
 #pragma mark --- tool method ---
@@ -413,10 +419,7 @@
         self.renderConf = renderConf;
         self.displayConf = displayConf;
         self.currentPageVC = defaultPage?:self.defaultReusePool.availablePage;
-        [self.view addGestureRecognizer:self.tapGes];
-        if (defaultPage) {
-            [self setViewControllers:@[defaultPage] direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
-        }
+        self.defaultPage = defaultPage;
     }
     return self;
 }
