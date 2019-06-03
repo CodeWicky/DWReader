@@ -370,7 +370,11 @@
         while (tmpInfo.page == DWReaderPageUndefined) {
             tmpInfo = tmpInfo.previousPageInfo;
         }
-        oriPage = tmpInfo.page;
+        if (!tmpInfo || tmpInfo.page == DWReaderPageUndefined) {
+            oriPage = 0;
+        } else {
+            oriPage = tmpInfo.page;
+        }
     }
     CGFloat percent = oriPage * 1.0 / self.currentChapter.totalPage;
     ///重新分页后要重新二次处理
@@ -399,7 +403,6 @@
     self.waitingChangeNextChapter = NO;
     self.waitingChangePreviousChapter = NO;
     self.cancelableChangingPage = NO;
-    self.changingPageOnChangingChapter = NO;
     [self.requestingChapterIDs removeAllObjects];
 }
 
