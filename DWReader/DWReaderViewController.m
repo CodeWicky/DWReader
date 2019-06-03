@@ -230,6 +230,7 @@
     DWReaderPageInfo * nextPage = currentVC.pageInfo.nextPageInfo;
     
     if (nextPage) {
+        self.currentChapter.curretnPageInfo = nextPage;
         ///先取出可用于渲染下一页的页面控制器，在更新页面配置信息
         DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
         self.currentPageVC = nextPageVC;
@@ -254,9 +255,9 @@
         if (!nextChapter.parsing) {
             ///切换章节并找到章节中第一页
             ///记录当前进行的是可取消的切章状态
-            self.currentChapter = nextChapter;
             nextPage = nextChapter.firstPageInfo;
-            
+            nextChapter.curretnPageInfo = nextPage;
+            self.currentChapter = nextChapter;
             DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
             ///记录原始页面控制器
             self.currentPageVC = nextPageVC;
@@ -284,6 +285,7 @@
     DWReaderPageViewController * currentVC = self.currentPageVC;
     DWReaderPageInfo * previousPage = currentVC.pageInfo.previousPageInfo;
     if (previousPage) {
+        self.currentChapter.curretnPageInfo = previousPage;
         DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
         self.currentPageVC = previousPageVC;
         [self showPageVC:previousPageVC from:self.lastPageVC nextPage:NO initial:NO chapterChange:NO animated:YES];
@@ -302,9 +304,9 @@
     if (previousChapter) {
         [self changeChapterConfigurationIfNeeded:previousChapter];
         if (!previousChapter.parsing) {
-            self.currentChapter = previousChapter;
             previousPage = previousChapter.lastPageInfo;
-            
+            previousChapter.curretnPageInfo = previousPage;
+            self.currentChapter = previousChapter;
             DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
             self.currentPageVC = previousPageVC;
             [self showPageVC:previousPageVC from:self.lastPageVC nextPage:NO initial:NO chapterChange:YES animated:YES];
@@ -331,7 +333,7 @@
     if (!pageInfo) {
         pageInfo = nextPage ? self.currentChapter.lastPageInfo : self.currentChapter.firstPageInfo;
     }
-    
+    self.currentChapter.curretnPageInfo = pageInfo;
     DWReaderPageViewController * availablePage = [self pageControllerFromInfo:pageInfo];
     ///切换当前使用的控制器
     self.currentPageVC = availablePage;
@@ -578,7 +580,8 @@
         ///否则直接跳至首页或者尾页
         pageInfo = nextChapter ? chapter.firstPageInfo : chapter.lastPageInfo;
     }
-    
+    ///切章完成后，切换当前展示的页面信息
+    chapter.curretnPageInfo = pageInfo;
     ///找到当前未使用的页面控制器(当前采取复用模式，总共只有两个页面控制器)
     DWReaderPageViewController * availablePage = [self pageControllerFromInfo:pageInfo];
     
@@ -698,6 +701,7 @@
     DWReaderPageInfo * nextPage = viewController.pageInfo.nextPageInfo;
     
     if (nextPage) {
+        self.currentChapter.curretnPageInfo = nextPage;
         ///先取出可用于渲染下一页的页面控制器，在更新页面配置信息
         DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
         ///直接返回vc的都是可取消的翻页，要标记可取消状态
@@ -723,8 +727,9 @@
             ///切换章节并找到章节中第一页
             ///记录当前进行的是可取消的切章状态
             self.cancelableChangingPage = YES;
-            self.currentChapter = nextChapter;
             nextPage = nextChapter.firstPageInfo;
+            nextChapter.curretnPageInfo = nextPage;
+            self.currentChapter = nextChapter;
             DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
             ///记录原始页面控制器
             self.currentPageVC = nextPageVC;
@@ -755,6 +760,7 @@
     
     DWReaderPageInfo * previousPage = viewController.pageInfo.previousPageInfo;
     if (previousPage) {
+        self.currentChapter.curretnPageInfo = previousPage;
         DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
         self.cancelableChangingPage = YES;
         self.currentPageVC = previousPageVC;
@@ -774,8 +780,9 @@
         [self changeChapterConfigurationIfNeeded:previousChapter];
         if (!previousChapter.parsing) {
             self.cancelableChangingPage = YES;
-            self.currentChapter = previousChapter;
             previousPage = previousChapter.lastPageInfo;
+            previousChapter.curretnPageInfo = previousPage;
+            self.currentChapter = previousChapter;
             DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
             self.currentPageVC = previousPageVC;
             return previousPageVC;

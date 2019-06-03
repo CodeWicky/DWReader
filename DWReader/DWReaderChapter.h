@@ -41,6 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///第一页信息
 @property (nonatomic ,strong) DWReaderPageInfo * firstPageInfo;
 
+///当前页面信息
+@property (nonatomic ,strong) DWReaderPageInfo * curretnPageInfo;
+
 ///最后一页信息
 @property (nonatomic ,weak) DWReaderPageInfo * lastPageInfo;
 
