@@ -465,6 +465,9 @@
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
         [self.readerDelegate reader:self requestBookDataWithChapterInfo:info nextChapter:next preload:preload requestCompleteCallback:^(BOOL success,NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
+            if (chapterID) {
+                [weakSelf.requestingChapterIDs removeObject:chapterID];
+            }
             if (success) {
                 [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex userInfo:userInfo nextChapter:nextChapter forceSeekingStart:forceSeekingStart animated:animated];
             } else {
@@ -477,6 +480,9 @@
         [self prepareForRequestData:info preload:preload];
         __weak typeof(self)weakSelf = self;
         self.requestBookDataCallback(self, info, next, preload, ^(BOOL success,NSString * _Nonnull title, NSString * _Nonnull content, NSString * _Nonnull bookID, NSString * _Nonnull chapterID, CGFloat percent, NSInteger chapterIndex, BOOL nextChapter, id  _Nullable userInfo) {
+            if (chapterID) {
+                [weakSelf.requestingChapterIDs removeObject:chapterID];
+            }
             if (success) {
                 [weakSelf requestCompleteWithInfo:info preload:preload title:title content:content bookID:bookID chapterID:chapterID percent:percent chapterIndex:chapterIndex userInfo:userInfo nextChapter:nextChapter forceSeekingStart:forceSeekingStart animated:animated];
             } else {
@@ -511,10 +517,6 @@
     info.chapter_id = chapterID;
     info.chapter_index = chapterIndex;
     info.userInfo = userInfo;
-    ///请求完成后先取消请求状态
-    if (info.chapter_id) {
-        [self.requestingChapterIDs removeObject:info.chapter_id];
-    }
     
     ///配置章节信息
     DWReaderChapter * chapter = [DWReaderChapter chapterWithOriginString:content title:title info:info];
