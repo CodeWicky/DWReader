@@ -816,8 +816,9 @@
         [self didEndDisplayingPage:previousViewControllers.firstObject];
         [self.currentPageVC configCurrentVCInUsing];
         ///若以动画切章应在此处进行切章完成上报
-        [self changeToChapter:self.currentChapter from:self.lastPageVC.pageInfo.chapter];
-        
+        if (![self.currentChapter.chapterInfo.chapter_id isEqualToString:self.lastPageVC.pageInfo.chapter.chapterInfo.chapter_id]) {
+            [self changeToChapter:self.currentChapter from:self.lastPageVC.pageInfo.chapter];
+        }
     } else {
         [self didEndDisplayingPage:self.currentPageVC];
     }
