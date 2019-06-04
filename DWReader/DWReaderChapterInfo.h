@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+UIKIT_EXTERN NSInteger const DWReaderChapterUndefined;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DWReaderChapterInfo : NSObject

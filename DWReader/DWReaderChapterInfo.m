@@ -8,11 +8,13 @@
 
 #import "DWReaderChapterInfo.h"
 
+NSInteger const DWReaderChapterUndefined = -1;
+
 @implementation DWReaderChapterInfo
 
 -(instancetype)init {
     if (self = [super init]) {
-        _chapter_index = NSNotFound;
+        _chapter_index = DWReaderChapterUndefined;
     }
     return self;
 }
