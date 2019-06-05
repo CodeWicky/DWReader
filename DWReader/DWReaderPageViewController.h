@@ -13,6 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface DWReaderPageViewController : UIViewController
 
+@property (nonatomic ,strong) UILabel * contentLabel;
+
 @property (nonatomic ,weak) DWReaderPageViewController * nextPage;
 
 @property (nonatomic ,weak) DWReaderPageViewController * previousPage;
@@ -24,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)configNextPage:(DWReaderPageViewController *)nextPage;
 
 -(void)updateInfo:(DWReaderPageInfo *)info;
+
 -(void)reload;
 
 @end

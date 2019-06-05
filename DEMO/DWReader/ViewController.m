@@ -105,10 +105,10 @@
     
     DWReaderRenderConfiguration * conf = [[DWReaderRenderConfiguration alloc] init];
     conf.renderFrame = renderFrame;
-    conf.titleFontSize = 28;
+    conf.titleFont = [UIFont systemFontOfSize:28];
     conf.titleLineSpacing = 18;
     conf.titleSpacing = 28;
-    conf.contentFontSize = 24;
+    conf.contentFont = [UIFont systemFontOfSize:24];
     conf.contentLineSpacing = 18;
     conf.paragraphSpacing = 28;
     conf.paragraphHeaderSpacing = 30;
@@ -132,7 +132,7 @@
     [self presentViewController:self.reader animated:YES completion:nil];
 }
 
--(void)reader:(DWReaderViewController *)reader requestBookDataWithChapterInfo:(DWReaderChapterInfo *)chapterInfo nextChapter:(BOOL)next requestCompleteCallback:(DWReaderRequestDataCompleteCallback)callback {
+-(void)reader:(DWReaderViewController *)reader requestBookDataWithChapterInfo:(DWReaderChapterInfo *)chapterInfo nextChapter:(BOOL)next preload:(BOOL)preload requestCompleteCallback:(DWReaderRequestDataCompleteCallback)callback {
     if (callback) {
         
         NSString * tmp = @"豪华的别墅酒店。\n年轻俊美的男人刚刚从浴室里洗澡出来，健硕的腰身只围着一条浴巾，充满了力与美的身躯，仿佛西方阿波罗临世。\n“该死的。”一声低咒，男人低下头，一脸烦燥懊恼。\n他拿起手机，拔通了助手的电话，“给我找个干净的女人进来。”\n“少爷，怎么今晚有兴趣了？”\n\n“在酒会上喝错了东西，快点。”低沉的声线已经不奈烦了。\n“好的，马上。”\n一处景观灯的牌子面前，穿着清凉的女孩抬起头，看着那蛇线一样的线路图，感到相当的无语。\n明明就是来旅个游的，竟然迷路了。\n";

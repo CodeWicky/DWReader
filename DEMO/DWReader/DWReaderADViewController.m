@@ -21,7 +21,7 @@
     dis.textColor = [UIColor yellowColor];
     [self.reader updateDisplayConfiguration:dis];
     DWReaderRenderConfiguration * conf = self.reader.renderConf;
-    conf.contentFontSize = 30;
+    conf.contentFont = [UIFont systemFontOfSize:30];
     [self.reader updateRenderConfiguration:conf];
 }
 

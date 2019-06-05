@@ -720,7 +720,7 @@
         DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
         ///直接返回vc的都是可取消的翻页，要标记可取消状态
         self.cancelableChangingPage = YES;
-        self.currentPageVC = nextPageVC;
+        ///这里先不记录vc，实际开始转场再记录vc
         return nextPageVC;
     }
     
@@ -743,11 +743,8 @@
             self.cancelableChangingPage = YES;
             nextPage = nextChapter.firstPageInfo;
             nextChapter.curretnPageInfo = nextPage;
-            self.currentChapter = nextChapter;
-            DWReaderPageViewController * nextPageVC = [self pageControllerFromInfo:nextPage];
-            ///记录原始页面控制器
-            self.currentPageVC = nextPageVC;
-            return nextPageVC;
+            ///这里改变记录控制器和chapter的位置为开始转场的位置，以免有的情况下走询问vc的代理但是不走开始转场的代理且页面不变导致的currentVC记录错误问题
+            return [self pageControllerFromInfo:nextPage];
         }
         return nil;
     }
@@ -777,7 +774,6 @@
         self.currentChapter.curretnPageInfo = previousPage;
         DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
         self.cancelableChangingPage = YES;
-        self.currentPageVC = previousPageVC;
         return previousPageVC;
     }
     
@@ -796,10 +792,7 @@
             self.cancelableChangingPage = YES;
             previousPage = previousChapter.lastPageInfo;
             previousChapter.curretnPageInfo = previousPage;
-            self.currentChapter = previousChapter;
-            DWReaderPageViewController * previousPageVC = [self pageControllerFromInfo:previousPage];
-            self.currentPageVC = previousPageVC;
-            return previousPageVC;
+            return [self pageControllerFromInfo:previousPage];
         }
         return nil;
     }
@@ -818,6 +811,8 @@
 ///避免连续翻页渲染失败（翻页开始时关闭交互防止二次翻页，翻页结束时再打开交互）
 -(void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray<DWReaderPageViewController *> *)pendingViewControllers {
     self.isTransitioning = YES;
+    self.currentPageVC = pendingViewControllers.firstObject;
+    self.currentChapter = self.currentPageVC.pageInfo.chapter;
     pageViewController.view.userInteractionEnabled = NO;
     [self willDisplayPage:pendingViewControllers.firstObject];
 }

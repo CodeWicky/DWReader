@@ -16,8 +16,6 @@
 
 @interface DWReaderPageViewController ()
 
-@property (nonatomic ,strong) UILabel * contentLb;
-
 ///隐藏私有属性，为extention中属性提供setter/getter
 @property (nonatomic ,strong) id reuseInternal;
 
@@ -40,7 +38,7 @@
 }
 
 -(void)reload {
-    self.contentLb.frame = self.renderFrame;
+    self.contentLabel.frame = self.renderFrame;
     [self draw];
 }
 
@@ -53,27 +51,27 @@
 #pragma mark --- tool method ---
 -(void)setupUI {
     self.view.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:self.contentLb];
+    [self.view addSubview:self.contentLabel];
 }
 
 -(void)draw {
-    self.contentLb.attributedText = self.pageInfo.pageContent;
-    [self.contentLb sizeToFit];
+    self.contentLabel.attributedText = self.pageInfo.pageContent;
+    [self.contentLabel sizeToFit];
 }
 
 #pragma mark --- setter/getter ---
--(UILabel *)contentLb {
-    if (!_contentLb) {
-        _contentLb = [[UILabel alloc] initWithFrame:self.renderFrame];
-        _contentLb.numberOfLines = 0;
+-(UILabel *)contentLabel {
+    if (!_contentLabel) {
+        _contentLabel = [[UILabel alloc] initWithFrame:self.renderFrame];
+        _contentLabel.numberOfLines = 0;
     }
-    return _contentLb;
+    return _contentLabel;
 }
 
 -(void)setRenderFrame:(CGRect)renderFrame {
     if (!CGRectEqualToRect(renderFrame, _renderFrame)) {
         _renderFrame = renderFrame;
-        self.contentLb.frame = _renderFrame;
+        self.contentLabel.frame = _renderFrame;
         if (self.pageInfo) {
             [self draw];
         }

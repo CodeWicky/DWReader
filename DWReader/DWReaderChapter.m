@@ -174,20 +174,20 @@ a = NULL;\
     self.drawString = nil;
     
     ///将标题插入正文头部(标题尾部加换行符)
-    NSMutableAttributedString * titleAttr = [self createAttrWithString:[self.title stringByAppendingString:@"\n"] fontName:_pageConf.fontName fontSize:_pageConf.titleFontSize bold:YES              lineSpacing:_pageConf.titleLineSpacing paragraphSpacing:_pageConf.titleSpacing paragraphHeaderSpacing:0];
-    NSMutableAttributedString * contentAttr = [self createAttrWithString:self.content fontName:_pageConf.fontName fontSize:_pageConf.contentFontSize bold:NO lineSpacing:_pageConf.contentLineSpacing paragraphSpacing:_pageConf.paragraphSpacing paragraphHeaderSpacing:_pageConf.paragraphHeaderSpacing];
+    NSMutableAttributedString * titleAttr = [self createAttrWithString:[self.title stringByAppendingString:@"\n"] font:_pageConf.titleFont             lineSpacing:_pageConf.titleLineSpacing paragraphSpacing:_pageConf.titleSpacing paragraphHeaderSpacing:0];
+    NSMutableAttributedString * contentAttr = [self createAttrWithString:self.content font:_pageConf.contentFont lineSpacing:_pageConf.contentLineSpacing paragraphSpacing:_pageConf.paragraphSpacing paragraphHeaderSpacing:_pageConf.paragraphHeaderSpacing];
     [titleAttr appendAttributedString:contentAttr];
     self.drawString = titleAttr;
     _needSetColor = YES;
 }
 
--(NSMutableAttributedString *)createAttrWithString:(NSString *)string fontName:(NSString *)fontName fontSize:(CGFloat)fontSize bold:(BOOL)bold lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing paragraphHeaderSpacing:(CGFloat)paragraphHeaderSpacing {
+-(NSMutableAttributedString *)createAttrWithString:(NSString *)string font:(UIFont *)font lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing paragraphHeaderSpacing:(CGFloat)paragraphHeaderSpacing {
     
     NSMutableAttributedString * attr = [[NSMutableAttributedString alloc] initWithString:string];
     
     NSRange range = NSMakeRange(0, attr.length);
     ///设置字符串属性（字号、行间距）
-    [attr addAttribute:NSFontAttributeName value:[UIFont fontWithName:fontName size:fontSize] range:range];
+    [attr addAttribute:NSFontAttributeName value:font range:range];
     NSMutableParagraphStyle * paraStyle = [[NSMutableParagraphStyle alloc] init];
     paraStyle.lineSpacing = lineSpacing;
     paraStyle.paragraphSpacing = paragraphSpacing;
