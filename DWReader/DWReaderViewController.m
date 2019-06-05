@@ -441,6 +441,7 @@
 -(void)changeChapterConfigurationIfNeeded:(DWReaderChapter *)chapter {
     [chapter seperatePageWithPageConfiguration:_internalRenderConf];
     [chapter configTextColor:_internalDisplayConf.textColor];
+    [self reprocessChapterIfNeeded:chapter];
 }
 
 -(void)requestChapter:(DWReaderChapterInfo *)info nextChapter:(BOOL)next forceSeekingStart:(BOOL)forceSeekingStart preload:(BOOL)preload aniamted:(BOOL)animated {

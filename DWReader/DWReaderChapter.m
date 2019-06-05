@@ -73,7 +73,7 @@ a = NULL;\
     _content = content;
 }
 
--(void)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf {
+-(BOOL)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf {
     ///当任意一个影响分页的数据改变时才重新计算分页
     if (![_internalPageConf isEqual:conf]) {
         
@@ -91,10 +91,12 @@ a = NULL;\
         if (self.textColor) {
             [self configTextColor:self.textColor];
         }
+        return YES;
     }
+    return NO;
 }
 
--(void)configTextColor:(UIColor *)textColor {
+-(BOOL)configTextColor:(UIColor *)textColor {
     if (![self.textColor isEqual:textColor] || _needSetColor) {
         _needSetColor = NO;
         _textColor = textColor;
@@ -104,7 +106,9 @@ a = NULL;\
             [page setNeedsReload];
             page = page.nextPageInfo;
         }
+        return YES;
     }
+    return NO;
 }
 
 -(void)asyncParseChapterToPageWithConfiguration:(DWReaderRenderConfiguration *)conf reprocess:(dispatch_block_t)reprocess completion:(dispatch_block_t)completion {

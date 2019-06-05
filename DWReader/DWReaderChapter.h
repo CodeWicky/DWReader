@@ -74,19 +74,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- 按给定配置分页
+ 按需以给定配置分页
 
  @param conf 页面配置
+ @return 返回是否重新设置了属性
  */
--(void)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf;
+-(BOOL)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf;
 
 
 /**
- 设置文字颜色
+ 按需设置文字颜色
 
  @param textColor 文字颜色
+ @return 返回是否重新设置了颜色
  */
--(void)configTextColor:(UIColor *)textColor;
+-(BOOL)configTextColor:(UIColor *)textColor;
 
 
 /**
