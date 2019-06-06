@@ -1,0 +1,489 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		60EBA79D5518FECE35636878 /* libPods-DWReader.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 691EFE88D6D66E950CB747D6 /* libPods-DWReader.a */; };
+		9B2EEA412291B47400D7B7FF /* DWReaderPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B2EEA342291B47400D7B7FF /* DWReaderPageViewController.m */; };
+		9B2EEA432291B47400D7B7FF /* DWReaderChapterInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B2EEA3C2291B47400D7B7FF /* DWReaderChapterInfo.m */; };
+		9B2EEA442291B47400D7B7FF /* DWReaderChapter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B2EEA3D2291B47400D7B7FF /* DWReaderChapter.m */; };
+		9B2EEA452291B47400D7B7FF /* DWReaderViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B2EEA3E2291B47400D7B7FF /* DWReaderViewController.m */; };
+		9B2EEA462291B47400D7B7FF /* DWReaderDisplayConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B2EEA3F2291B47400D7B7FF /* DWReaderDisplayConfiguration.m */; };
+		9B2EEA472291B47400D7B7FF /* DWReaderPageInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B2EEA402291B47400D7B7FF /* DWReaderPageInfo.m */; };
+		9B6ED6872212FE83003BB1EA /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED6862212FE83003BB1EA /* AppDelegate.m */; };
+		9B6ED68A2212FE83003BB1EA /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED6892212FE83003BB1EA /* ViewController.m */; };
+		9B6ED68D2212FE83003BB1EA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B6ED68B2212FE83003BB1EA /* Main.storyboard */; };
+		9B6ED68F2212FE84003BB1EA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B6ED68E2212FE84003BB1EA /* Assets.xcassets */; };
+		9B6ED6922212FE84003BB1EA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B6ED6902212FE84003BB1EA /* LaunchScreen.storyboard */; };
+		9B6ED6952212FE84003BB1EA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED6942212FE84003BB1EA /* main.m */; };
+		9B92B5F522A942550028298A /* a.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9B92B5F422A942550028298A /* a.txt */; };
+		9BE977302296C01C00FB43B3 /* DWReaderADViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE9772F2296C01C00FB43B3 /* DWReaderADViewController.m */; };
+		9BE977332296C03F00FB43B3 /* DWReaderADInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE977322296C03F00FB43B3 /* DWReaderADInfo.m */; };
+		9BE9774722982CE900FB43B3 /* DWReaderRenderConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE9774622982CE900FB43B3 /* DWReaderRenderConfiguration.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5262A722229219828E2D36BE /* Pods-DWReader.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DWReader.debug.xcconfig"; path = "Pods/Target Support Files/Pods-DWReader/Pods-DWReader.debug.xcconfig"; sourceTree = "<group>"; };
+		691EFE88D6D66E950CB747D6 /* libPods-DWReader.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DWReader.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B2EEA342291B47400D7B7FF /* DWReaderPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWReaderPageViewController.m; sourceTree = "<group>"; };
+		9B2EEA352291B47400D7B7FF /* DWReaderChapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWReaderChapter.h; sourceTree = "<group>"; };
+		9B2EEA362291B47400D7B7FF /* DWReaderChapterInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWReaderChapterInfo.h; sourceTree = "<group>"; };
+		9B2EEA372291B47400D7B7FF /* DWReaderDisplayConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWReaderDisplayConfiguration.h; sourceTree = "<group>"; };
+		9B2EEA382291B47400D7B7FF /* DWReaderViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWReaderViewController.h; sourceTree = "<group>"; };
+		9B2EEA392291B47400D7B7FF /* DWReaderPageInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWReaderPageInfo.h; sourceTree = "<group>"; };
+		9B2EEA3A2291B47400D7B7FF /* DWReaderPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWReaderPageViewController.h; sourceTree = "<group>"; };
+		9B2EEA3C2291B47400D7B7FF /* DWReaderChapterInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWReaderChapterInfo.m; sourceTree = "<group>"; };
+		9B2EEA3D2291B47400D7B7FF /* DWReaderChapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWReaderChapter.m; sourceTree = "<group>"; };
+		9B2EEA3E2291B47400D7B7FF /* DWReaderViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWReaderViewController.m; sourceTree = "<group>"; };
+		9B2EEA3F2291B47400D7B7FF /* DWReaderDisplayConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWReaderDisplayConfiguration.m; sourceTree = "<group>"; };
+		9B2EEA402291B47400D7B7FF /* DWReaderPageInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWReaderPageInfo.m; sourceTree = "<group>"; };
+		9B53084A222048AD00400132 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		9B6ED6822212FE83003BB1EA /* DWReader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DWReader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B6ED6852212FE83003BB1EA /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		9B6ED6862212FE83003BB1EA /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		9B6ED6882212FE83003BB1EA /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		9B6ED6892212FE83003BB1EA /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		9B6ED68C2212FE83003BB1EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		9B6ED68E2212FE84003BB1EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9B6ED6912212FE84003BB1EA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		9B6ED6932212FE84003BB1EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9B6ED6942212FE84003BB1EA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		9B92B5F422A942550028298A /* a.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = a.txt; sourceTree = "<group>"; };
+		9BE9772E2296C01C00FB43B3 /* DWReaderADViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderADViewController.h; sourceTree = "<group>"; };
+		9BE9772F2296C01C00FB43B3 /* DWReaderADViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderADViewController.m; sourceTree = "<group>"; };
+		9BE977312296C03F00FB43B3 /* DWReaderADInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderADInfo.h; sourceTree = "<group>"; };
+		9BE977322296C03F00FB43B3 /* DWReaderADInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderADInfo.m; sourceTree = "<group>"; };
+		9BE9774522982CE800FB43B3 /* DWReaderRenderConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWReaderRenderConfiguration.h; sourceTree = "<group>"; };
+		9BE9774622982CE900FB43B3 /* DWReaderRenderConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWReaderRenderConfiguration.m; sourceTree = "<group>"; };
+		9BE9779522A2775F00FB43B3 /* DWReaderHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderHeader.h; sourceTree = "<group>"; };
+		C2B2B369920AE1989A49159C /* Pods-DWReader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DWReader.release.xcconfig"; path = "Pods/Target Support Files/Pods-DWReader/Pods-DWReader.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9B6ED67F2212FE83003BB1EA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60EBA79D5518FECE35636878 /* libPods-DWReader.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6309B8530ACB46A882D430B3 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				5262A722229219828E2D36BE /* Pods-DWReader.debug.xcconfig */,
+				C2B2B369920AE1989A49159C /* Pods-DWReader.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		9B2EEA322291B47400D7B7FF /* DWReader */ = {
+			isa = PBXGroup;
+			children = (
+				9BE9774522982CE800FB43B3 /* DWReaderRenderConfiguration.h */,
+				9BE9774622982CE900FB43B3 /* DWReaderRenderConfiguration.m */,
+				9B2EEA342291B47400D7B7FF /* DWReaderPageViewController.m */,
+				9B2EEA352291B47400D7B7FF /* DWReaderChapter.h */,
+				9B2EEA362291B47400D7B7FF /* DWReaderChapterInfo.h */,
+				9B2EEA372291B47400D7B7FF /* DWReaderDisplayConfiguration.h */,
+				9B2EEA382291B47400D7B7FF /* DWReaderViewController.h */,
+				9B2EEA392291B47400D7B7FF /* DWReaderPageInfo.h */,
+				9B2EEA3A2291B47400D7B7FF /* DWReaderPageViewController.h */,
+				9B2EEA3C2291B47400D7B7FF /* DWReaderChapterInfo.m */,
+				9B2EEA3D2291B47400D7B7FF /* DWReaderChapter.m */,
+				9B2EEA3E2291B47400D7B7FF /* DWReaderViewController.m */,
+				9B2EEA3F2291B47400D7B7FF /* DWReaderDisplayConfiguration.m */,
+				9B2EEA402291B47400D7B7FF /* DWReaderPageInfo.m */,
+				9BE9779522A2775F00FB43B3 /* DWReaderHeader.h */,
+			);
+			name = DWReader;
+			path = ../../DWReader;
+			sourceTree = "<group>";
+		};
+		9B6ED6792212FE82003BB1EA = {
+			isa = PBXGroup;
+			children = (
+				9B92B5F422A942550028298A /* a.txt */,
+				9B6ED6842212FE83003BB1EA /* DWReader */,
+				9B6ED6832212FE83003BB1EA /* Products */,
+				6309B8530ACB46A882D430B3 /* Pods */,
+				D2250FDCB0C7FE5568D74487 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		9B6ED6832212FE83003BB1EA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9B6ED6822212FE83003BB1EA /* DWReader.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9B6ED6842212FE83003BB1EA /* DWReader */ = {
+			isa = PBXGroup;
+			children = (
+				9B2EEA322291B47400D7B7FF /* DWReader */,
+				9B6ED6852212FE83003BB1EA /* AppDelegate.h */,
+				9B6ED6862212FE83003BB1EA /* AppDelegate.m */,
+				9B6ED6882212FE83003BB1EA /* ViewController.h */,
+				9B6ED6892212FE83003BB1EA /* ViewController.m */,
+				9B6ED68B2212FE83003BB1EA /* Main.storyboard */,
+				9B6ED68E2212FE84003BB1EA /* Assets.xcassets */,
+				9B6ED6902212FE84003BB1EA /* LaunchScreen.storyboard */,
+				9B6ED6932212FE84003BB1EA /* Info.plist */,
+				9B6ED6942212FE84003BB1EA /* main.m */,
+				9B53084A222048AD00400132 /* PrefixHeader.pch */,
+				9BE9772E2296C01C00FB43B3 /* DWReaderADViewController.h */,
+				9BE9772F2296C01C00FB43B3 /* DWReaderADViewController.m */,
+				9BE977312296C03F00FB43B3 /* DWReaderADInfo.h */,
+				9BE977322296C03F00FB43B3 /* DWReaderADInfo.m */,
+			);
+			path = DWReader;
+			sourceTree = "<group>";
+		};
+		D2250FDCB0C7FE5568D74487 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				691EFE88D6D66E950CB747D6 /* libPods-DWReader.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		9B6ED6812212FE83003BB1EA /* DWReader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9B6ED6982212FE84003BB1EA /* Build configuration list for PBXNativeTarget "DWReader" */;
+			buildPhases = (
+				89E275D9135E7D356F024CC1 /* [CP] Check Pods Manifest.lock */,
+				9B6ED67E2212FE83003BB1EA /* Sources */,
+				9B6ED67F2212FE83003BB1EA /* Frameworks */,
+				9B6ED6802212FE83003BB1EA /* Resources */,
+				A9214D373BB28C51E86D67AE /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DWReader;
+			productName = DWReader;
+			productReference = 9B6ED6822212FE83003BB1EA /* DWReader.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		9B6ED67A2212FE82003BB1EA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = Wicky;
+				TargetAttributes = {
+					9B6ED6812212FE83003BB1EA = {
+						CreatedOnToolsVersion = 10.0;
+					};
+				};
+			};
+			buildConfigurationList = 9B6ED67D2212FE82003BB1EA /* Build configuration list for PBXProject "DWReader" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 9B6ED6792212FE82003BB1EA;
+			productRefGroup = 9B6ED6832212FE83003BB1EA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				9B6ED6812212FE83003BB1EA /* DWReader */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9B6ED6802212FE83003BB1EA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B92B5F522A942550028298A /* a.txt in Resources */,
+				9B6ED6922212FE84003BB1EA /* LaunchScreen.storyboard in Resources */,
+				9B6ED68F2212FE84003BB1EA /* Assets.xcassets in Resources */,
+				9B6ED68D2212FE83003BB1EA /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		89E275D9135E7D356F024CC1 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DWReader-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A9214D373BB28C51E86D67AE /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DWReader/Pods-DWReader-resources.sh",
+				"${PODS_ROOT}/DWCheckBox/DWCheckBox/DWCheckBoxBundle.bundle",
+				"${PODS_ROOT}/DWLogger/DWLogger/DWLoggerBundle.bundle",
+				"${PODS_ROOT}/DWTableViewHelper/DWTableViewHelper/DWTableViewHelperResource.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/DWCheckBoxBundle.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/DWLoggerBundle.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/DWTableViewHelperResource.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DWReader/Pods-DWReader-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9B6ED67E2212FE83003BB1EA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B2EEA472291B47400D7B7FF /* DWReaderPageInfo.m in Sources */,
+				9BE977302296C01C00FB43B3 /* DWReaderADViewController.m in Sources */,
+				9BE9774722982CE900FB43B3 /* DWReaderRenderConfiguration.m in Sources */,
+				9B2EEA452291B47400D7B7FF /* DWReaderViewController.m in Sources */,
+				9B6ED68A2212FE83003BB1EA /* ViewController.m in Sources */,
+				9B2EEA412291B47400D7B7FF /* DWReaderPageViewController.m in Sources */,
+				9B2EEA462291B47400D7B7FF /* DWReaderDisplayConfiguration.m in Sources */,
+				9B2EEA442291B47400D7B7FF /* DWReaderChapter.m in Sources */,
+				9B6ED6952212FE84003BB1EA /* main.m in Sources */,
+				9B6ED6872212FE83003BB1EA /* AppDelegate.m in Sources */,
+				9BE977332296C03F00FB43B3 /* DWReaderADInfo.m in Sources */,
+				9B2EEA432291B47400D7B7FF /* DWReaderChapterInfo.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		9B6ED68B2212FE83003BB1EA /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9B6ED68C2212FE83003BB1EA /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		9B6ED6902212FE84003BB1EA /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				9B6ED6912212FE84003BB1EA /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		9B6ED6962212FE84003BB1EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		9B6ED6972212FE84003BB1EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		9B6ED6992212FE84003BB1EA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5262A722229219828E2D36BE /* Pods-DWReader.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 36WT396TPZ;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/DWReader/PrefixHeader.pch";
+				INFOPLIST_FILE = DWReader/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wemomo.testReader;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Xcode iOS Wildcard";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9B6ED69A2212FE84003BB1EA /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C2B2B369920AE1989A49159C /* Pods-DWReader.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 72CZEEPG39;
+				GCC_PREFIX_HEADER = "$(SRCROOT)/DWReader/PrefixHeader.pch";
+				INFOPLIST_FILE = DWReader/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wemomo.testReader;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = EnterpriseProfile1613;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9B6ED67D2212FE82003BB1EA /* Build configuration list for PBXProject "DWReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9B6ED6962212FE84003BB1EA /* Debug */,
+				9B6ED6972212FE84003BB1EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		9B6ED6982212FE84003BB1EA /* Build configuration list for PBXNativeTarget "DWReader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9B6ED6992212FE84003BB1EA /* Debug */,
+				9B6ED69A2212FE84003BB1EA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 9B6ED67A2212FE82003BB1EA /* Project object */;
+}

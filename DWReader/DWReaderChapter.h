@@ -7,11 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "DWReaderPage.h"
+#import "DWReaderPageInfo.h"
+#import "DWReaderRenderConfiguration.h"
+#import "DWReaderChapterInfo.h"
+
+
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class DWReaderPageConfiguration;
 @interface DWReaderChapter : NSObject
 
 #pragma mark --- 输入数据 ---
@@ -21,12 +24,12 @@ NS_ASSUME_NONNULL_BEGIN
 ///标题
 @property (nonatomic ,copy ,readonly) NSString * title;
 
-///渲染尺寸
-@property (nonatomic ,assign ,readonly) CGSize renderSize;
+///章节信息
+@property (nonatomic ,strong) DWReaderChapterInfo * chapterInfo;
 
 #pragma mark --- 可配置项 ---
 ///页面配置项
-@property (nonatomic ,strong ,readonly) DWReaderPageConfiguration * pageConf;
+@property (nonatomic ,strong ,readonly) DWReaderRenderConfiguration * pageConf;
 
 ///字体颜色
 @property (nonatomic ,strong ,readonly) UIColor * textColor;
@@ -35,19 +38,30 @@ NS_ASSUME_NONNULL_BEGIN
 ///正文内容
 @property (nonatomic ,copy ,readonly) NSString * content;
 
-///分页信息
-@property (nonatomic ,strong ,readonly) NSArray <DWReaderPage *>* pages;
+///第一页信息
+@property (nonatomic ,strong) DWReaderPageInfo * firstPageInfo;
+
+///当前页面信息
+@property (nonatomic ,strong) DWReaderPageInfo * curretnPageInfo;
+
+///最后一页信息
+@property (nonatomic ,weak) DWReaderPageInfo * lastPageInfo;
+
+///正在异步解析
+@property (nonatomic ,assign ,readonly) BOOL parsing;
+
+///总页数
+@property (nonatomic ,assign ,readonly) NSUInteger totalPage;
 
 /**
  初始化章节内容
 
  @param oriStr 原始数据
  @param title 标题
- @param renderSize 渲染尺寸
  @return 章节内容
  */
-+(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title renderSize:(CGSize)renderSize;
--(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title renderSize:(CGSize)renderSize;
++(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info;
+-(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info;
 
 
 /**
@@ -60,41 +74,51 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- 按给定配置分页
+ 按需以给定配置分页
 
  @param conf 页面配置
+ @return 返回是否重新设置了属性
  */
--(void)seperatePageWithPageConfiguration:(DWReaderPageConfiguration *)conf;
+-(BOOL)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf;
 
 
 /**
- 设置文字颜色
+ 按需设置文字颜色
 
  @param textColor 文字颜色
+ @return 返回是否重新设置了颜色
  */
--(void)configTextColor:(UIColor *)textColor;
+-(BOOL)configTextColor:(UIColor *)textColor;
 
-@end
 
-/*
- 页面配置
+/**
+ 解析内容并分段
+
+ @param conf 页面配置
+ @param reprocess 分页完成后想做的额外操作
+ @param completion 异步完成回调
  */
-@interface DWReaderPageConfiguration : NSObject
+-(void)asyncParseChapterToPageWithConfiguration:(DWReaderRenderConfiguration *)conf reprocess:(nullable dispatch_block_t)reprocess completion:(dispatch_block_t)completion;
+-(void)parseChapterToPageWithConfiguration:(DWReaderRenderConfiguration *)conf reprocess:(nullable dispatch_block_t)reprocess;
 
-///字号
-@property (nonatomic ,assign) CGFloat fontSize;
 
-///标题距正文的距离
-@property (nonatomic ,assign) CGFloat titleSpacing;
+/**
+ 二次处理chapter，重新配置首页、尾页及总页数
 
-///行间距
-@property (nonatomic ,assign) CGFloat lineSpacing;
+ @param first 新的首页
+ @param last 新的尾页
+ @param totalPage 新的总页数
+ */
+-(void)reprocessChapterWithFirstPageInfo:(DWReaderPageInfo *)first lastPageInfo:(DWReaderPageInfo *)last totalPage:(NSInteger)totalPage;
 
-///段落间距
-@property (nonatomic ,assign) CGFloat paragraphSpacing;
 
-///段首缩进
-@property (nonatomic ,assign) CGFloat paragraphHeaderSpacing;
+/**
+ 找到指定页码的页面信息
+
+ @param pageIndex 指定页码
+ @return 对应的页面信息
+ */
+-(DWReaderPageInfo *)pageInfoOnPage:(NSUInteger)pageIndex;
 
 @end
 
