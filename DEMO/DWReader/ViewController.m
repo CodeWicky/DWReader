@@ -117,10 +117,8 @@
     renderConf.paragraphHeaderSpacing = fontSize * 2;
 
     DWReaderDisplayConfiguration * disCon = [[DWReaderDisplayConfiguration alloc] init];
-    
     disCon.textColor = [UIColor redColor];
     disCon.transitionStyle = UIPageViewControllerTransitionStylePageCurl;
-
 
     DWReaderChapterInfo * info = [[DWReaderChapterInfo alloc] init];
     info.book_id = @"1000";
