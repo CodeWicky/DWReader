@@ -21,6 +21,7 @@
 		9B6ED6922212FE84003BB1EA /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9B6ED6902212FE84003BB1EA /* LaunchScreen.storyboard */; };
 		9B6ED6952212FE84003BB1EA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B6ED6942212FE84003BB1EA /* main.m */; };
 		9B92B5F522A942550028298A /* a.txt in Resources */ = {isa = PBXBuildFile; fileRef = 9B92B5F422A942550028298A /* a.txt */; };
+		9B92B5F822AA17500028298A /* DWReaderLayouter.m in Sources */ = {isa = PBXBuildFile; fileRef = 9B92B5F722AA17500028298A /* DWReaderLayouter.m */; };
 		9BE977302296C01C00FB43B3 /* DWReaderADViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE9772F2296C01C00FB43B3 /* DWReaderADViewController.m */; };
 		9BE977332296C03F00FB43B3 /* DWReaderADInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE977322296C03F00FB43B3 /* DWReaderADInfo.m */; };
 		9BE9774722982CE900FB43B3 /* DWReaderRenderConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BE9774622982CE900FB43B3 /* DWReaderRenderConfiguration.m */; };
@@ -53,6 +54,8 @@
 		9B6ED6932212FE84003BB1EA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9B6ED6942212FE84003BB1EA /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		9B92B5F422A942550028298A /* a.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = a.txt; sourceTree = "<group>"; };
+		9B92B5F622AA17500028298A /* DWReaderLayouter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderLayouter.h; sourceTree = "<group>"; };
+		9B92B5F722AA17500028298A /* DWReaderLayouter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderLayouter.m; sourceTree = "<group>"; };
 		9BE9772E2296C01C00FB43B3 /* DWReaderADViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderADViewController.h; sourceTree = "<group>"; };
 		9BE9772F2296C01C00FB43B3 /* DWReaderADViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderADViewController.m; sourceTree = "<group>"; };
 		9BE977312296C03F00FB43B3 /* DWReaderADInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderADInfo.h; sourceTree = "<group>"; };
@@ -102,6 +105,8 @@
 				9B2EEA3F2291B47400D7B7FF /* DWReaderDisplayConfiguration.m */,
 				9B2EEA402291B47400D7B7FF /* DWReaderPageInfo.m */,
 				9BE9779522A2775F00FB43B3 /* DWReaderHeader.h */,
+				9B92B5F622AA17500028298A /* DWReaderLayouter.h */,
+				9B92B5F722AA17500028298A /* DWReaderLayouter.m */,
 			);
 			name = DWReader;
 			path = ../../DWReader;
@@ -278,6 +283,7 @@
 				9B2EEA452291B47400D7B7FF /* DWReaderViewController.m in Sources */,
 				9B6ED68A2212FE83003BB1EA /* ViewController.m in Sources */,
 				9B2EEA412291B47400D7B7FF /* DWReaderPageViewController.m in Sources */,
+				9B92B5F822AA17500028298A /* DWReaderLayouter.m in Sources */,
 				9B2EEA462291B47400D7B7FF /* DWReaderDisplayConfiguration.m in Sources */,
 				9B2EEA442291B47400D7B7FF /* DWReaderChapter.m in Sources */,
 				9B6ED6952212FE84003BB1EA /* main.m in Sources */,
