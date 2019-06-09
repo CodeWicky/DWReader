@@ -213,6 +213,7 @@
 
 -(void)reader:(DWReaderViewController *)reader currentPage:(DWReaderPageViewController *)currentPage tapGesture:(UITapGestureRecognizer *)tapGes {
     NSLog(@"Has tap page");
+    
 }
 
 @end
