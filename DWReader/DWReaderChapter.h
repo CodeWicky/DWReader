@@ -24,6 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///标题
 @property (nonatomic ,copy ,readonly) NSString * title;
 
+///要过滤的字符或字符串
+@property (nonatomic ,strong ,readonly) NSCharacterSet * charactersToBeFiltered;
+
 ///章节信息
 @property (nonatomic ,strong) DWReaderChapterInfo * chapterInfo;
 
@@ -58,10 +61,11 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param oriStr 原始数据
  @param title 标题
+ @param filtered 正文数据中，会被过滤的字符或字符串
  @return 章节内容
  */
-+(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info;
--(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info;
++(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title charactersToBeFiltered:(NSCharacterSet *)filtered info:(DWReaderChapterInfo *)info;
+-(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title charactersToBeFiltered:(NSCharacterSet *)filtered info:(DWReaderChapterInfo *)info;
 
 
 /**

@@ -136,6 +136,9 @@ typedef void(^DWReaderChapterChangeCallback)(DWReaderViewController * reader ,DW
 ///当前展示配置
 @property (nonatomic ,strong ,readonly) DWReaderDisplayConfiguration * displayConf;
 
+///正文内容中，将被过滤的字符或字符串
+@property (nonatomic ,strong) NSCharacterSet * charactersToBeFiltered;
+
 ///获取书籍数据代理（如果指定代理且代理实现对应方法则优先是否代理方法，否则使用回调方法）
 @property (nonatomic ,weak) id<DWReaderDataDelegate> readerDelegate;
 

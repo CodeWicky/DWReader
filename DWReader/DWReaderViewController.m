@@ -520,8 +520,7 @@
     info.userInfo = userInfo;
     
     ///配置章节信息
-    DWReaderChapter * chapter = [DWReaderChapter chapterWithOriginString:content title:title info:info];
-    
+    DWReaderChapter * chapter = [DWReaderChapter chapterWithOriginString:content title:title charactersToBeFiltered:self.charactersToBeFiltered info:info];
     ///如果是预加载，分页等工作要异步完成。由于异步自动跳转，同步不会，所以存入表中的时机要正确。按照下列的策略可以保证从表中获取的章节只有两种状态，一种是异步解析会自动跳转的状态，一种是同步解析不会自动跳转的状态
     if (preload) {
         ///如果是预加载是异步解析，且解析完成后会自动切章，所以在解析之前存储到章节表中
