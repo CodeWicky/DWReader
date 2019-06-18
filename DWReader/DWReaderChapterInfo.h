@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
+UIKIT_EXTERN NSInteger const DWReaderChapterUndefined;
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface DWReaderChapterInfo : NSObject
@@ -21,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic ,copy) NSString * title;
 
 @property (nonatomic ,assign) NSInteger chapter_index;
+
+@property (nonatomic ,strong) id userInfo;
 
 @end
 

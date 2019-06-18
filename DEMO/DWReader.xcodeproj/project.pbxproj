@@ -57,6 +57,7 @@
 		9BE977322296C03F00FB43B3 /* DWReaderADInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DWReaderADInfo.m; sourceTree = "<group>"; };
 		9BE9774522982CE800FB43B3 /* DWReaderRenderConfiguration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DWReaderRenderConfiguration.h; sourceTree = "<group>"; };
 		9BE9774622982CE900FB43B3 /* DWReaderRenderConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DWReaderRenderConfiguration.m; sourceTree = "<group>"; };
+		9BE9779522A2775F00FB43B3 /* DWReaderHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DWReaderHeader.h; sourceTree = "<group>"; };
 		C2B2B369920AE1989A49159C /* Pods-DWReader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DWReader.release.xcconfig"; path = "Pods/Target Support Files/Pods-DWReader/Pods-DWReader.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,6 +99,7 @@
 				9B2EEA3E2291B47400D7B7FF /* DWReaderViewController.m */,
 				9B2EEA3F2291B47400D7B7FF /* DWReaderDisplayConfiguration.m */,
 				9B2EEA402291B47400D7B7FF /* DWReaderPageInfo.m */,
+				9BE9779522A2775F00FB43B3 /* DWReaderHeader.h */,
 			);
 			name = DWReader;
 			path = ../../DWReader;
@@ -420,16 +422,17 @@
 			baseConfigurationReference = 5262A722229219828E2D36BE /* Pods-DWReader.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Z26Y87B8NH;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 36WT396TPZ;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/DWReader/PrefixHeader.pch";
 				INFOPLIST_FILE = DWReader/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.DWReader;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wemomo.testReader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "Xcode iOS Wildcard";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -439,16 +442,18 @@
 			baseConfigurationReference = C2B2B369920AE1989A49159C /* Pods-DWReader.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = Z26Y87B8NH;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = 72CZEEPG39;
 				GCC_PREFIX_HEADER = "$(SRCROOT)/DWReader/PrefixHeader.pch";
 				INFOPLIST_FILE = DWReader/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.DWReader;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wemomo.testReader;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = EnterpriseProfile1613;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

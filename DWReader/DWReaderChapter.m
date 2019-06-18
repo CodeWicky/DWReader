@@ -7,7 +7,7 @@
 //
 
 #import "DWReaderChapter.h"
-#import <CoreText/CoreText.h>
+#import "DWReaderLayouter.h"
 
 #define kLineBreakSymbol @"\n"
 #define kLineBreakLength (1)
@@ -20,6 +20,7 @@ CFRelease(a);\
 a = NULL;\
 }\
 } while(0);
+
 
 @interface DWReaderChapter ()
 
@@ -35,14 +36,15 @@ a = NULL;\
 @implementation DWReaderChapter
 
 #pragma mark --- interface method ---
-+(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info {
-    return [[self alloc] initWithOriginString:oriStr title:title info:info];
++(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title charactersToBeFiltered:(NSCharacterSet *)filtered info:(DWReaderChapterInfo *)info {
+    return [[self alloc] initWithOriginString:oriStr title:title charactersToBeFiltered:filtered info:info];
 }
 
--(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info {
+-(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title charactersToBeFiltered:(NSCharacterSet *)filtered info:(DWReaderChapterInfo *)info {
     if (self = [super init]) {
         _originString = oriStr;
         _title = title;
+        _charactersToBeFiltered = filtered;
         _chapterInfo = info;
         _pageConf = nil;
         _internalPageConf = nil;
@@ -58,7 +60,12 @@ a = NULL;\
 -(void)parseChapter {
     NSString * content = _originString;
     
-    ///替换连续\n为单个\n
+    ///替换字符集中所有不合法字符
+    if (self.charactersToBeFiltered) {
+        content = [[content componentsSeparatedByCharactersInSet:self.charactersToBeFiltered] componentsJoinedByString:@""];
+    }
+    ///替换\r为\n统一所有换行，然后替换连续\n为单个\n避免连续换行
+    content = [content stringByReplacingOccurrencesOfString:@"\r" withString:kLineBreakSymbol];
     content = [[[NSRegularExpression alloc] initWithPattern:@"\\n+" options:0 error:nil] stringByReplacingMatchesInString:content options:0 range:NSMakeRange(0, content.length) withTemplate:kLineBreakSymbol];
     
     ///去除段首段尾的分段符
@@ -73,7 +80,7 @@ a = NULL;\
     _content = content;
 }
 
--(void)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf {
+-(BOOL)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf {
     ///当任意一个影响分页的数据改变时才重新计算分页
     if (![_internalPageConf isEqual:conf]) {
         
@@ -91,10 +98,12 @@ a = NULL;\
         if (self.textColor) {
             [self configTextColor:self.textColor];
         }
+        return YES;
     }
+    return NO;
 }
 
--(void)configTextColor:(UIColor *)textColor {
+-(BOOL)configTextColor:(UIColor *)textColor {
     if (![self.textColor isEqual:textColor] || _needSetColor) {
         _needSetColor = NO;
         _textColor = textColor;
@@ -104,7 +113,9 @@ a = NULL;\
             [page setNeedsReload];
             page = page.nextPageInfo;
         }
+        return YES;
     }
+    return NO;
 }
 
 -(void)asyncParseChapterToPageWithConfiguration:(DWReaderRenderConfiguration *)conf reprocess:(dispatch_block_t)reprocess completion:(dispatch_block_t)completion {
@@ -174,20 +185,20 @@ a = NULL;\
     self.drawString = nil;
     
     ///将标题插入正文头部(标题尾部加换行符)
-    NSMutableAttributedString * titleAttr = [self createAttrWithString:[self.title stringByAppendingString:@"\n"] fontName:_pageConf.fontName fontSize:_pageConf.titleFontSize lineSpacing:_pageConf.titleLineSpacing paragraphSpacing:_pageConf.titleSpacing paragraphHeaderSpacing:0];
-    NSMutableAttributedString * contentAttr = [self createAttrWithString:self.content fontName:_pageConf.fontName fontSize:_pageConf.contentFontSize lineSpacing:_pageConf.contentLineSpacing paragraphSpacing:_pageConf.paragraphSpacing paragraphHeaderSpacing:_pageConf.paragraphHeaderSpacing];
+    NSMutableAttributedString * titleAttr = [self createAttrWithString:[self.title stringByAppendingString:@"\n"] font:_pageConf.titleFont             lineSpacing:_pageConf.titleLineSpacing paragraphSpacing:_pageConf.titleSpacing paragraphHeaderSpacing:0];
+    NSMutableAttributedString * contentAttr = [self createAttrWithString:self.content font:_pageConf.contentFont lineSpacing:_pageConf.contentLineSpacing paragraphSpacing:_pageConf.paragraphSpacing paragraphHeaderSpacing:_pageConf.paragraphHeaderSpacing];
     [titleAttr appendAttributedString:contentAttr];
     self.drawString = titleAttr;
     _needSetColor = YES;
 }
 
--(NSMutableAttributedString *)createAttrWithString:(NSString *)string fontName:(NSString *)fontName fontSize:(CGFloat)fontSize lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing paragraphHeaderSpacing:(CGFloat)paragraphHeaderSpacing {
+-(NSMutableAttributedString *)createAttrWithString:(NSString *)string font:(UIFont *)font lineSpacing:(CGFloat)lineSpacing paragraphSpacing:(CGFloat)paragraphSpacing paragraphHeaderSpacing:(CGFloat)paragraphHeaderSpacing {
     
     NSMutableAttributedString * attr = [[NSMutableAttributedString alloc] initWithString:string];
     
     NSRange range = NSMakeRange(0, attr.length);
     ///设置字符串属性（字号、行间距）
-    [attr addAttribute:NSFontAttributeName value:[UIFont fontWithName:fontName size:fontSize] range:range];
+    [attr addAttribute:NSFontAttributeName value:font range:range];
     NSMutableParagraphStyle * paraStyle = [[NSMutableParagraphStyle alloc] init];
     paraStyle.lineSpacing = lineSpacing;
     paraStyle.paragraphSpacing = paragraphSpacing;
@@ -227,7 +238,10 @@ a = NULL;\
         DWReaderPageInfo * pageInfo = [DWReaderPageInfo pageInfoWithChapter:self];
         pageInfo.range = range;
         pageInfo.page = pageCount + 1;
-        pageInfo.pageContent = (NSMutableAttributedString *)[drawString attributedSubstringFromRange:range];
+        ///这里不直接用subStringFromRange是因为，实测偶尔会返回一个不可变字符串，具体原因未知。后续有人想知道问题或者想复现问题，请使用以下字符串生成一个可变字符串：
+        
+        ///@"暗夜亡灵\n付　强\n付强，北京大学物理系博士，从事科研工作多年，目前主攻绿色低碳管理。科幻迷、推理迷、动漫迷；自称死逻辑派、死理性派，却能被一首歌、一段剧情感动得稀里哗啦。发誓要将推理科幻进行到底。已出版科幻长篇《时间深渊》、中篇系列作品《孤独者游戏》。"
+        pageInfo.pageContent = [[NSMutableAttributedString alloc] initWithAttributedString:[drawString attributedSubstringFromRange:range]];
         pageInfo.previousPageInfo = lastPageInfo;
         lastPageInfo.nextPageInfo = pageInfo;
         pageCount += 1;
@@ -262,15 +276,12 @@ a = NULL;\
 }
 
 -(NSRange)calculateVisibleRangeWithString:(NSAttributedString *)string renderSize:(CGSize)size location:(NSUInteger)loc {
-    ///利用CoreText计算当前显示区域内可显示的范围
+///由于直接利用CTFrameGetVisibleStringRange计算出的位置有时不是很准确，导致空白很大，故采取分析每行尺寸后自行判断可见范围，这种方式的好处在于，如果以后每页维护一个layouter的话，做选择或者批注的时候将有很强的扩展性。毕竟这部分内容在DWCoreTextLabel中我已经做过实现。
     CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((__bridge CFAttributedStringRef) string);
     UIBezierPath * bezierPath = [UIBezierPath bezierPathWithRect:(CGRect){CGPointZero,size}];
     CTFrameRef frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, 0), bezierPath.CGPath, NULL);
-    CFRange range = CTFrameGetVisibleStringRange(frame);
-    NSRange fixRange = {loc, range.length};
-    CFSAFERELEASE(frame);
-    CFSAFERELEASE(framesetter);
-    return fixRange;
+    DWReaderLayouter * layouter = [DWReaderLayouter layoutWithCTFrame:frame containerHeight:size.height];
+    return NSMakeRange(loc, layouter.lines.lastObject.endIndex);
 }
 
 -(void)configAsyncParseStatus:(BOOL)parsing {

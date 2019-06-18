@@ -24,6 +24,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///标题
 @property (nonatomic ,copy ,readonly) NSString * title;
 
+///要过滤的字符或字符串
+@property (nonatomic ,strong ,readonly) NSCharacterSet * charactersToBeFiltered;
+
 ///章节信息
 @property (nonatomic ,strong) DWReaderChapterInfo * chapterInfo;
 
@@ -41,6 +44,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///第一页信息
 @property (nonatomic ,strong) DWReaderPageInfo * firstPageInfo;
 
+///当前页面信息
+@property (nonatomic ,strong) DWReaderPageInfo * curretnPageInfo;
+
 ///最后一页信息
 @property (nonatomic ,weak) DWReaderPageInfo * lastPageInfo;
 
@@ -55,10 +61,11 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param oriStr 原始数据
  @param title 标题
+ @param filtered 正文数据中，会被过滤的字符或字符串
  @return 章节内容
  */
-+(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info;
--(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title info:(DWReaderChapterInfo *)info;
++(instancetype)chapterWithOriginString:(NSString *)oriStr title:(NSString *)title charactersToBeFiltered:(NSCharacterSet *)filtered info:(DWReaderChapterInfo *)info;
+-(instancetype)initWithOriginString:(NSString *)oriStr title:(NSString *)title charactersToBeFiltered:(NSCharacterSet *)filtered info:(DWReaderChapterInfo *)info;
 
 
 /**
@@ -71,19 +78,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- 按给定配置分页
+ 按需以给定配置分页
 
  @param conf 页面配置
+ @return 返回是否重新设置了属性
  */
--(void)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf;
+-(BOOL)seperatePageWithPageConfiguration:(DWReaderRenderConfiguration *)conf;
 
 
 /**
- 设置文字颜色
+ 按需设置文字颜色
 
  @param textColor 文字颜色
+ @return 返回是否重新设置了颜色
  */
--(void)configTextColor:(UIColor *)textColor;
+-(BOOL)configTextColor:(UIColor *)textColor;
 
 
 /**

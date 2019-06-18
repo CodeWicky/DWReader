@@ -102,22 +102,30 @@
 //    [self.navigationController pushViewController:self.pageVC animated:YES];
     
     UIEdgeInsets safeAreaInsets = UIEdgeInsetsZero;
+    
     ///由于内部没有tabBar，所以要减去tabBar的高度。
     CGRect renderFrame = CGRectMake(30, safeAreaInsets.top + 66.5, self.view.bounds.size.width - 60, self.view.bounds.size.height - safeAreaInsets.top - 66.5 -  safeAreaInsets.bottom - 70.5);
+    
+    DWReaderRenderConfiguration * conf = [[DWReaderRenderConfiguration alloc] init];
+    conf.renderFrame = renderFrame;
+    
+    
+    
+    
     CGFloat fontSize = 15;
-    DWReaderRenderConfiguration * renderConf = [[DWReaderRenderConfiguration alloc] init];
-    renderConf.renderFrame = renderFrame;
-    renderConf.contentFont = [UIFont fontWithName:@"PingFang SC" size:fontSize];
-    renderConf.titleFont = [UIFont fontWithName:@"PingFang SC" size:fontSize * 1.5];
-    renderConf.titleLineSpacing = fontSize * 0.3;
-    renderConf.titleSpacing = fontSize * 1.5;
-    renderConf.contentLineSpacing = fontSize * 0.2;
-    renderConf.paragraphSpacing = fontSize * 1.3;
-    renderConf.paragraphHeaderSpacing = fontSize * 2;
+    conf.contentFont = [UIFont fontWithName:@"PingFang SC" size:fontSize];
+    conf.titleFont = [UIFont fontWithName:@"PingFang SC" size:fontSize * 1.5];
+    conf.titleLineSpacing = fontSize * 0.3;
+    conf.titleSpacing = fontSize * 1.5;
+    conf.contentLineSpacing = fontSize * 0.2;
+    conf.paragraphSpacing = fontSize * 1.3;
+    conf.paragraphHeaderSpacing = fontSize * 2;
 
     DWReaderDisplayConfiguration * disCon = [[DWReaderDisplayConfiguration alloc] init];
+    
     disCon.textColor = [UIColor redColor];
     disCon.transitionStyle = UIPageViewControllerTransitionStylePageCurl;
+
 
     DWReaderChapterInfo * info = [[DWReaderChapterInfo alloc] init];
     info.book_id = @"1000";
@@ -125,9 +133,7 @@
 
     DWReaderPageViewController * vc = [DWReaderPageViewController new];
     vc.view.backgroundColor = [UIColor redColor];
-
-    self.reader = [DWReaderViewController readerWithRenderConfiguration:renderConf displayConfiguration:disCon defaultPage:vc];
-
+    self.reader = [DWReaderViewController readerWithRenderConfiguration:conf displayConfiguration:disCon defaultPage:vc];
     self.reader.readerDelegate = self;
     [self.reader fetchChapter:info nextChapter:YES animated:NO];
     [self.reader registerClass:[DWReaderADViewController class] forPageViewControllerReuseIdentifier:@"ad"];
@@ -136,8 +142,8 @@
 
 -(void)reader:(DWReaderViewController *)reader requestBookDataWithChapterInfo:(DWReaderChapterInfo *)chapterInfo nextChapter:(BOOL)next preload:(BOOL)preload requestCompleteCallback:(DWReaderRequestDataCompleteCallback)callback {
     if (callback) {
-        NSString * tmp = [NSString stringWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"a" ofType:@"txt"] encoding:(NSUTF8StringEncoding) error:nil];
         
+        NSString * tmp = [[NSString alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"a" ofType:@"txt"] encoding:(NSUTF8StringEncoding) error:nil];
         callback(YES,@"霸道总裁爱上我",tmp,chapterInfo.book_id,chapterInfo.chapter_id,0.5,3,next,nil);
     }
 }
@@ -188,7 +194,6 @@
 //    callback(page,nil,chapter.totalPage + 1);
 //}
 
-
 -(DWReaderPageViewController *)reader:(DWReaderViewController *)reader pageControllerForPageInfo:(DWReaderPageInfo *)pageInfo renderFrame:(CGRect)renderFrame {
     if ([pageInfo isKindOfClass:[DWReaderADInfo class]]) {
         DWReaderADViewController * ad = [reader dequeueReusablePageViewControllerWithIdentifier:@"ad"];
@@ -213,7 +218,6 @@
 
 -(void)reader:(DWReaderViewController *)reader currentPage:(DWReaderPageViewController *)currentPage tapGesture:(UITapGestureRecognizer *)tapGes {
     NSLog(@"Has tap page");
-    
 }
 
 @end
