@@ -204,6 +204,7 @@ a = NULL;\
     paraStyle.paragraphSpacing = paragraphSpacing;
     paraStyle.firstLineHeadIndent = paragraphHeaderSpacing;
     paraStyle.lineBreakMode = NSLineBreakByCharWrapping;
+    paraStyle.alignment = NSTextAlignmentJustified;
     [attr addAttribute:NSParagraphStyleAttributeName value:paraStyle range:range];
     
     return attr;
@@ -262,6 +263,7 @@ a = NULL;\
                 paraStyle.lineSpacing = _pageConf.contentLineSpacing;
                 paraStyle.paragraphSpacing = _pageConf.paragraphSpacing;
                 paraStyle.lineBreakMode = NSLineBreakByCharWrapping;
+                paraStyle.alignment = NSTextAlignmentJustified;
                 [drawString addAttribute:NSParagraphStyleAttributeName value:paraStyle range:NSMakeRange(currentLoc, 1)];
             }
         }
